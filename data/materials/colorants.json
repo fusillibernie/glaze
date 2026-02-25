@@ -1,0 +1,278 @@
+{
+  "colorants": [
+    {
+      "name": "Cobalt Carbonate",
+      "type": "colorant",
+      "description": "Strong blue colorant, use 0.25-2%",
+      "typical_range": [0.25, 2.0],
+      "colors": {
+        "oxidation": "blue",
+        "reduction": "blue"
+      },
+      "analysis": {
+        "CoO": 63.0,
+        "LOI": 37.0
+      }
+    },
+    {
+      "name": "Cobalt Oxide",
+      "type": "colorant",
+      "description": "Black cobalt oxide, stronger than carbonate",
+      "typical_range": [0.1, 1.0],
+      "colors": {
+        "oxidation": "blue",
+        "reduction": "blue"
+      },
+      "analysis": {
+        "CoO": 93.0,
+        "LOI": 7.0
+      }
+    },
+    {
+      "name": "Copper Carbonate",
+      "type": "colorant",
+      "description": "Green in oxidation, red in reduction",
+      "typical_range": [1.0, 5.0],
+      "colors": {
+        "oxidation": "green/turquoise",
+        "reduction": "red/copper"
+      },
+      "analysis": {
+        "CuO": 57.5,
+        "LOI": 42.5
+      }
+    },
+    {
+      "name": "Copper Oxide (Black)",
+      "type": "colorant",
+      "description": "Stronger copper, 1.5x carbonate",
+      "typical_range": [0.5, 3.0],
+      "colors": {
+        "oxidation": "green",
+        "reduction": "red/copper"
+      },
+      "analysis": {
+        "CuO": 100.0
+      }
+    },
+    {
+      "name": "Red Iron Oxide",
+      "type": "colorant",
+      "description": "Most common iron, amber to tenmoku",
+      "typical_range": [1.0, 12.0],
+      "colors": {
+        "oxidation": "amber/rust/brown",
+        "reduction": "celadon/tenmoku"
+      },
+      "analysis": {
+        "Fe2O3": 97.0,
+        "SiO2": 2.0,
+        "Al2O3": 0.5
+      }
+    },
+    {
+      "name": "Yellow Iron Oxide",
+      "type": "colorant",
+      "description": "Lighter iron, softer colors",
+      "typical_range": [2.0, 10.0],
+      "colors": {
+        "oxidation": "yellow/tan",
+        "reduction": "light celadon"
+      },
+      "analysis": {
+        "Fe2O3": 86.0,
+        "LOI": 14.0
+      }
+    },
+    {
+      "name": "Black Iron Oxide",
+      "type": "colorant",
+      "description": "FeO + Fe2O3, darker effects",
+      "typical_range": [1.0, 8.0],
+      "colors": {
+        "oxidation": "brown/black",
+        "reduction": "dark celadon/tenmoku"
+      },
+      "analysis": {
+        "FeO": 77.0,
+        "Fe2O3": 23.0
+      }
+    },
+    {
+      "name": "Rutile",
+      "type": "colorant",
+      "description": "Titanium + iron, creates mottling and crystals",
+      "typical_range": [2.0, 8.0],
+      "colors": {
+        "oxidation": "tan/cream with variations",
+        "reduction": "blue/gray mottling"
+      },
+      "analysis": {
+        "TiO2": 92.0,
+        "Fe2O3": 3.5,
+        "SiO2": 1.5,
+        "Al2O3": 1.0
+      }
+    },
+    {
+      "name": "Titanium Dioxide",
+      "type": "colorant",
+      "description": "Pure titania, whitener and opacifier",
+      "typical_range": [2.0, 10.0],
+      "colors": {
+        "oxidation": "white/cream",
+        "reduction": "white/gray"
+      },
+      "analysis": {
+        "TiO2": 99.0,
+        "Fe2O3": 0.1
+      }
+    },
+    {
+      "name": "Manganese Dioxide",
+      "type": "colorant",
+      "description": "Purple-brown colorant",
+      "typical_range": [1.0, 6.0],
+      "colors": {
+        "oxidation": "purple/brown",
+        "reduction": "brown"
+      },
+      "analysis": {
+        "MnO2": 85.0,
+        "MnO": 10.0,
+        "Fe2O3": 1.0
+      }
+    },
+    {
+      "name": "Chrome Oxide",
+      "type": "colorant",
+      "description": "Green colorant, avoid with tin (pink)",
+      "typical_range": [0.25, 2.0],
+      "colors": {
+        "oxidation": "green",
+        "reduction": "green"
+      },
+      "notes": "Chrome + tin = pink/red (chrome-tin pink)",
+      "analysis": {
+        "Cr2O3": 99.0
+      }
+    },
+    {
+      "name": "Nickel Oxide (Green)",
+      "type": "colorant",
+      "description": "Muted earth tones, variable",
+      "typical_range": [0.5, 3.0],
+      "colors": {
+        "oxidation": "gray/brown/green",
+        "reduction": "gray/blue"
+      },
+      "analysis": {
+        "NiO": 78.0,
+        "LOI": 22.0
+      }
+    },
+    {
+      "name": "Nickel Oxide (Black)",
+      "type": "colorant",
+      "description": "Stronger nickel source",
+      "typical_range": [0.25, 2.0],
+      "colors": {
+        "oxidation": "gray/brown",
+        "reduction": "gray/blue"
+      },
+      "analysis": {
+        "NiO": 99.0
+      }
+    },
+    {
+      "name": "Tin Oxide",
+      "type": "opacifier",
+      "description": "Primary opacifier, creates white",
+      "typical_range": [3.0, 8.0],
+      "colors": {
+        "oxidation": "white (opacifies)",
+        "reduction": "white"
+      },
+      "analysis": {
+        "SnO2": 99.5
+      }
+    },
+    {
+      "name": "Zircopax",
+      "type": "opacifier",
+      "description": "Zirconium silicate opacifier",
+      "typical_range": [5.0, 15.0],
+      "colors": {
+        "oxidation": "white (opacifies)",
+        "reduction": "white"
+      },
+      "analysis": {
+        "ZrO2": 65.0,
+        "SiO2": 34.0
+      }
+    },
+    {
+      "name": "Vanadium Pentoxide",
+      "type": "colorant",
+      "description": "Yellow stain base",
+      "typical_range": [2.0, 8.0],
+      "colors": {
+        "oxidation": "yellow/orange",
+        "reduction": "gray/green"
+      },
+      "analysis": {
+        "V2O5": 99.0
+      }
+    },
+    {
+      "name": "Mason Stain 6600 (Crimson)",
+      "type": "stain",
+      "description": "Red stain, zinc-free bases only",
+      "typical_range": [5.0, 12.0],
+      "colors": {
+        "oxidation": "red/crimson",
+        "reduction": "muted red"
+      }
+    },
+    {
+      "name": "Mason Stain 6304 (Pansy Purple)",
+      "type": "stain",
+      "description": "Purple stain",
+      "typical_range": [5.0, 12.0],
+      "colors": {
+        "oxidation": "purple",
+        "reduction": "purple"
+      }
+    },
+    {
+      "name": "Ilmenite",
+      "type": "colorant",
+      "description": "Iron titanate, dark speckling",
+      "typical_range": [1.0, 5.0],
+      "colors": {
+        "oxidation": "black specks",
+        "reduction": "metallic specks"
+      },
+      "analysis": {
+        "TiO2": 52.0,
+        "FeO": 47.0,
+        "MnO": 1.0
+      }
+    },
+    {
+      "name": "Granular Ilmenite",
+      "type": "colorant",
+      "description": "Coarse ilmenite for larger specks",
+      "typical_range": [1.0, 4.0],
+      "colors": {
+        "oxidation": "black spots",
+        "reduction": "metallic spots"
+      },
+      "analysis": {
+        "TiO2": 52.0,
+        "FeO": 47.0,
+        "MnO": 1.0
+      }
+    }
+  ]
+}
