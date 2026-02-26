@@ -1,0 +1,567 @@
+{
+  "substitutions": [
+    {
+      "material": "Gerstley Borate",
+      "alternate_names": ["GB", "Gerstly Borate"],
+      "status": "limited",
+      "reason": "Original deposit exhausted. Current supply is variable in chemistry and inconsistent.",
+      "substitutes": [
+        {
+          "name": "Gillespie Borate",
+          "type": "direct",
+          "ratio": 1.0,
+          "notes": "Closest match chemically. Formulated as a direct replacement.",
+          "adjustments": []
+        },
+        {
+          "name": "Laguna Borate",
+          "type": "direct",
+          "ratio": 1.0,
+          "notes": "Another commercial replacement, slightly different chemistry.",
+          "adjustments": []
+        },
+        {
+          "name": "Frit 3134 + EPK Mix",
+          "type": "blend",
+          "components": [
+            {"material": "Frit 3134", "parts": 90},
+            {"material": "EPK Kaolin", "parts": 10}
+          ],
+          "ratio": 0.95,
+          "notes": "90 parts Frit 3134 + 10 parts EPK substitutes for 100 parts GB. May need slight adjustments.",
+          "adjustments": [
+            {"oxide": "CaO", "change": "slightly higher"},
+            {"oxide": "Al2O3", "change": "slightly lower"}
+          ]
+        },
+        {
+          "name": "Colemanite + Frit 3134 Mix",
+          "type": "blend",
+          "components": [
+            {"material": "Colemanite", "parts": 50},
+            {"material": "Frit 3134", "parts": 50}
+          ],
+          "ratio": 1.0,
+          "notes": "50/50 mix. Colemanite is natural but also variable.",
+          "adjustments": []
+        }
+      ]
+    },
+    {
+      "material": "Colemanite",
+      "alternate_names": [],
+      "status": "variable",
+      "reason": "Natural mineral with variable chemistry. Consider frits for consistency.",
+      "substitutes": [
+        {
+          "name": "Frit 3134",
+          "type": "direct",
+          "ratio": 0.75,
+          "notes": "Use 75% as much Frit 3134. It has higher B2O3 concentration.",
+          "adjustments": [
+            {"oxide": "CaO", "change": "add 5% whiting to compensate"}
+          ]
+        },
+        {
+          "name": "Ulexite",
+          "type": "direct",
+          "ratio": 1.1,
+          "notes": "Use 10% more Ulexite. Lower B2O3 content.",
+          "adjustments": []
+        }
+      ]
+    },
+    {
+      "material": "Albany Slip",
+      "alternate_names": ["Albany Clay"],
+      "status": "discontinued",
+      "reason": "Original deposit closed. No longer available.",
+      "substitutes": [
+        {
+          "name": "Alberta Slip",
+          "type": "direct",
+          "ratio": 1.0,
+          "notes": "Formulated as direct replacement. Very close match.",
+          "adjustments": []
+        },
+        {
+          "name": "Sheffield Slip",
+          "type": "direct",
+          "ratio": 1.0,
+          "notes": "Another slip clay alternative.",
+          "adjustments": []
+        },
+        {
+          "name": "Albany Slip Substitute Mix",
+          "type": "blend",
+          "components": [
+            {"material": "Redart Clay", "parts": 40},
+            {"material": "Ball Clay (OM4)", "parts": 28},
+            {"material": "Nepheline Syenite", "parts": 20},
+            {"material": "Red Iron Oxide", "parts": 8},
+            {"material": "Manganese Dioxide", "parts": 2},
+            {"material": "Cobalt Carbonate", "parts": 2}
+          ],
+          "ratio": 1.0,
+          "notes": "DIY substitute mix. Results may vary.",
+          "adjustments": []
+        }
+      ]
+    },
+    {
+      "material": "Kingman Feldspar",
+      "alternate_names": [],
+      "status": "discontinued",
+      "reason": "Mine closed.",
+      "substitutes": [
+        {
+          "name": "Custer Feldspar",
+          "type": "direct",
+          "ratio": 1.0,
+          "notes": "Similar potash feldspar. Very close chemistry.",
+          "adjustments": []
+        },
+        {
+          "name": "G-200 Feldspar",
+          "type": "direct",
+          "ratio": 1.0,
+          "notes": "Another potash feldspar option.",
+          "adjustments": []
+        }
+      ]
+    },
+    {
+      "material": "Kona F-4 Feldspar",
+      "alternate_names": ["F-4 Feldspar"],
+      "status": "discontinued",
+      "reason": "No longer produced.",
+      "substitutes": [
+        {
+          "name": "Custer Feldspar",
+          "type": "direct",
+          "ratio": 1.0,
+          "notes": "Close match for most recipes.",
+          "adjustments": []
+        },
+        {
+          "name": "Minspar 200",
+          "type": "direct",
+          "ratio": 1.0,
+          "notes": "Soda feldspar, may flux slightly differently.",
+          "adjustments": []
+        }
+      ]
+    },
+    {
+      "material": "Oxford Feldspar",
+      "alternate_names": [],
+      "status": "discontinued",
+      "reason": "No longer available.",
+      "substitutes": [
+        {
+          "name": "G-200 Feldspar",
+          "type": "direct",
+          "ratio": 1.0,
+          "notes": "Potash feldspar substitute.",
+          "adjustments": []
+        }
+      ]
+    },
+    {
+      "material": "Cornwall Stone",
+      "alternate_names": ["Cornish Stone"],
+      "status": "limited",
+      "reason": "Imported, expensive, variable availability.",
+      "substitutes": [
+        {
+          "name": "Cornwall Stone Substitute",
+          "type": "blend",
+          "components": [
+            {"material": "Custer Feldspar", "parts": 67},
+            {"material": "Silica (Flint)", "parts": 21},
+            {"material": "EPK Kaolin", "parts": 8},
+            {"material": "Whiting (Calcium Carbonate)", "parts": 4}
+          ],
+          "ratio": 1.0,
+          "notes": "Approximate match for most recipes.",
+          "adjustments": []
+        },
+        {
+          "name": "Nepheline Syenite",
+          "type": "direct",
+          "ratio": 0.85,
+          "notes": "Use 85% as much. Higher alkali content.",
+          "adjustments": [
+            {"oxide": "SiO2", "change": "may need to add 5-10% silica"}
+          ]
+        }
+      ]
+    },
+    {
+      "material": "Barium Carbonate",
+      "alternate_names": ["BaCO3"],
+      "status": "restricted",
+      "reason": "Toxic - not food safe. Consider safer alternatives.",
+      "substitutes": [
+        {
+          "name": "Strontium Carbonate",
+          "type": "direct",
+          "ratio": 0.67,
+          "notes": "Use 67% as much. SrO has similar matte-promoting properties but is safer.",
+          "adjustments": [
+            {"oxide": "effect", "change": "slightly different matte quality"}
+          ]
+        },
+        {
+          "name": "High Alumina Matte",
+          "type": "alternative",
+          "ratio": null,
+          "notes": "Increase alumina (EPK/alumina hydrate) instead for matte effect. Different mechanism.",
+          "adjustments": [
+            {"oxide": "Al2O3", "change": "increase by 2-4%"}
+          ]
+        }
+      ]
+    },
+    {
+      "material": "Lead Oxide",
+      "alternate_names": ["PbO", "Litharge", "Red Lead", "White Lead"],
+      "status": "restricted",
+      "reason": "Toxic - strongly discouraged for all use, especially food surfaces.",
+      "substitutes": [
+        {
+          "name": "Frit 3134",
+          "type": "alternative",
+          "ratio": null,
+          "notes": "For low-fire flux, use lead-free frits. Complete reformulation needed.",
+          "adjustments": []
+        },
+        {
+          "name": "Frit 3124",
+          "type": "alternative",
+          "ratio": null,
+          "notes": "Lead-free low-fire frit option.",
+          "adjustments": []
+        }
+      ]
+    },
+    {
+      "material": "Ferro Frit 3134",
+      "alternate_names": ["Frit 3134", "3134"],
+      "status": "available",
+      "reason": null,
+      "substitutes": [
+        {
+          "name": "Fusion Frit F-75",
+          "type": "direct",
+          "ratio": 1.0,
+          "notes": "Fusion's equivalent to 3134.",
+          "adjustments": []
+        },
+        {
+          "name": "Frit 3195",
+          "type": "similar",
+          "ratio": 1.0,
+          "notes": "Higher alumina, lower alkali. May mature slightly higher.",
+          "adjustments": []
+        }
+      ]
+    },
+    {
+      "material": "Frit 3195",
+      "alternate_names": ["Ferro Frit 3195"],
+      "status": "available",
+      "reason": null,
+      "substitutes": [
+        {
+          "name": "Fusion Frit F-69",
+          "type": "direct",
+          "ratio": 1.0,
+          "notes": "Fusion's high-alumina boron frit.",
+          "adjustments": []
+        }
+      ]
+    },
+    {
+      "material": "EPK Kaolin",
+      "alternate_names": ["Edgar Plastic Kaolin", "EPK"],
+      "status": "available",
+      "reason": null,
+      "substitutes": [
+        {
+          "name": "Tile 6 Kaolin",
+          "type": "direct",
+          "ratio": 1.0,
+          "notes": "Similar plastic kaolin.",
+          "adjustments": []
+        },
+        {
+          "name": "Grolleg Kaolin",
+          "type": "direct",
+          "ratio": 1.0,
+          "notes": "English kaolin, whiter but less plastic.",
+          "adjustments": []
+        }
+      ]
+    },
+    {
+      "material": "Custer Feldspar",
+      "alternate_names": [],
+      "status": "available",
+      "reason": null,
+      "substitutes": [
+        {
+          "name": "G-200 Feldspar",
+          "type": "direct",
+          "ratio": 1.0,
+          "notes": "Very similar potash feldspar.",
+          "adjustments": []
+        },
+        {
+          "name": "G-200 HP Feldspar",
+          "type": "direct",
+          "ratio": 1.0,
+          "notes": "High purity version of G-200.",
+          "adjustments": []
+        }
+      ]
+    },
+    {
+      "material": "OM4 Ball Clay",
+      "alternate_names": ["Ball Clay (OM4)", "Old Mine 4"],
+      "status": "limited",
+      "reason": "Original mine exhausted. Current production is from remaining stockpiles.",
+      "substitutes": [
+        {
+          "name": "Goldart Clay",
+          "type": "direct",
+          "ratio": 1.0,
+          "notes": "Common substitute ball clay.",
+          "adjustments": [
+            {"oxide": "color", "change": "slightly different fired color"}
+          ]
+        },
+        {
+          "name": "XX Sagger Ball Clay",
+          "type": "direct",
+          "ratio": 1.0,
+          "notes": "Another ball clay option.",
+          "adjustments": []
+        }
+      ]
+    },
+    {
+      "material": "Barnard Clay",
+      "alternate_names": ["Barnard Slip", "Blackbird Clay"],
+      "status": "limited",
+      "reason": "Variable availability.",
+      "substitutes": [
+        {
+          "name": "Alberta Slip",
+          "type": "similar",
+          "ratio": 1.0,
+          "notes": "Different character but similar function.",
+          "adjustments": [
+            {"oxide": "Fe2O3", "change": "add 5% red iron oxide for darker color"}
+          ]
+        },
+        {
+          "name": "Redart Clay",
+          "type": "similar",
+          "ratio": 0.8,
+          "notes": "Use 80%. Higher iron content. Add flux if needed.",
+          "adjustments": []
+        }
+      ]
+    },
+    {
+      "material": "Magnesium Carbonate",
+      "alternate_names": ["MgCO3", "Magneite"],
+      "status": "available",
+      "reason": null,
+      "substitutes": [
+        {
+          "name": "Talc",
+          "type": "similar",
+          "ratio": 2.0,
+          "notes": "Use double the amount. Talc has ~32% MgO vs MgCO3's ~45%.",
+          "adjustments": [
+            {"oxide": "SiO2", "change": "talc adds silica, may need to reduce elsewhere"}
+          ]
+        },
+        {
+          "name": "Dolomite",
+          "type": "similar",
+          "ratio": 1.5,
+          "notes": "Also adds CaO. Different flux balance.",
+          "adjustments": [
+            {"oxide": "CaO", "change": "adds calcium, may need to reduce whiting"}
+          ]
+        }
+      ]
+    },
+    {
+      "material": "Bone Ash",
+      "alternate_names": ["Calcium Phosphate", "Tricalcium Phosphate"],
+      "status": "available",
+      "reason": null,
+      "substitutes": [
+        {
+          "name": "Synthetic Calcium Phosphate",
+          "type": "direct",
+          "ratio": 1.0,
+          "notes": "Synthetic version, more consistent than natural bone ash.",
+          "adjustments": []
+        }
+      ]
+    },
+    {
+      "material": "Tin Oxide",
+      "alternate_names": ["SnO2", "Stannic Oxide"],
+      "status": "expensive",
+      "reason": "Costly. Consider alternatives for opacity.",
+      "substitutes": [
+        {
+          "name": "Zircopax",
+          "type": "alternative",
+          "ratio": 1.5,
+          "notes": "Use 1.5x as much. Different quality of white, but much cheaper.",
+          "adjustments": [
+            {"oxide": "effect", "change": "more opaque white, less influence on colorants"}
+          ]
+        },
+        {
+          "name": "Superpax",
+          "type": "alternative",
+          "ratio": 1.5,
+          "notes": "Fine zircon opacifier.",
+          "adjustments": []
+        }
+      ]
+    },
+    {
+      "material": "Zircopax",
+      "alternate_names": ["Zirconium Silicate"],
+      "status": "available",
+      "reason": null,
+      "substitutes": [
+        {
+          "name": "Superpax",
+          "type": "direct",
+          "ratio": 1.0,
+          "notes": "Similar zircon opacifier, finer grind.",
+          "adjustments": []
+        },
+        {
+          "name": "Ultrox",
+          "type": "direct",
+          "ratio": 1.0,
+          "notes": "Another zircon opacifier option.",
+          "adjustments": []
+        }
+      ]
+    },
+    {
+      "material": "Rutile",
+      "alternate_names": ["Titanium Dioxide (natural)"],
+      "status": "variable",
+      "reason": "Natural mineral with variable iron content affecting color.",
+      "substitutes": [
+        {
+          "name": "Titanium Dioxide",
+          "type": "similar",
+          "ratio": 0.7,
+          "notes": "Pure TiO2 for white opacity without color variation. Use 70%.",
+          "adjustments": [
+            {"oxide": "effect", "change": "no iron speckling, cleaner but less interesting"}
+          ]
+        },
+        {
+          "name": "Ilmenite",
+          "type": "alternative",
+          "ratio": null,
+          "notes": "For speckling effect, use ilmenite instead. Different visual effect.",
+          "adjustments": []
+        }
+      ]
+    },
+    {
+      "material": "Spodumene",
+      "alternate_names": [],
+      "status": "available",
+      "reason": null,
+      "substitutes": [
+        {
+          "name": "Petalite",
+          "type": "similar",
+          "ratio": 1.0,
+          "notes": "Lower Li2O but similar thermal expansion properties.",
+          "adjustments": [
+            {"oxide": "Li2O", "change": "petalite has ~4.5% vs spodumene's 7.5%"}
+          ]
+        },
+        {
+          "name": "Lithium Carbonate",
+          "type": "partial",
+          "ratio": 0.1,
+          "notes": "For lithium content only. Add 10% Li2CO3 to replace spodumene's flux.",
+          "adjustments": [
+            {"oxide": "SiO2", "change": "need to add silica and alumina separately"}
+          ]
+        }
+      ]
+    },
+    {
+      "material": "Wollastonite",
+      "alternate_names": [],
+      "status": "available",
+      "reason": null,
+      "substitutes": [
+        {
+          "name": "Whiting + Silica Mix",
+          "type": "blend",
+          "components": [
+            {"material": "Whiting (Calcium Carbonate)", "parts": 52},
+            {"material": "Silica (Flint)", "parts": 48}
+          ],
+          "ratio": 1.0,
+          "notes": "Same oxide contribution but with high LOI. May affect glaze fit.",
+          "adjustments": [
+            {"oxide": "LOI", "change": "much higher, may cause crawling"}
+          ]
+        }
+      ]
+    },
+    {
+      "material": "Volcanic Ash",
+      "alternate_names": [],
+      "status": "variable",
+      "reason": "Highly variable depending on source.",
+      "substitutes": [
+        {
+          "name": "Volcanic Ash Substitute",
+          "type": "blend",
+          "components": [
+            {"material": "Nepheline Syenite", "parts": 45},
+            {"material": "Silica (Flint)", "parts": 25},
+            {"material": "EPK Kaolin", "parts": 15},
+            {"material": "Ball Clay (OM4)", "parts": 10},
+            {"material": "Red Iron Oxide", "parts": 3},
+            {"material": "Bentonite", "parts": 2}
+          ],
+          "ratio": 1.0,
+          "notes": "Approximate substitute. Real volcanic ash varies widely.",
+          "adjustments": []
+        }
+      ]
+    }
+  ],
+  "availability_status": {
+    "available": "Readily available from major suppliers",
+    "limited": "Available but with limitations (variability, stockpile only, etc.)",
+    "discontinued": "No longer produced or available",
+    "restricted": "Available but use is discouraged (toxicity, environmental)",
+    "expensive": "Available but costly, alternatives may be preferred",
+    "variable": "Available but chemistry is inconsistent"
+  }
+}

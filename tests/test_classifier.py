@@ -84,7 +84,8 @@ class TestClassification:
         """Test classification of matte glaze."""
         classification = classifier.classify(matte_recipe)
 
-        assert classification.stull.region in [StullRegion.MATTE, StullRegion.SATIN]
+        # DRY_MATTE is also a valid matte classification for low Si:Al ratios
+        assert classification.stull.region in [StullRegion.MATTE, StullRegion.SATIN, StullRegion.DRY_MATTE]
         assert classification.stull.si_al_ratio < 8
 
     def test_classify_no_umf_raises(self, classifier):

@@ -1,6 +1,16 @@
 """Data models for ceramic glaze formulation."""
 
-from .materials import Material, MaterialType, MaterialAnalysis, OxideAnalysis, OXIDE_MOLECULAR_WEIGHTS
+from .materials import (
+    Material,
+    MaterialType,
+    MaterialCategory,
+    MaterialFunction,
+    MaterialAnalysis,
+    OxideAnalysis,
+    OXIDE_MOLECULAR_WEIGHTS,
+    MATERIAL_FUNCTION_INFO,
+    MATERIAL_USAGE_GUIDELINES,
+)
 from .glaze import (
     Glaze,
     GlazeRecipe,

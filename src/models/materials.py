@@ -33,6 +33,217 @@ class MaterialCategory(Enum):
     MODIFIER = "modifier"  # Various effects
 
 
+class MaterialFunction(Enum):
+    """Specific functions a material performs in a glaze."""
+    # Glass formers
+    GLASS_FORMER = "glass_former"
+    SECONDARY_GLASS_FORMER = "secondary_glass_former"
+
+    # Fluxes by temperature
+    HIGH_TEMP_FLUX = "high_temp_flux"
+    MID_TEMP_FLUX = "mid_temp_flux"
+    LOW_TEMP_FLUX = "low_temp_flux"
+
+    # Flux types
+    ALKALI_FLUX = "alkali_flux"
+    ALKALINE_EARTH_FLUX = "alkaline_earth_flux"
+    BORON_FLUX = "boron_flux"
+
+    # Stabilizers
+    ALUMINA_SOURCE = "alumina_source"
+    VISCOSITY_MODIFIER = "viscosity_modifier"
+
+    # Surface effects
+    MATTE_PROMOTER = "matte_promoter"
+    OPACITY_SOURCE = "opacity_source"
+    CRYSTAL_PROMOTER = "crystal_promoter"
+    OPALESCENCE = "opalescence"
+
+    # Colorants
+    IRON_COLORANT = "iron_colorant"
+    COPPER_COLORANT = "copper_colorant"
+    COBALT_COLORANT = "cobalt_colorant"
+    MANGANESE_COLORANT = "manganese_colorant"
+    CHROME_COLORANT = "chrome_colorant"
+
+    # Physical properties
+    THERMAL_EXPANSION_REDUCER = "thermal_expansion_reducer"
+    SUSPENSION_AID = "suspension_aid"
+    PLASTICITY = "plasticity"
+
+
+# Material function descriptions and usage guidelines
+MATERIAL_FUNCTION_INFO = {
+    MaterialFunction.GLASS_FORMER: {
+        "description": "Primary glass-forming oxide (SiO2). Forms the backbone of the glaze structure.",
+        "typical_oxides": ["SiO2"],
+        "effect_on_glaze": "Higher amounts increase hardness, durability, and chemical resistance. Too much raises melting temperature.",
+    },
+    MaterialFunction.SECONDARY_GLASS_FORMER: {
+        "description": "Secondary glass former (B2O3). Lowers melting temperature while forming glass.",
+        "typical_oxides": ["B2O3"],
+        "effect_on_glaze": "Lowers maturing temperature, increases gloss, promotes healing of surface defects.",
+    },
+    MaterialFunction.HIGH_TEMP_FLUX: {
+        "description": "Flux active at high temperatures (cone 8-12). Calcium and magnesium sources.",
+        "typical_oxides": ["CaO", "MgO"],
+        "effect_on_glaze": "Promotes durability and hardness. CaO is primary high-fire flux.",
+    },
+    MaterialFunction.MID_TEMP_FLUX: {
+        "description": "Flux active at mid-range temperatures (cone 4-7).",
+        "typical_oxides": ["CaO", "Na2O", "K2O", "ZnO"],
+        "effect_on_glaze": "Balanced melting, good for functional ware.",
+    },
+    MaterialFunction.LOW_TEMP_FLUX: {
+        "description": "Flux active at low temperatures (cone 06-2). Alkalis, boron, lead.",
+        "typical_oxides": ["Na2O", "K2O", "Li2O", "B2O3", "PbO"],
+        "effect_on_glaze": "Dramatically lowers melting point. Use with care for thermal expansion.",
+    },
+    MaterialFunction.ALKALI_FLUX: {
+        "description": "Alkali oxides (Na2O, K2O, Li2O). Powerful low-temp fluxes with high expansion.",
+        "typical_oxides": ["Na2O", "K2O", "Li2O"],
+        "effect_on_glaze": "Strong fluxing action but high thermal expansion can cause crazing.",
+    },
+    MaterialFunction.ALKALINE_EARTH_FLUX: {
+        "description": "Alkaline earth oxides (CaO, MgO, BaO, SrO). Moderate fluxes with lower expansion.",
+        "typical_oxides": ["CaO", "MgO", "BaO", "SrO"],
+        "effect_on_glaze": "CaO promotes durability. MgO promotes matte/buttery surfaces. BaO promotes matte but not food-safe.",
+    },
+    MaterialFunction.BORON_FLUX: {
+        "description": "Boron oxide (B2O3). Acts as both flux and glass former.",
+        "typical_oxides": ["B2O3"],
+        "effect_on_glaze": "Lowers melting temp, increases gloss, heals crawling. Essential for low-fire glazes.",
+    },
+    MaterialFunction.ALUMINA_SOURCE: {
+        "description": "Alumina (Al2O3) source. Primary stabilizer and viscosity controller.",
+        "typical_oxides": ["Al2O3"],
+        "effect_on_glaze": "Increases viscosity, prevents running, promotes matte surfaces, increases durability.",
+    },
+    MaterialFunction.VISCOSITY_MODIFIER: {
+        "description": "Modifies melt viscosity to control flow and surface quality.",
+        "typical_oxides": ["Al2O3", "SiO2", "MgO"],
+        "effect_on_glaze": "Higher alumina = more viscous, less running. Lower alumina = fluid, potential running.",
+    },
+    MaterialFunction.MATTE_PROMOTER: {
+        "description": "Promotes matte or satin surface through crystal formation or high alumina.",
+        "typical_oxides": ["Al2O3", "MgO", "BaO", "CaO"],
+        "effect_on_glaze": "MgO gives buttery matte. BaO gives dry matte. High Al2O3 gives satin/matte.",
+    },
+    MaterialFunction.OPACITY_SOURCE: {
+        "description": "Creates opacity through crystal formation or light scattering.",
+        "typical_oxides": ["TiO2", "ZrO2", "SnO2"],
+        "effect_on_glaze": "TiO2 gives cream color. ZrO2 gives white opacity. SnO2 promotes white with less color influence.",
+    },
+    MaterialFunction.CRYSTAL_PROMOTER: {
+        "description": "Promotes crystal growth for visual effects.",
+        "typical_oxides": ["ZnO", "TiO2", "MgO"],
+        "effect_on_glaze": "ZnO essential for macro crystals. Slow cooling required.",
+    },
+    MaterialFunction.OPALESCENCE: {
+        "description": "Creates opalescent or phosphorescent effects.",
+        "typical_oxides": ["P2O5", "CaO"],
+        "effect_on_glaze": "Bone ash (calcium phosphate) creates soft opalescent glow.",
+    },
+    MaterialFunction.THERMAL_EXPANSION_REDUCER: {
+        "description": "Reduces thermal expansion coefficient to prevent crazing.",
+        "typical_oxides": ["Li2O", "B2O3", "SiO2"],
+        "effect_on_glaze": "Lithium has lowest expansion. Boron and silica also help reduce expansion.",
+    },
+    MaterialFunction.SUSPENSION_AID: {
+        "description": "Helps keep glaze materials suspended in water.",
+        "typical_oxides": [],
+        "effect_on_glaze": "Clay additions (EPK, ball clay) improve suspension and application properties.",
+    },
+    MaterialFunction.PLASTICITY: {
+        "description": "Improves handling and application of raw glaze.",
+        "typical_oxides": [],
+        "effect_on_glaze": "Bentonite (1-2%) dramatically improves plasticity. Too much causes crawling.",
+    },
+}
+
+
+# Usage guidelines by material type
+MATERIAL_USAGE_GUIDELINES = {
+    MaterialType.FELDSPAR: {
+        "typical_min": 15.0,
+        "typical_max": 50.0,
+        "primary_functions": [MaterialFunction.MID_TEMP_FLUX, MaterialFunction.GLASS_FORMER, MaterialFunction.ALKALI_FLUX],
+        "description": "Feldspars are the backbone of most glazes, providing silica, alumina, and fluxes in one material.",
+        "notes": "Potash feldspars (K2O-rich) are more refractory than soda feldspars (Na2O-rich).",
+    },
+    MaterialType.CLAY: {
+        "typical_min": 5.0,
+        "typical_max": 25.0,
+        "primary_functions": [MaterialFunction.ALUMINA_SOURCE, MaterialFunction.SUSPENSION_AID, MaterialFunction.PLASTICITY],
+        "description": "Clays provide alumina and help with suspension. Essential for glaze application.",
+        "notes": "Kaolins are primary source. Ball clays add plasticity but can darken color. Bentonite 1-2% max.",
+    },
+    MaterialType.SILICA: {
+        "typical_min": 5.0,
+        "typical_max": 30.0,
+        "primary_functions": [MaterialFunction.GLASS_FORMER],
+        "description": "Pure silica (flint/quartz) is the primary glass former. Raises melting point.",
+        "notes": "Too much silica raises melting temperature and can cause crawling. Essential for durability.",
+    },
+    MaterialType.CALCIUM: {
+        "typical_min": 5.0,
+        "typical_max": 25.0,
+        "primary_functions": [MaterialFunction.HIGH_TEMP_FLUX, MaterialFunction.ALKALINE_EARTH_FLUX],
+        "description": "Calcium sources (whiting, wollastonite) are primary high-fire fluxes.",
+        "notes": "Whiting has high LOI (44%). Wollastonite has no LOI and adds silica, reducing crazing.",
+    },
+    MaterialType.MAGNESIUM: {
+        "typical_min": 2.0,
+        "typical_max": 15.0,
+        "primary_functions": [MaterialFunction.MATTE_PROMOTER, MaterialFunction.HIGH_TEMP_FLUX],
+        "description": "Magnesium sources (talc, dolomite) promote buttery matte surfaces.",
+        "notes": "Dolomite provides both CaO and MgO. Talc also adds silica. Best in reduction for buttery surfaces.",
+    },
+    MaterialType.BORON: {
+        "typical_min": 5.0,
+        "typical_max": 25.0,
+        "primary_functions": [MaterialFunction.BORON_FLUX, MaterialFunction.SECONDARY_GLASS_FORMER],
+        "description": "Boron sources (frits, Gerstley borate) are essential for low/mid-fire glazes.",
+        "notes": "Gerstley borate is variable - consider frit substitutes. Boron promotes gloss and heals defects.",
+    },
+    MaterialType.ALUMINA: {
+        "typical_min": 1.0,
+        "typical_max": 10.0,
+        "primary_functions": [MaterialFunction.ALUMINA_SOURCE, MaterialFunction.VISCOSITY_MODIFIER, MaterialFunction.MATTE_PROMOTER],
+        "description": "Pure alumina sources adjust viscosity and surface texture.",
+        "notes": "Alumina hydrate has 35% LOI. Calcined alumina has none. Use to stiffen runny glazes.",
+    },
+    MaterialType.FLUX: {
+        "typical_min": 2.0,
+        "typical_max": 15.0,
+        "primary_functions": [MaterialFunction.ALKALI_FLUX, MaterialFunction.ALKALINE_EARTH_FLUX, MaterialFunction.CRYSTAL_PROMOTER],
+        "description": "Secondary fluxes modify melting behavior and special effects.",
+        "notes": "Zinc promotes crystals. Lithium lowers expansion. Barium promotes matte (not food-safe).",
+    },
+    MaterialType.FRIT: {
+        "typical_min": 10.0,
+        "typical_max": 80.0,
+        "primary_functions": [MaterialFunction.BORON_FLUX, MaterialFunction.LOW_TEMP_FLUX, MaterialFunction.GLASS_FORMER],
+        "description": "Frits are pre-melted materials that provide consistent, insoluble chemistry.",
+        "notes": "Essential for low-fire. 3134 is calcium-boron. 3110 is sodium silicate (high expansion).",
+    },
+    MaterialType.COLORANT: {
+        "typical_min": 0.5,
+        "typical_max": 10.0,
+        "primary_functions": [MaterialFunction.IRON_COLORANT, MaterialFunction.COPPER_COLORANT, MaterialFunction.COBALT_COLORANT],
+        "description": "Metal oxides and stains that provide color.",
+        "notes": "Cobalt is strongest (0.5-2%). Iron varies by atmosphere (1-10%). Copper gives green/red (1-5%).",
+    },
+    MaterialType.OPACIFIER: {
+        "typical_min": 3.0,
+        "typical_max": 15.0,
+        "primary_functions": [MaterialFunction.OPACITY_SOURCE],
+        "description": "Materials that create opacity through crystal formation.",
+        "notes": "Zircopax (zirconia) 8-12% for white. Tin oxide 3-8% for softer white. Titanium 3-8% for cream.",
+    },
+}
+
+
 @dataclass
 class OxideAnalysis:
     """Oxide composition of a material (weight %)."""

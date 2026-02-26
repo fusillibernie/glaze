@@ -6,7 +6,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Query
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Query, Body
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -31,6 +31,7 @@ from src.services.formulator import GlazeFormulator, FormulationTarget
 from src.services.analyzer import GlazeAnalyzer
 from src.services.predictor import OutcomePredictor
 from src.services.classifier import GlazeClassifier, StullRegion, GlazeCategory
+from src.services.substitution_service import SubstitutionService, AvailabilityStatus
 from src.integrations.glazy_client import GlazyClient
 
 
@@ -58,6 +59,7 @@ formulator = GlazeFormulator(materials_db)
 analyzer = GlazeAnalyzer()
 predictor = OutcomePredictor()
 classifier = GlazeClassifier()
+substitution_service = SubstitutionService(DATA_DIR / "materials" / "substitutions.json")
 glazy_client = GlazyClient(cache_dir=DATA_DIR / "glazy_cache")
 
 # Mount static files for uploaded photos
@@ -231,6 +233,145 @@ async def find_substitutes(name: str, limit: int = 5):
         }
         for m, sim in substitutes
     ]
+
+
+# ============== Substitution Endpoints ==============
+
+@app.get("/api/substitutions/status/{material_name}")
+async def get_material_availability(material_name: str):
+    """Get availability status and substitution info for a material."""
+    sub_info = substitution_service.get_substitution_info(material_name)
+    if not sub_info:
+        return {
+            "material": material_name,
+            "status": "available",
+            "reason": None,
+            "substitutes": [],
+        }
+
+    return {
+        "material": sub_info.material,
+        "status": sub_info.status.value,
+        "reason": sub_info.reason,
+        "substitutes": [
+            {
+                "name": s.name,
+                "type": s.sub_type.value,
+                "ratio": s.ratio,
+                "notes": s.notes,
+                "components": [
+                    {"material": c.material, "parts": c.parts}
+                    for c in s.components
+                ] if s.components else None,
+                "adjustments": [
+                    {"oxide": a.oxide, "change": a.change}
+                    for a in s.adjustments
+                ] if s.adjustments else None,
+            }
+            for s in sub_info.substitutes
+        ],
+    }
+
+
+@app.get("/api/substitutions/unavailable")
+async def list_unavailable_materials():
+    """List all materials with availability issues."""
+    unavailable = substitution_service.get_all_unavailable()
+    return [
+        {
+            "material": name,
+            "status": status.value,
+            "reason": reason,
+        }
+        for name, status, reason in unavailable
+    ]
+
+
+class RecipeSubstitutionInput(BaseModel):
+    recipe: dict[str, float]  # material_name -> amount
+    materials_to_substitute: Optional[list[str]] = None
+
+
+@app.post("/api/substitutions/calculate")
+async def calculate_substitution(
+    material_name: str,
+    amount: float,
+    substitute_index: int = 0,
+):
+    """Calculate amounts for substituting a material."""
+    result = substitution_service.calculate_substitution(
+        material_name, amount, substitute_index
+    )
+
+    if not result:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No substitutes found for {material_name}",
+        )
+
+    return {
+        "original_material": result.original_material,
+        "original_amount": result.original_amount,
+        "substitute_name": result.substitute_name,
+        "substitute_type": result.substitute_type.value,
+        "components": [
+            {"material": name, "amount": amt}
+            for name, amt in result.components
+        ],
+        "notes": result.notes,
+        "adjustments": [
+            {"oxide": a.oxide, "change": a.change}
+            for a in result.adjustments
+        ],
+        "warnings": result.warnings,
+    }
+
+
+@app.post("/api/substitutions/recipe")
+async def substitute_recipe_materials(input_data: RecipeSubstitutionInput):
+    """Substitute unavailable materials in a recipe."""
+    new_recipe, results = substitution_service.substitute_recipe(
+        input_data.recipe,
+        input_data.materials_to_substitute,
+    )
+
+    return {
+        "original_recipe": input_data.recipe,
+        "substituted_recipe": new_recipe,
+        "substitutions": [
+            {
+                "original_material": r.original_material,
+                "original_amount": r.original_amount,
+                "substitute_name": r.substitute_name,
+                "components": [
+                    {"material": name, "amount": amt}
+                    for name, amt in r.components
+                ],
+                "notes": r.notes,
+                "warnings": r.warnings,
+            }
+            for r in results
+        ],
+    }
+
+
+@app.post("/api/substitutions/check-recipe")
+async def check_recipe_availability(recipe: dict[str, float]):
+    """Check availability of all materials in a recipe."""
+    issues = substitution_service.check_recipe_availability(recipe)
+
+    return {
+        "recipe_materials": list(recipe.keys()),
+        "issues": [
+            {
+                "material": name,
+                "status": status.value,
+                "reason": reason,
+            }
+            for name, (status, reason) in issues.items()
+        ],
+        "all_available": len(issues) == 0,
+    }
 
 
 # ============== Recipe Endpoints ==============
@@ -701,7 +842,7 @@ async def upload_result_photo(
 
 
 @app.post("/api/results")
-async def submit_result(result: ResultInput, photo_ids: list[str] = []):
+async def submit_result(result: ResultInput = Body(...), photo_ids: list[str] = Query(default=[])):
     """Submit a firing result."""
     result_id = str(uuid.uuid4())
 
@@ -808,6 +949,91 @@ async def get_umf_ranges(cone: int):
     from src.models.umf import get_umf_ranges
     ranges = get_umf_ranges(cone)
     return ranges
+
+
+# ============== Material Function Reference ==============
+
+@app.get("/api/reference/material-types")
+async def list_material_types():
+    """List material types with usage guidelines."""
+    from src.models.materials import MaterialType, MATERIAL_USAGE_GUIDELINES, MaterialFunction
+
+    result = []
+    for mat_type in MaterialType:
+        guidelines = MATERIAL_USAGE_GUIDELINES.get(mat_type, {})
+        result.append({
+            "type": mat_type.value,
+            "typical_min_percent": guidelines.get("typical_min"),
+            "typical_max_percent": guidelines.get("typical_max"),
+            "primary_functions": [f.value for f in guidelines.get("primary_functions", [])],
+            "description": guidelines.get("description", ""),
+            "notes": guidelines.get("notes", ""),
+        })
+    return result
+
+
+@app.get("/api/reference/material-functions")
+async def list_material_functions():
+    """List all material functions with descriptions."""
+    from src.models.materials import MaterialFunction, MATERIAL_FUNCTION_INFO
+
+    result = []
+    for func in MaterialFunction:
+        info = MATERIAL_FUNCTION_INFO.get(func, {})
+        result.append({
+            "function": func.value,
+            "description": info.get("description", ""),
+            "typical_oxides": info.get("typical_oxides", []),
+            "effect_on_glaze": info.get("effect_on_glaze", ""),
+        })
+    return result
+
+
+@app.get("/api/reference/material-functions/{function}")
+async def get_material_function(function: str):
+    """Get detailed info about a specific material function."""
+    from src.models.materials import MaterialFunction, MATERIAL_FUNCTION_INFO
+
+    try:
+        func = MaterialFunction(function)
+    except ValueError:
+        raise HTTPException(status_code=404, detail=f"Unknown function: {function}")
+
+    info = MATERIAL_FUNCTION_INFO.get(func, {})
+    return {
+        "function": func.value,
+        "description": info.get("description", ""),
+        "typical_oxides": info.get("typical_oxides", []),
+        "effect_on_glaze": info.get("effect_on_glaze", ""),
+    }
+
+
+@app.get("/api/materials/{name}/function")
+async def get_material_with_function(name: str):
+    """Get a material with its function information and usage guidelines."""
+    from src.models.materials import MATERIAL_USAGE_GUIDELINES
+
+    material = materials_db.get(name)
+    if not material:
+        raise HTTPException(status_code=404, detail=f"Material not found: {name}")
+
+    guidelines = MATERIAL_USAGE_GUIDELINES.get(material.material_type, {})
+
+    return {
+        "name": material.name,
+        "type": material.material_type.value,
+        "description": material.description,
+        "analysis": material.analysis.oxide_analysis.to_dict(),
+        "usage_guidelines": {
+            "typical_min_percent": guidelines.get("typical_min"),
+            "typical_max_percent": guidelines.get("typical_max"),
+            "primary_functions": [f.value for f in guidelines.get("primary_functions", [])],
+            "type_description": guidelines.get("description", ""),
+            "notes": guidelines.get("notes", ""),
+        },
+        "substitutes": material.substitutes,
+        "warnings": material.warnings,
+    }
 
 
 # ============== Helper Functions ==============
