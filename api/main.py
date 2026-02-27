@@ -9,6 +9,7 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Query, Body
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 
 from src.models.materials import Material, MaterialType
@@ -64,6 +65,20 @@ glazy_client = GlazyClient(cache_dir=DATA_DIR / "glazy_cache")
 
 # Mount static files for uploaded photos
 app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
+
+# UI directory
+UI_DIR = Path(__file__).parent.parent / "ui"
+
+
+# ============== Root Endpoint - Serve UI ==============
+
+@app.get("/", response_class=HTMLResponse)
+async def root():
+    """Serve the main UI."""
+    ui_path = UI_DIR / "index.html"
+    if ui_path.exists():
+        return HTMLResponse(content=ui_path.read_text(encoding="utf-8"))
+    return HTMLResponse(content="<h1>Glaze Formulator</h1><p>UI not found. Check ui/index.html</p>")
 
 
 # ============== Request/Response Models ==============

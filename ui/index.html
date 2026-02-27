@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glaze - Ceramic Glaze Formulator</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-card: #1f2940;
+            --accent: #e94560;
+            --accent-light: #ff6b6b;
+            --text-primary: #eee;
+            --text-secondary: #aaa;
+            --text-muted: #666;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --danger: #ef4444;
+            --border: #2d3748;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card));
+            padding: 1rem 2rem;
+            border-bottom: 2px solid var(--accent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .tabs {
+            display: flex;
+            background: var(--bg-secondary);
+            padding: 0 1rem;
+            gap: 0.25rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+            background: rgba(233, 69, 96, 0.1);
+        }
+
+        .tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+            background: rgba(233, 69, 96, 0.1);
+        }
+
+        main {
+            padding: 1.5rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+        @media (max-width: 1200px) {
+            .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            color: var(--accent);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        input::placeholder {
+            color: var(--text-muted);
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: var(--accent-light);
+            transform: translateY(-1px);
+        }
+
+        button.secondary {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+        }
+
+        button.secondary:hover {
+            background: var(--border);
+        }
+
+        button.success {
+            background: var(--success);
+            color: #000;
+        }
+
+        button.small {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        tr:hover {
+            background: rgba(233, 69, 96, 0.05);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .badge-success { background: rgba(74, 222, 128, 0.2); color: var(--success); }
+        .badge-warning { background: rgba(251, 191, 36, 0.2); color: var(--warning); }
+        .badge-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+        .badge-info { background: rgba(233, 69, 96, 0.2); color: var(--accent); }
+
+        .search-box {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-box input {
+            flex: 1;
+        }
+
+        .material-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .material-item {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .material-item:hover {
+            background: rgba(233, 69, 96, 0.1);
+        }
+
+        .material-item.selected {
+            background: rgba(233, 69, 96, 0.2);
+            border-left: 3px solid var(--accent);
+        }
+
+        .material-name {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .material-type {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .oxide-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .oxide-label {
+            width: 60px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .oxide-track {
+            flex: 1;
+            height: 20px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .oxide-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            transition: width 0.3s;
+        }
+
+        .oxide-value {
+            width: 60px;
+            text-align: right;
+            font-size: 0.85rem;
+        }
+
+        .recipe-ingredients {
+            margin-bottom: 1rem;
+        }
+
+        .ingredient-row {
+            display: grid;
+            grid-template-columns: 1fr 80px 40px;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            align-items: center;
+        }
+
+        .ingredient-row input {
+            padding: 0.5rem;
+        }
+
+        .remove-btn {
+            background: var(--danger);
+            padding: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .umf-display {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .umf-section h4 {
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .umf-oxide {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .umf-oxide .name {
+            color: var(--text-secondary);
+        }
+
+        .umf-oxide .value {
+            font-weight: 500;
+            font-family: 'Consolas', monospace;
+        }
+
+        .stull-chart {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .prediction-card {
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .prediction-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .prediction-title {
+            color: var(--text-secondary);
+        }
+
+        .prediction-value {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .risk-meter {
+            height: 8px;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .risk-fill {
+            height: 100%;
+            transition: width 0.3s;
+        }
+
+        .risk-low { background: var(--success); }
+        .risk-medium { background: var(--warning); }
+        .risk-high { background: var(--danger); }
+
+        .substitution-item {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+        }
+
+        .substitution-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .substitution-name {
+            font-weight: 500;
+        }
+
+        .substitution-ratio {
+            color: var(--accent);
+        }
+
+        .analysis-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .analysis-section h4 {
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+        }
+
+        .issue-item, .warning-item, .recommendation-item {
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .issue-item {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 3px solid var(--danger);
+        }
+
+        .warning-item {
+            background: rgba(251, 191, 36, 0.1);
+            border-left: 3px solid var(--warning);
+        }
+
+        .recommendation-item {
+            background: rgba(74, 222, 128, 0.1);
+            border-left: 3px solid var(--success);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .cone-select {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .cone-btn {
+            padding: 0.5rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .cone-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .cone-btn.selected {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mt-1 { margin-top: 1rem; }
+        .mb-1 { margin-bottom: 1rem; }
+        .text-success { color: var(--success); }
+        .text-warning { color: var(--warning); }
+        .text-danger { color: var(--danger); }
+        .text-muted { color: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+            <h1>Glaze</h1>
+            <div class="header-subtitle">Ceramic Glaze Formulator & Chemistry Calculator</div>
+        </div>
+        <div>
+            <span class="badge badge-info">Cone 06-13</span>
+        </div>
+    </header>
+
+    <nav class="tabs">
+        <button class="tab active" data-tab="materials">Materials</button>
+        <button class="tab" data-tab="recipe">Recipe Builder</button>
+        <button class="tab" data-tab="analysis">Analysis</button>
+        <button class="tab" data-tab="substitutions">Substitutions</button>
+        <button class="tab" data-tab="search">Glazy Search</button>
+    </nav>
+
+    <main>
+        <!-- MATERIALS TAB -->
+        <section id="materials" class="tab-content active">
+            <div class="grid grid-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Material Database</h3>
+                        <span id="material-count" class="badge badge-info">0 materials</span>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" id="material-search" placeholder="Search materials...">
+                        <select id="material-type-filter">
+                            <option value="">All Types</option>
+                        </select>
+                    </div>
+                    <div id="material-list" class="material-list">
+                        <div class="loading active">
+                            <div class="spinner"></div>
+                            Loading materials...
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="grid-column: span 2;">
+                    <div class="card-header">
+                        <h3 class="card-title">Material Details</h3>
+                        <button class="small secondary" id="add-to-recipe-btn" style="display:none;">+ Add to Recipe</button>
+                    </div>
+                    <div id="material-details">
+                        <div class="empty-state">
+                            Select a material to view its oxide analysis and details
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RECIPE BUILDER TAB -->
+        <section id="recipe" class="tab-content">
+            <div class="grid grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Recipe Builder</h3>
+                        <button class="small secondary" id="clear-recipe-btn">Clear</button>
+                    </div>
+                    <div class="form-group">
+                        <label>Recipe Name</label>
+                        <input type="text" id="recipe-name" placeholder="My Glaze Recipe">
+                    </div>
+                    <div class="form-group">
+                        <label>Target Cone</label>
+                        <div class="cone-select" id="cone-select">
+                            <button class="cone-btn" data-cone="06">06</button>
+                            <button class="cone-btn" data-cone="05">05</button>
+                            <button class="cone-btn" data-cone="04">04</button>
+                            <button class="cone-btn" data-cone="03">03</button>
+                            <button class="cone-btn" data-cone="02">02</button>
+                            <button class="cone-btn" data-cone="01">01</button>
+                            <button class="cone-btn" data-cone="1">1</button>
+                            <button class="cone-btn" data-cone="2">2</button>
+                            <button class="cone-btn" data-cone="3">3</button>
+                            <button class="cone-btn" data-cone="4">4</button>
+                            <button class="cone-btn" data-cone="5">5</button>
+                            <button class="cone-btn selected" data-cone="6">6</button>
+                            <button class="cone-btn" data-cone="7">7</button>
+                            <button class="cone-btn" data-cone="8">8</button>
+                            <button class="cone-btn" data-cone="9">9</button>
+                            <button class="cone-btn" data-cone="10">10</button>
+                            <button class="cone-btn" data-cone="11">11</button>
+                            <button class="cone-btn" data-cone="12">12</button>
+                            <button class="cone-btn" data-cone="13">13</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Ingredients</label>
+                        <div id="recipe-ingredients" class="recipe-ingredients">
+                            <!-- Ingredients added dynamically -->
+                        </div>
+                        <button class="small secondary mt-1" id="add-ingredient-btn">+ Add Ingredient</button>
+                    </div>
+                    <div class="flex-between mt-1">
+                        <span id="recipe-total">Total: 0%</span>
+                        <button id="calculate-umf-btn" class="success">Calculate UMF</button>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="card mb-1">
+                        <div class="card-header">
+                            <h3 class="card-title">Unity Molecular Formula</h3>
+                        </div>
+                        <div id="umf-display">
+                            <div class="empty-state">
+                                Add ingredients and click Calculate UMF to see the unity formula
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Stull Chart Position</h3>
+                        </div>
+                        <div id="stull-chart" class="stull-chart">
+                            <div class="empty-state">
+                                Calculate UMF to see position on Stull chart
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ANALYSIS TAB -->
+        <section id="analysis" class="tab-content">
+            <div class="grid grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Recipe Analysis</h3>
+                        <button id="analyze-recipe-btn" class="small">Analyze Recipe</button>
+                    </div>
+                    <div id="analysis-results">
+                        <div class="empty-state">
+                            Build a recipe and click Analyze to see detailed chemistry analysis
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Outcome Prediction</h3>
+                        <button id="predict-outcome-btn" class="small">Predict Outcome</button>
+                    </div>
+                    <div id="prediction-results">
+                        <div class="empty-state">
+                            Click Predict Outcome to see expected surface, color, and defect risks
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SUBSTITUTIONS TAB -->
+        <section id="substitutions" class="tab-content">
+            <div class="grid grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Unavailable Materials</h3>
+                        <button id="refresh-unavailable-btn" class="small secondary">Refresh</button>
+                    </div>
+                    <div id="unavailable-list">
+                        <div class="loading active">
+                            <div class="spinner"></div>
+                            Loading...
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Find Substitutes</h3>
+                    </div>
+                    <div class="form-group">
+                        <label>Material to Substitute</label>
+                        <select id="substitute-material-select">
+                            <option value="">Select a material...</option>
+                        </select>
+                    </div>
+                    <div id="substitute-results">
+                        <div class="empty-state">
+                            Select a material to find available substitutes
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-1">
+                <div class="card-header">
+                    <h3 class="card-title">Recipe Availability Check</h3>
+                    <button id="check-recipe-availability-btn" class="small">Check Current Recipe</button>
+                </div>
+                <div id="recipe-availability-results">
+                    <div class="empty-state">
+                        Build a recipe and click Check to verify all materials are available
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GLAZY SEARCH TAB -->
+        <section id="search" class="tab-content">
+            <div class="card mb-1">
+                <div class="card-header">
+                    <h3 class="card-title">Search Glazy.org</h3>
+                </div>
+                <div class="grid grid-4">
+                    <div class="form-group">
+                        <label>Search Query</label>
+                        <input type="text" id="glazy-search-query" placeholder="e.g., celadon, tenmoku, shino...">
+                    </div>
+                    <div class="form-group">
+                        <label>Cone</label>
+                        <select id="glazy-cone">
+                            <option value="">Any</option>
+                            <option value="06">Cone 06</option>
+                            <option value="6">Cone 6</option>
+                            <option value="10">Cone 10</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Atmosphere</label>
+                        <select id="glazy-atmosphere">
+                            <option value="">Any</option>
+                            <option value="oxidation">Oxidation</option>
+                            <option value="reduction">Reduction</option>
+                            <option value="neutral">Neutral</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Surface</label>
+                        <select id="glazy-surface">
+                            <option value="">Any</option>
+                            <option value="glossy">Glossy</option>
+                            <option value="satin">Satin</option>
+                            <option value="matte">Matte</option>
+                        </select>
+                    </div>
+                </div>
+                <button id="glazy-search-btn">Search Glazy</button>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Search Results</h3>
+                    <span id="glazy-result-count" class="badge badge-info">0 results</span>
+                </div>
+                <div id="glazy-results">
+                    <div class="empty-state">
+                        Enter search criteria and click Search to find recipes on Glazy.org
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const API_BASE = '';
+
+        // State
+        let materials = [];
+        let selectedMaterial = null;
+        let recipeIngredients = [];
+        let targetCone = '6';
+        let currentUMF = null;
+
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Cone selection
+        document.getElementById('cone-select').addEventListener('click', (e) => {
+            if (e.target.classList.contains('cone-btn')) {
+                document.querySelectorAll('.cone-btn').forEach(b => b.classList.remove('selected'));
+                e.target.classList.add('selected');
+                targetCone = e.target.dataset.cone;
+            }
+        });
+
+        // Load materials on start
+        async function loadMaterials() {
+            try {
+                const response = await fetch(`${API_BASE}/api/materials`);
+                const data = await response.json();
+                materials = data.materials || [];
+                renderMaterialList();
+                populateMaterialSelect();
+                document.getElementById('material-count').textContent = `${materials.length} materials`;
+            } catch (error) {
+                console.error('Failed to load materials:', error);
+                document.getElementById('material-list').innerHTML =
+                    '<div class="empty-state text-danger">Failed to load materials</div>';
+            }
+        }
+
+        async function loadMaterialTypes() {
+            try {
+                const response = await fetch(`${API_BASE}/api/reference/material-types`);
+                const data = await response.json();
+                const select = document.getElementById('material-type-filter');
+                data.types.forEach(type => {
+                    const option = document.createElement('option');
+                    option.value = type.type;
+                    option.textContent = type.type.replace(/_/g, ' ');
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Failed to load material types:', error);
+            }
+        }
+
+        function renderMaterialList() {
+            const search = document.getElementById('material-search').value.toLowerCase();
+            const typeFilter = document.getElementById('material-type-filter').value;
+
+            const filtered = materials.filter(m => {
+                const matchesSearch = !search ||
+                    m.name.toLowerCase().includes(search) ||
+                    (m.alternate_names || []).some(n => n.toLowerCase().includes(search));
+                const matchesType = !typeFilter || m.material_type === typeFilter;
+                return matchesSearch && matchesType;
+            });
+
+            const listEl = document.getElementById('material-list');
+            if (filtered.length === 0) {
+                listEl.innerHTML = '<div class="empty-state">No materials found</div>';
+                return;
+            }
+
+            listEl.innerHTML = filtered.map(m => `
+                <div class="material-item ${selectedMaterial?.name === m.name ? 'selected' : ''}"
+                     data-name="${m.name}">
+                    <div class="material-name">${m.name}</div>
+                    <div class="material-type">${(m.material_type || 'unknown').replace(/_/g, ' ')}</div>
+                </div>
+            `).join('');
+
+            listEl.querySelectorAll('.material-item').forEach(item => {
+                item.addEventListener('click', () => selectMaterial(item.dataset.name));
+            });
+        }
+
+        async function selectMaterial(name) {
+            try {
+                const response = await fetch(`${API_BASE}/api/materials/${encodeURIComponent(name)}`);
+                selectedMaterial = await response.json();
+                renderMaterialDetails();
+                renderMaterialList();
+                document.getElementById('add-to-recipe-btn').style.display = 'inline-block';
+            } catch (error) {
+                console.error('Failed to load material details:', error);
+            }
+        }
+
+        function renderMaterialDetails() {
+            const m = selectedMaterial;
+            if (!m) return;
+
+            const analysis = m.analysis || {};
+            const oxides = [
+                { name: 'SiO2', value: analysis.SiO2 },
+                { name: 'Al2O3', value: analysis.Al2O3 },
+                { name: 'Na2O', value: analysis.Na2O },
+                { name: 'K2O', value: analysis.K2O },
+                { name: 'CaO', value: analysis.CaO },
+                { name: 'MgO', value: analysis.MgO },
+                { name: 'Fe2O3', value: analysis.Fe2O3 },
+                { name: 'B2O3', value: analysis.B2O3 },
+                { name: 'ZnO', value: analysis.ZnO },
+                { name: 'BaO', value: analysis.BaO },
+                { name: 'Li2O', value: analysis.Li2O },
+                { name: 'TiO2', value: analysis.TiO2 },
+            ].filter(o => o.value && o.value > 0);
+
+            const maxOxide = Math.max(...oxides.map(o => o.value), 1);
+
+            document.getElementById('material-details').innerHTML = `
+                <div class="grid grid-2">
+                    <div>
+                        <h4 style="color: var(--accent); margin-bottom: 1rem;">${m.name}</h4>
+                        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                            Type: <span class="badge badge-info">${(m.material_type || 'unknown').replace(/_/g, ' ')}</span>
+                        </p>
+                        ${m.description ? `<p style="margin-bottom: 1rem;">${m.description}</p>` : ''}
+                        ${m.typical_percentage_min !== undefined ? `
+                            <p style="color: var(--text-secondary);">
+                                Typical usage: ${m.typical_percentage_min}% - ${m.typical_percentage_max}%
+                            </p>
+                        ` : ''}
+                        ${m.warnings ? `
+                            <p class="text-warning mt-1">Warning: ${m.warnings}</p>
+                        ` : ''}
+                        ${m.substitutes && m.substitutes.length ? `
+                            <div class="mt-1">
+                                <p style="color: var(--text-secondary);">Substitutes:</p>
+                                ${m.substitutes.map(s => `<span class="badge badge-success" style="margin: 0.25rem;">${s}</span>`).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div>
+                        <h4 style="color: var(--text-secondary); margin-bottom: 1rem;">Oxide Analysis</h4>
+                        ${oxides.map(o => `
+                            <div class="oxide-bar">
+                                <span class="oxide-label">${o.name}</span>
+                                <div class="oxide-track">
+                                    <div class="oxide-fill" style="width: ${(o.value / maxOxide) * 100}%"></div>
+                                </div>
+                                <span class="oxide-value">${o.value.toFixed(2)}%</span>
+                            </div>
+                        `).join('')}
+                        ${analysis.LOI ? `
+                            <div class="oxide-bar">
+                                <span class="oxide-label">LOI</span>
+                                <div class="oxide-track">
+                                    <div class="oxide-fill" style="width: ${(analysis.LOI / maxOxide) * 100}%; background: var(--text-muted)"></div>
+                                </div>
+                                <span class="oxide-value">${analysis.LOI.toFixed(2)}%</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function populateMaterialSelect() {
+            const select = document.getElementById('substitute-material-select');
+            select.innerHTML = '<option value="">Select a material...</option>';
+            materials.forEach(m => {
+                const option = document.createElement('option');
+                option.value = m.name;
+                option.textContent = m.name;
+                select.appendChild(option);
+            });
+        }
+
+        // Recipe management
+        function addIngredient(name = '', percentage = '') {
+            const id = Date.now();
+            recipeIngredients.push({ id, name, percentage });
+            renderRecipeIngredients();
+        }
+
+        function removeIngredient(id) {
+            recipeIngredients = recipeIngredients.filter(i => i.id !== id);
+            renderRecipeIngredients();
+        }
+
+        function renderRecipeIngredients() {
+            const container = document.getElementById('recipe-ingredients');
+
+            if (recipeIngredients.length === 0) {
+                container.innerHTML = '<div class="text-muted">No ingredients added yet</div>';
+                updateRecipeTotal();
+                return;
+            }
+
+            container.innerHTML = recipeIngredients.map(ing => `
+                <div class="ingredient-row">
+                    <select class="ingredient-select" data-id="${ing.id}">
+                        <option value="">Select material...</option>
+                        ${materials.map(m => `
+                            <option value="${m.name}" ${m.name === ing.name ? 'selected' : ''}>${m.name}</option>
+                        `).join('')}
+                    </select>
+                    <input type="number" class="ingredient-pct" data-id="${ing.id}"
+                           value="${ing.percentage}" placeholder="%" min="0" max="100" step="0.1">
+                    <button class="remove-btn" data-id="${ing.id}">X</button>
+                </div>
+            `).join('');
+
+            container.querySelectorAll('.ingredient-select').forEach(select => {
+                select.addEventListener('change', (e) => {
+                    const ing = recipeIngredients.find(i => i.id === parseInt(e.target.dataset.id));
+                    if (ing) ing.name = e.target.value;
+                    updateRecipeTotal();
+                });
+            });
+
+            container.querySelectorAll('.ingredient-pct').forEach(input => {
+                input.addEventListener('change', (e) => {
+                    const ing = recipeIngredients.find(i => i.id === parseInt(e.target.dataset.id));
+                    if (ing) ing.percentage = parseFloat(e.target.value) || 0;
+                    updateRecipeTotal();
+                });
+            });
+
+            container.querySelectorAll('.remove-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    removeIngredient(parseInt(e.target.dataset.id));
+                });
+            });
+
+            updateRecipeTotal();
+        }
+
+        function updateRecipeTotal() {
+            const total = recipeIngredients.reduce((sum, ing) => sum + (ing.percentage || 0), 0);
+            const totalEl = document.getElementById('recipe-total');
+            totalEl.textContent = `Total: ${total.toFixed(1)}%`;
+            totalEl.className = total === 100 ? 'text-success' : (total > 100 ? 'text-danger' : 'text-warning');
+        }
+
+        document.getElementById('add-ingredient-btn').addEventListener('click', () => addIngredient());
+
+        document.getElementById('add-to-recipe-btn').addEventListener('click', () => {
+            if (selectedMaterial) {
+                addIngredient(selectedMaterial.name, '');
+                document.querySelector('.tab[data-tab="recipe"]').click();
+            }
+        });
+
+        document.getElementById('clear-recipe-btn').addEventListener('click', () => {
+            recipeIngredients = [];
+            renderRecipeIngredients();
+            document.getElementById('umf-display').innerHTML =
+                '<div class="empty-state">Add ingredients and click Calculate UMF</div>';
+            document.getElementById('stull-chart').innerHTML =
+                '<div class="empty-state">Calculate UMF to see position on Stull chart</div>';
+            currentUMF = null;
+        });
+
+        // UMF Calculation
+        document.getElementById('calculate-umf-btn').addEventListener('click', calculateUMF);
+
+        async function calculateUMF() {
+            const validIngredients = recipeIngredients.filter(i => i.name && i.percentage > 0);
+            if (validIngredients.length === 0) {
+                alert('Please add ingredients with percentages');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/recipes/calculate-umf`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ingredients: validIngredients.map(i => ({
+                            material_name: i.name,
+                            percentage: i.percentage
+                        }))
+                    })
+                });
+
+                const data = await response.json();
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                currentUMF = data.umf;
+                renderUMF(data.umf);
+                renderStullChart(data.umf);
+            } catch (error) {
+                console.error('Failed to calculate UMF:', error);
+                alert('Failed to calculate UMF');
+            }
+        }
+
+        function renderUMF(umf) {
+            const fluxes = [
+                { name: 'Na2O', value: umf.Na2O },
+                { name: 'K2O', value: umf.K2O },
+                { name: 'Li2O', value: umf.Li2O },
+                { name: 'CaO', value: umf.CaO },
+                { name: 'MgO', value: umf.MgO },
+                { name: 'ZnO', value: umf.ZnO },
+                { name: 'BaO', value: umf.BaO },
+                { name: 'SrO', value: umf.SrO },
+            ].filter(o => o.value && o.value > 0.001);
+
+            const stabilizers = [
+                { name: 'Al2O3', value: umf.Al2O3 },
+                { name: 'B2O3', value: umf.B2O3 },
+            ].filter(o => o.value && o.value > 0.001);
+
+            const glassFormers = [
+                { name: 'SiO2', value: umf.SiO2 },
+            ];
+
+            document.getElementById('umf-display').innerHTML = `
+                <div class="umf-display">
+                    <div class="umf-section">
+                        <h4>Fluxes (RO/R2O) = 1.0</h4>
+                        ${fluxes.map(o => `
+                            <div class="umf-oxide">
+                                <span class="name">${o.name}</span>
+                                <span class="value">${o.value.toFixed(3)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="umf-section">
+                        <h4>Stabilizers (R2O3)</h4>
+                        ${stabilizers.map(o => `
+                            <div class="umf-oxide">
+                                <span class="name">${o.name}</span>
+                                <span class="value">${o.value.toFixed(3)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="umf-section">
+                        <h4>Glass Formers (RO2)</h4>
+                        ${glassFormers.map(o => `
+                            <div class="umf-oxide">
+                                <span class="name">${o.name}</span>
+                                <span class="value">${o.value.toFixed(3)}</span>
+                            </div>
+                        `).join('')}
+                        <div class="umf-oxide mt-1" style="border-top: 1px solid var(--border); padding-top: 0.5rem;">
+                            <span class="name">Si:Al</span>
+                            <span class="value">${(umf.silica_alumina_ratio || 0).toFixed(2)}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderStullChart(umf) {
+            const al2o3 = umf.Al2O3 || 0;
+            const sio2 = umf.SiO2 || 0;
+
+            // Stull chart regions
+            const regions = {
+                'Glossy': { x: [2.5, 5], y: [0.2, 0.5], color: 'rgba(74, 222, 128, 0.3)' },
+                'Satin': { x: [2, 3.5], y: [0.3, 0.55], color: 'rgba(251, 191, 36, 0.3)' },
+                'Matte': { x: [1.5, 3], y: [0.4, 0.7], color: 'rgba(233, 69, 96, 0.3)' },
+            };
+
+            const trace = {
+                x: [sio2],
+                y: [al2o3],
+                mode: 'markers',
+                type: 'scatter',
+                marker: {
+                    size: 20,
+                    color: '#e94560',
+                    symbol: 'diamond',
+                    line: { width: 2, color: '#fff' }
+                },
+                name: 'Your Recipe',
+                hovertemplate: `SiO2: ${sio2.toFixed(2)}<br>Al2O3: ${al2o3.toFixed(3)}<extra></extra>`
+            };
+
+            const layout = {
+                title: { text: '', font: { color: '#eee' } },
+                paper_bgcolor: '#16213e',
+                plot_bgcolor: '#1a1a2e',
+                xaxis: {
+                    title: 'SiO2',
+                    range: [0, 6],
+                    gridcolor: '#2d3748',
+                    color: '#aaa'
+                },
+                yaxis: {
+                    title: 'Al2O3',
+                    range: [0, 1],
+                    gridcolor: '#2d3748',
+                    color: '#aaa'
+                },
+                margin: { t: 20, r: 20, b: 50, l: 50 },
+                showlegend: false,
+                shapes: [
+                    // Glossy region
+                    { type: 'rect', x0: 2.5, x1: 5, y0: 0.15, y1: 0.45,
+                      fillcolor: 'rgba(74, 222, 128, 0.15)', line: { width: 0 } },
+                    // Matte region
+                    { type: 'rect', x0: 1.5, x1: 3, y0: 0.45, y1: 0.8,
+                      fillcolor: 'rgba(251, 191, 36, 0.15)', line: { width: 0 } },
+                ],
+                annotations: [
+                    { x: 3.75, y: 0.3, text: 'Glossy', showarrow: false, font: { color: '#4ade80', size: 12 } },
+                    { x: 2.25, y: 0.6, text: 'Matte', showarrow: false, font: { color: '#fbbf24', size: 12 } },
+                ]
+            };
+
+            Plotly.newPlot('stull-chart', [trace], layout, { responsive: true });
+        }
+
+        // Analysis
+        document.getElementById('analyze-recipe-btn').addEventListener('click', analyzeRecipe);
+
+        async function analyzeRecipe() {
+            const validIngredients = recipeIngredients.filter(i => i.name && i.percentage > 0);
+            if (validIngredients.length === 0) {
+                alert('Please add ingredients to the recipe first');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/recipes/analyze`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: document.getElementById('recipe-name').value || 'Untitled',
+                        target_cone: targetCone,
+                        ingredients: validIngredients.map(i => ({
+                            material_name: i.name,
+                            percentage: i.percentage
+                        }))
+                    })
+                });
+
+                const data = await response.json();
+                renderAnalysis(data);
+            } catch (error) {
+                console.error('Failed to analyze recipe:', error);
+                alert('Failed to analyze recipe');
+            }
+        }
+
+        function renderAnalysis(data) {
+            const analysis = data.analysis || {};
+
+            document.getElementById('analysis-results').innerHTML = `
+                <div class="analysis-section">
+                    <h4>Chemistry Summary</h4>
+                    <div class="grid grid-3">
+                        <div class="prediction-card">
+                            <div class="prediction-header">
+                                <span class="prediction-title">Si:Al Ratio</span>
+                            </div>
+                            <div class="prediction-value">${(analysis.silica_alumina_ratio || 0).toFixed(2)}</div>
+                        </div>
+                        <div class="prediction-card">
+                            <div class="prediction-header">
+                                <span class="prediction-title">Predicted Surface</span>
+                            </div>
+                            <div class="prediction-value">${analysis.predicted_surface || 'Unknown'}</div>
+                        </div>
+                        <div class="prediction-card">
+                            <div class="prediction-header">
+                                <span class="prediction-title">Cone Range</span>
+                            </div>
+                            <div class="prediction-value">${analysis.cone_range || 'N/A'}</div>
+                        </div>
+                    </div>
+                </div>
+
+                ${analysis.issues && analysis.issues.length ? `
+                    <div class="analysis-section">
+                        <h4>Issues</h4>
+                        ${analysis.issues.map(issue => `
+                            <div class="issue-item">
+                                <span class="text-danger">!</span>
+                                <span>${issue}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+
+                ${analysis.warnings && analysis.warnings.length ? `
+                    <div class="analysis-section">
+                        <h4>Warnings</h4>
+                        ${analysis.warnings.map(warning => `
+                            <div class="warning-item">
+                                <span class="text-warning">!</span>
+                                <span>${warning}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+
+                ${analysis.recommendations && analysis.recommendations.length ? `
+                    <div class="analysis-section">
+                        <h4>Recommendations</h4>
+                        ${analysis.recommendations.map(rec => `
+                            <div class="recommendation-item">
+                                <span class="text-success">+</span>
+                                <span>${rec}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+            `;
+        }
+
+        // Prediction
+        document.getElementById('predict-outcome-btn').addEventListener('click', predictOutcome);
+
+        async function predictOutcome() {
+            const validIngredients = recipeIngredients.filter(i => i.name && i.percentage > 0);
+            if (validIngredients.length === 0) {
+                alert('Please add ingredients to the recipe first');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/recipes/predict`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: document.getElementById('recipe-name').value || 'Untitled',
+                        target_cone: targetCone,
+                        ingredients: validIngredients.map(i => ({
+                            material_name: i.name,
+                            percentage: i.percentage
+                        }))
+                    })
+                });
+
+                const data = await response.json();
+                renderPrediction(data);
+            } catch (error) {
+                console.error('Failed to predict outcome:', error);
+                alert('Failed to predict outcome');
+            }
+        }
+
+        function renderPrediction(data) {
+            const prediction = data.prediction || {};
+            const defects = prediction.defect_risks || {};
+
+            document.getElementById('prediction-results').innerHTML = `
+                <div class="grid grid-2">
+                    <div class="prediction-card">
+                        <div class="prediction-header">
+                            <span class="prediction-title">Predicted Surface</span>
+                            <span class="badge badge-info">${((prediction.confidence || 0) * 100).toFixed(0)}% confidence</span>
+                        </div>
+                        <div class="prediction-value">${prediction.predicted_surface || 'Unknown'}</div>
+                    </div>
+                    <div class="prediction-card">
+                        <div class="prediction-header">
+                            <span class="prediction-title">Predicted Color</span>
+                        </div>
+                        <div class="prediction-value">${prediction.predicted_color || 'Clear/Base'}</div>
+                    </div>
+                </div>
+
+                <h4 style="color: var(--accent); margin: 1rem 0;">Defect Risks</h4>
+                <div class="grid grid-2">
+                    ${Object.entries(defects).map(([defect, risk]) => `
+                        <div class="prediction-card">
+                            <div class="prediction-header">
+                                <span class="prediction-title">${defect.replace(/_/g, ' ')}</span>
+                                <span class="${risk > 0.5 ? 'text-danger' : risk > 0.3 ? 'text-warning' : 'text-success'}">
+                                    ${(risk * 100).toFixed(0)}%
+                                </span>
+                            </div>
+                            <div class="risk-meter">
+                                <div class="risk-fill ${risk > 0.5 ? 'risk-high' : risk > 0.3 ? 'risk-medium' : 'risk-low'}"
+                                     style="width: ${risk * 100}%"></div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                ${prediction.application_recommendations ? `
+                    <h4 style="color: var(--accent); margin: 1rem 0;">Application Tips</h4>
+                    <ul style="padding-left: 1.5rem; color: var(--text-secondary);">
+                        ${prediction.application_recommendations.map(r => `<li>${r}</li>`).join('')}
+                    </ul>
+                ` : ''}
+            `;
+        }
+
+        // Substitutions
+        async function loadUnavailableMaterials() {
+            try {
+                const response = await fetch(`${API_BASE}/api/substitutions/unavailable`);
+                const data = await response.json();
+                renderUnavailableMaterials(data.materials || []);
+            } catch (error) {
+                console.error('Failed to load unavailable materials:', error);
+                document.getElementById('unavailable-list').innerHTML =
+                    '<div class="empty-state text-danger">Failed to load</div>';
+            }
+        }
+
+        function renderUnavailableMaterials(mats) {
+            if (mats.length === 0) {
+                document.getElementById('unavailable-list').innerHTML =
+                    '<div class="empty-state text-success">All materials available!</div>';
+                return;
+            }
+
+            document.getElementById('unavailable-list').innerHTML = mats.map(m => `
+                <div class="substitution-item">
+                    <div class="substitution-header">
+                        <span class="substitution-name">${m.name}</span>
+                        <span class="badge ${m.status === 'discontinued' ? 'badge-danger' : 'badge-warning'}">
+                            ${m.status}
+                        </span>
+                    </div>
+                    <p class="text-muted" style="font-size: 0.9rem;">${m.reason || ''}</p>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('refresh-unavailable-btn').addEventListener('click', loadUnavailableMaterials);
+
+        document.getElementById('substitute-material-select').addEventListener('change', async (e) => {
+            const name = e.target.value;
+            if (!name) {
+                document.getElementById('substitute-results').innerHTML =
+                    '<div class="empty-state">Select a material to find substitutes</div>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/substitutions/status/${encodeURIComponent(name)}`);
+                const data = await response.json();
+                renderSubstituteResults(data);
+            } catch (error) {
+                console.error('Failed to find substitutes:', error);
+            }
+        });
+
+        function renderSubstituteResults(data) {
+            const subs = data.substitutes || [];
+
+            document.getElementById('substitute-results').innerHTML = `
+                <div class="prediction-card mb-1">
+                    <div class="prediction-header">
+                        <span class="prediction-title">Status</span>
+                        <span class="badge ${data.status === 'available' ? 'badge-success' : 'badge-warning'}">
+                            ${data.status}
+                        </span>
+                    </div>
+                </div>
+
+                ${subs.length ? `
+                    <h4 style="color: var(--text-secondary); margin-bottom: 0.75rem;">Available Substitutes</h4>
+                    ${subs.map(s => `
+                        <div class="substitution-item">
+                            <div class="substitution-header">
+                                <span class="substitution-name">${s.name}</span>
+                                <span class="substitution-ratio">${s.ratio ? `${s.ratio}:1` : '1:1'}</span>
+                            </div>
+                            ${s.notes ? `<p class="text-muted" style="font-size: 0.9rem;">${s.notes}</p>` : ''}
+                        </div>
+                    `).join('')}
+                ` : '<div class="text-muted">No substitutes found</div>'}
+            `;
+        }
+
+        document.getElementById('check-recipe-availability-btn').addEventListener('click', async () => {
+            const validIngredients = recipeIngredients.filter(i => i.name && i.percentage > 0);
+            if (validIngredients.length === 0) {
+                alert('Please add ingredients to the recipe first');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/substitutions/check-recipe`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ingredients: validIngredients.map(i => ({
+                            material_name: i.name,
+                            percentage: i.percentage
+                        }))
+                    })
+                });
+
+                const data = await response.json();
+                renderRecipeAvailability(data);
+            } catch (error) {
+                console.error('Failed to check availability:', error);
+            }
+        });
+
+        function renderRecipeAvailability(data) {
+            const issues = data.unavailable || [];
+
+            if (issues.length === 0) {
+                document.getElementById('recipe-availability-results').innerHTML = `
+                    <div class="empty-state text-success">
+                        All materials in your recipe are available!
+                    </div>
+                `;
+                return;
+            }
+
+            document.getElementById('recipe-availability-results').innerHTML = `
+                <div class="text-warning mb-1">
+                    ${issues.length} material(s) may have availability issues:
+                </div>
+                ${issues.map(i => `
+                    <div class="substitution-item">
+                        <div class="substitution-header">
+                            <span class="substitution-name">${i.material}</span>
+                            <span class="badge badge-warning">${i.status}</span>
+                        </div>
+                        ${i.substitutes && i.substitutes.length ? `
+                            <p class="text-muted" style="font-size: 0.9rem;">
+                                Substitutes: ${i.substitutes.join(', ')}
+                            </p>
+                        ` : ''}
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        // Glazy Search
+        document.getElementById('glazy-search-btn').addEventListener('click', searchGlazy);
+
+        async function searchGlazy() {
+            const query = document.getElementById('glazy-search-query').value;
+            const cone = document.getElementById('glazy-cone').value;
+            const atmosphere = document.getElementById('glazy-atmosphere').value;
+            const surface = document.getElementById('glazy-surface').value;
+
+            const params = new URLSearchParams();
+            if (query) params.append('query', query);
+            if (cone) params.append('cone', cone);
+            if (atmosphere) params.append('atmosphere', atmosphere);
+            if (surface) params.append('surface', surface);
+
+            try {
+                document.getElementById('glazy-results').innerHTML =
+                    '<div class="loading active"><div class="spinner"></div>Searching Glazy...</div>';
+
+                const response = await fetch(`${API_BASE}/api/glazy/search?${params}`);
+                const data = await response.json();
+                renderGlazyResults(data.recipes || []);
+            } catch (error) {
+                console.error('Failed to search Glazy:', error);
+                document.getElementById('glazy-results').innerHTML =
+                    '<div class="empty-state text-danger">Failed to search Glazy</div>';
+            }
+        }
+
+        function renderGlazyResults(recipes) {
+            document.getElementById('glazy-result-count').textContent = `${recipes.length} results`;
+
+            if (recipes.length === 0) {
+                document.getElementById('glazy-results').innerHTML =
+                    '<div class="empty-state">No recipes found</div>';
+                return;
+            }
+
+            document.getElementById('glazy-results').innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Cone</th>
+                            <th>Atmosphere</th>
+                            <th>Surface</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${recipes.map(r => `
+                            <tr>
+                                <td>${r.name}</td>
+                                <td>${r.cone || 'N/A'}</td>
+                                <td>${r.atmosphere || 'N/A'}</td>
+                                <td>${r.surface || 'N/A'}</td>
+                                <td>
+                                    <button class="small secondary" onclick="importGlazyRecipe('${r.glazy_id}')">
+                                        Import
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        async function importGlazyRecipe(glazyId) {
+            try {
+                const response = await fetch(`${API_BASE}/api/glazy/recipe/${glazyId}`);
+                const recipe = await response.json();
+
+                if (recipe.ingredients) {
+                    recipeIngredients = recipe.ingredients.map((ing, i) => ({
+                        id: Date.now() + i,
+                        name: ing.material_name,
+                        percentage: ing.percentage
+                    }));
+                    document.getElementById('recipe-name').value = recipe.name || '';
+                    renderRecipeIngredients();
+                    document.querySelector('.tab[data-tab="recipe"]').click();
+                }
+            } catch (error) {
+                console.error('Failed to import recipe:', error);
+                alert('Failed to import recipe from Glazy');
+            }
+        }
+
+        // Event listeners for search/filter
+        document.getElementById('material-search').addEventListener('input', renderMaterialList);
+        document.getElementById('material-type-filter').addEventListener('change', renderMaterialList);
+
+        // Initialize
+        loadMaterials();
+        loadMaterialTypes();
+        loadUnavailableMaterials();
+    </script>
+</body>
+</html>
