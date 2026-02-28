@@ -7,104 +7,146 @@
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
     <style>
         :root {
-            --bg-primary: #1a1a2e;
-            --bg-secondary: #16213e;
-            --bg-card: #1f2940;
-            --accent: #e94560;
-            --accent-light: #ff6b6b;
-            --text-primary: #eee;
-            --text-secondary: #aaa;
-            --text-muted: #666;
-            --success: #4ade80;
-            --warning: #fbbf24;
+            --bg-primary: #0f0f1a;
+            --bg-secondary: #1a1a2e;
+            --bg-card: #242442;
+            --bg-hover: #2d2d4a;
+            --accent: #7c3aed;
+            --accent-light: #a78bfa;
+            --accent-glow: rgba(124, 58, 237, 0.3);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.15);
+            --warning: #f59e0b;
+            --warning-bg: rgba(245, 158, 11, 0.15);
             --danger: #ef4444;
-            --border: #2d3748;
+            --danger-bg: rgba(239, 68, 68, 0.15);
+            --border: #334155;
+            --border-light: #475569;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.2s ease;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
+            line-height: 1.5;
         }
 
+        /* Header */
         header {
             background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card));
             padding: 1rem 2rem;
-            border-bottom: 2px solid var(--accent);
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
         }
 
         header h1 {
-            font-size: 1.8rem;
-            color: var(--accent);
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-light), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-subtitle {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Navigation Tabs */
+        .tabs {
+            display: flex;
+            background: var(--bg-secondary);
+            padding: 0.5rem 1rem;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 0.75rem 1.25rem;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+            border-radius: var(--radius-sm);
+            white-space: nowrap;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
-        .header-subtitle {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .tabs {
-            display: flex;
-            background: var(--bg-secondary);
-            padding: 0 1rem;
-            gap: 0.25rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .tab {
-            padding: 1rem 1.5rem;
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-size: 0.95rem;
-            transition: all 0.2s;
-            border-bottom: 3px solid transparent;
-        }
-
         .tab:hover {
             color: var(--text-primary);
-            background: rgba(233, 69, 96, 0.1);
+            background: var(--bg-hover);
         }
 
         .tab.active {
-            color: var(--accent);
-            border-bottom-color: var(--accent);
-            background: rgba(233, 69, 96, 0.1);
+            color: var(--accent-light);
+            background: var(--accent-glow);
         }
 
+        .tab-icon { font-size: 1.1rem; }
+
+        /* Main Content */
         main {
             padding: 1.5rem;
             max-width: 1600px;
             margin: 0 auto;
         }
 
-        .tab-content {
-            display: none;
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .tab-content.active {
-            display: block;
-        }
-
-        .grid {
-            display: grid;
-            gap: 1.5rem;
-        }
-
+        /* Grid System */
+        .grid { display: grid; gap: 1.5rem; }
         .grid-2 { grid-template-columns: repeat(2, 1fr); }
         .grid-3 { grid-template-columns: repeat(3, 1fr); }
         .grid-4 { grid-template-columns: repeat(4, 1fr); }
@@ -112,104 +154,558 @@
         @media (max-width: 1200px) {
             .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
         }
-
         @media (max-width: 768px) {
             .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+            .tabs { padding: 0.5rem; }
+            main { padding: 1rem; }
         }
 
+        /* Cards */
         .card {
             background: var(--bg-card);
-            border-radius: 12px;
+            border-radius: var(--radius);
             padding: 1.5rem;
             border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
         }
+
+        .card:hover { border-color: var(--border-light); }
 
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 0.75rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 1rem;
             border-bottom: 1px solid var(--border);
         }
 
         .card-title {
-            font-size: 1.1rem;
-            color: var(--accent);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .form-group {
-            margin-bottom: 1rem;
+        .card-title-icon {
+            color: var(--accent-light);
         }
+
+        /* Forms */
+        .form-group { margin-bottom: 1.25rem; }
 
         label {
             display: block;
             margin-bottom: 0.5rem;
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .label-hint {
+            color: var(--text-muted);
+            font-weight: 400;
+            font-size: 0.8rem;
         }
 
         input, select, textarea {
             width: 100%;
-            padding: 0.75rem;
+            padding: 0.75rem 1rem;
             background: var(--bg-secondary);
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             color: var(--text-primary);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            transition: var(--transition);
         }
 
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
         }
 
-        input::placeholder {
-            color: var(--text-muted);
-        }
+        input::placeholder { color: var(--text-muted); }
 
+        /* Buttons */
         button {
             padding: 0.75rem 1.5rem;
             background: var(--accent);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            font-size: 0.95rem;
-            transition: all 0.2s;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
         button:hover {
             background: var(--accent-light);
             transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        button:active { transform: translateY(0); }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
         }
 
         button.secondary {
             background: var(--bg-secondary);
             border: 1px solid var(--border);
+            color: var(--text-primary);
         }
 
         button.secondary:hover {
-            background: var(--border);
+            background: var(--bg-hover);
+            border-color: var(--border-light);
         }
 
-        button.success {
-            background: var(--success);
-            color: #000;
-        }
+        button.success { background: var(--success); }
+        button.warning { background: var(--warning); color: #000; }
+        button.danger { background: var(--danger); }
 
         button.small {
             padding: 0.5rem 1rem;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        button.icon-btn {
+            padding: 0.5rem;
+            width: 36px;
+            height: 36px;
         }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-primary { background: var(--accent-glow); color: var(--accent-light); }
+        .badge-success { background: var(--success-bg); color: var(--success); }
+        .badge-warning { background: var(--warning-bg); color: var(--warning); }
+        .badge-danger { background: var(--danger-bg); color: var(--danger); }
+
+        /* Quick Start Templates */
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .template-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .template-card:hover {
+            border-color: var(--accent);
+            background: var(--bg-hover);
+            transform: translateY(-2px);
+        }
+
+        .template-card.selected {
+            border-color: var(--accent);
+            background: var(--accent-glow);
+        }
+
+        .template-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .template-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .template-badge {
+            margin-top: 0.5rem;
+        }
+
+        /* Cone Selector */
+        .cone-select {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .cone-btn {
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: var(--transition);
+            min-width: 44px;
+        }
+
+        .cone-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent-light);
+        }
+
+        .cone-btn.selected {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        /* Recipe Ingredients */
+        .recipe-ingredients { margin-bottom: 1rem; }
+
+        .ingredient-row {
+            display: grid;
+            grid-template-columns: 1fr 120px 80px 44px;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            align-items: center;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .ingredient-row:hover {
+            border-color: var(--border-light);
+        }
+
+        .ingredient-row input,
+        .ingredient-row select {
+            padding: 0.5rem 0.75rem;
+            margin: 0;
+        }
+
+        .ingredient-slider {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .ingredient-slider input[type="range"] {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            -webkit-appearance: none;
+            background: var(--border);
+            cursor: pointer;
+        }
+
+        .ingredient-slider input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+        }
+
+        .ingredient-pct-display {
+            width: 50px;
+            text-align: right;
+            font-weight: 600;
+            font-family: 'Consolas', monospace;
+        }
+
+        .remove-btn {
+            background: var(--danger);
+            padding: 0.5rem;
+            font-size: 1rem;
+            border-radius: 6px;
+        }
+
+        /* UMF Display */
+        .umf-display {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .umf-section h4 {
+            color: var(--accent-light);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .umf-oxide {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .umf-oxide:last-child { border-bottom: none; }
+
+        .umf-oxide .name { color: var(--text-secondary); }
+
+        .umf-oxide .value {
+            font-weight: 600;
+            font-family: 'Consolas', monospace;
+            color: var(--text-primary);
+        }
+
+        .umf-total {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid var(--accent);
+        }
+
+        /* Stull Chart */
+        .stull-chart {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            min-height: 300px;
+        }
+
+        /* Live Preview */
+        .live-preview {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card));
+            border: 2px solid var(--accent-glow);
+            border-radius: var(--radius);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .live-preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .live-preview-title {
+            font-size: 0.85rem;
+            color: var(--accent-light);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .live-preview-title::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .live-preview-stats {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .live-stat {
+            text-align: center;
+        }
+
+        .live-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .live-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Material List */
+        .material-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .material-item {
+            padding: 0.875rem 1rem;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .material-item:hover { background: var(--bg-hover); }
+
+        .material-item.selected {
+            background: var(--accent-glow);
+            border-left: 3px solid var(--accent);
+        }
+
+        .material-info { flex: 1; }
+
+        .material-name {
+            font-weight: 500;
+            margin-bottom: 0.125rem;
+        }
+
+        .material-type {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .material-add-btn {
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .material-item:hover .material-add-btn {
+            opacity: 1;
+        }
+
+        /* Oxide Bars */
+        .oxide-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.625rem;
+        }
+
+        .oxide-label {
+            width: 55px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-family: 'Consolas', monospace;
+        }
+
+        .oxide-track {
+            flex: 1;
+            height: 24px;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0 0.75rem;
+        }
+
+        .oxide-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .oxide-value {
+            width: 55px;
+            text-align: right;
+            font-size: 0.85rem;
+            font-family: 'Consolas', monospace;
+            font-weight: 500;
+        }
+
+        /* Analysis Items */
+        .analysis-section { margin-bottom: 1.5rem; }
+
+        .analysis-section h4 {
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .issue-item, .warning-item, .recommendation-item {
+            padding: 0.875rem 1rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .issue-item { background: var(--danger-bg); border-left: 3px solid var(--danger); }
+        .warning-item { background: var(--warning-bg); border-left: 3px solid var(--warning); }
+        .recommendation-item { background: var(--success-bg); border-left: 3px solid var(--success); }
+
+        .issue-icon { font-size: 1.1rem; }
+
+        /* Prediction Cards */
+        .prediction-card {
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.75rem;
+        }
+
+        .prediction-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .prediction-title { color: var(--text-secondary); font-size: 0.85rem; }
+        .prediction-value { font-size: 1.25rem; font-weight: 600; }
+
+        .risk-meter {
+            height: 6px;
+            background: var(--bg-primary);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .risk-fill { height: 100%; transition: width 0.3s; border-radius: 3px; }
+        .risk-low { background: var(--success); }
+        .risk-medium { background: var(--warning); }
+        .risk-high { background: var(--danger); }
+
+        /* Substitution Items */
+        .substitution-item {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.75rem;
+            border: 1px solid var(--border);
+        }
+
+        .substitution-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .substitution-name { font-weight: 500; }
+        .substitution-ratio { color: var(--accent-light); font-weight: 600; }
+
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; }
 
         th, td {
-            padding: 0.75rem;
+            padding: 0.875rem 1rem;
             text-align: left;
             border-bottom: 1px solid var(--border);
         }
@@ -217,257 +713,23 @@
         th {
             background: var(--bg-secondary);
             color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        tr:hover {
-            background: rgba(233, 69, 96, 0.05);
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .badge-success { background: rgba(74, 222, 128, 0.2); color: var(--success); }
-        .badge-warning { background: rgba(251, 191, 36, 0.2); color: var(--warning); }
-        .badge-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
-        .badge-info { background: rgba(233, 69, 96, 0.2); color: var(--accent); }
-
-        .search-box {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .search-box input {
-            flex: 1;
-        }
-
-        .material-list {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .material-item {
-            padding: 0.75rem;
-            border-bottom: 1px solid var(--border);
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .material-item:hover {
-            background: rgba(233, 69, 96, 0.1);
-        }
-
-        .material-item.selected {
-            background: rgba(233, 69, 96, 0.2);
-            border-left: 3px solid var(--accent);
-        }
-
-        .material-name {
-            font-weight: 500;
-            margin-bottom: 0.25rem;
-        }
-
-        .material-type {
+            font-weight: 600;
             font-size: 0.85rem;
-            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
-        .oxide-bar {
-            display: flex;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
+        tr:hover { background: var(--bg-hover); }
 
-        .oxide-label {
-            width: 60px;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-
-        .oxide-track {
-            flex: 1;
-            height: 20px;
-            background: var(--bg-secondary);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .oxide-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent), var(--accent-light));
-            transition: width 0.3s;
-        }
-
-        .oxide-value {
-            width: 60px;
-            text-align: right;
-            font-size: 0.85rem;
-        }
-
-        .recipe-ingredients {
-            margin-bottom: 1rem;
-        }
-
-        .ingredient-row {
-            display: grid;
-            grid-template-columns: 1fr 80px 40px;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-            align-items: center;
-        }
-
-        .ingredient-row input {
-            padding: 0.5rem;
-        }
-
-        .remove-btn {
-            background: var(--danger);
-            padding: 0.5rem;
-            font-size: 0.8rem;
-        }
-
-        .umf-display {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-        }
-
-        .umf-section h4 {
-            color: var(--accent);
-            margin-bottom: 0.75rem;
-            font-size: 0.9rem;
-        }
-
-        .umf-oxide {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.4rem 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .umf-oxide .name {
-            color: var(--text-secondary);
-        }
-
-        .umf-oxide .value {
-            font-weight: 500;
-            font-family: 'Consolas', monospace;
-        }
-
-        .stull-chart {
-            background: var(--bg-secondary);
-            border-radius: 8px;
-            padding: 1rem;
-        }
-
-        .prediction-card {
-            padding: 1rem;
-            background: var(--bg-secondary);
-            border-radius: 8px;
-            margin-bottom: 1rem;
-        }
-
-        .prediction-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-        }
-
-        .prediction-title {
-            color: var(--text-secondary);
-        }
-
-        .prediction-value {
-            font-size: 1.2rem;
-            font-weight: 500;
-        }
-
-        .risk-meter {
-            height: 8px;
-            background: var(--bg-primary);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .risk-fill {
-            height: 100%;
-            transition: width 0.3s;
-        }
-
-        .risk-low { background: var(--success); }
-        .risk-medium { background: var(--warning); }
-        .risk-high { background: var(--danger); }
-
-        .substitution-item {
-            background: var(--bg-secondary);
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 0.75rem;
-        }
-
-        .substitution-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-        }
-
-        .substitution-name {
-            font-weight: 500;
-        }
-
-        .substitution-ratio {
-            color: var(--accent);
-        }
-
-        .analysis-section {
-            margin-bottom: 1.5rem;
-        }
-
-        .analysis-section h4 {
-            color: var(--accent);
-            margin-bottom: 0.75rem;
-        }
-
-        .issue-item, .warning-item, .recommendation-item {
-            padding: 0.75rem;
-            border-radius: 6px;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-        }
-
-        .issue-item {
-            background: rgba(239, 68, 68, 0.1);
-            border-left: 3px solid var(--danger);
-        }
-
-        .warning-item {
-            background: rgba(251, 191, 36, 0.1);
-            border-left: 3px solid var(--warning);
-        }
-
-        .recommendation-item {
-            background: rgba(74, 222, 128, 0.1);
-            border-left: 3px solid var(--success);
-        }
-
+        /* Loading & Empty States */
         .loading {
             display: none;
             text-align: center;
-            padding: 2rem;
+            padding: 3rem;
             color: var(--text-secondary);
         }
 
-        .loading.active {
-            display: block;
-        }
+        .loading.active { display: block; }
 
         .spinner {
             width: 40px;
@@ -479,128 +741,291 @@
             margin: 0 auto 1rem;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         .empty-state {
             text-align: center;
             padding: 3rem;
-            color: var(--text-secondary);
+            color: var(--text-muted);
         }
 
-        .cone-select {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
+        .empty-state-icon {
+            font-size: 3rem;
             margin-bottom: 1rem;
+            opacity: 0.5;
         }
 
-        .cone-btn {
-            padding: 0.5rem 1rem;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .cone-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-
-        .cone-btn.selected {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: white;
-        }
-
-        .flex-between {
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 1000;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 0.75rem;
         }
 
+        .toast {
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-sm);
+            color: white;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideIn 0.3s ease;
+            box-shadow: var(--shadow-lg);
+            min-width: 280px;
+        }
+
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--danger); }
+        .toast.warning { background: var(--warning); color: #000; }
+        .toast.info { background: var(--accent); }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Tooltips */
+        [data-tooltip] {
+            position: relative;
+            cursor: help;
+        }
+
+        [data-tooltip]::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            color: var(--text-primary);
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        [data-tooltip]:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Utilities */
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .flex-center { display: flex; justify-content: center; align-items: center; }
+        .flex-gap { display: flex; gap: 0.75rem; align-items: center; }
         .mt-1 { margin-top: 1rem; }
         .mb-1 { margin-bottom: 1rem; }
+        .ml-auto { margin-left: auto; }
         .text-success { color: var(--success); }
         .text-warning { color: var(--warning); }
         .text-danger { color: var(--danger); }
         .text-muted { color: var(--text-muted); }
+        .text-center { text-align: center; }
+        .font-mono { font-family: 'Consolas', monospace; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--border-light); }
+
+        /* Quick Start Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-lg);
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title { font-size: 1.25rem; font-weight: 600; }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+
+        .modal-close:hover { color: var(--text-primary); }
+
+        /* Help Panel */
+        .help-trigger {
+            position: fixed;
+            bottom: 1.5rem;
+            left: 1.5rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            z-index: 100;
+        }
+
+        .help-trigger:hover { background: var(--accent-light); }
+
+        /* Keyboard shortcuts hint */
+        kbd {
+            padding: 0.15rem 0.4rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-family: 'Consolas', monospace;
+        }
     </style>
 </head>
 <body>
     <header>
-        <div>
-            <h1>Glaze</h1>
-            <div class="header-subtitle">Ceramic Glaze Formulator & Chemistry Calculator</div>
+        <div class="logo">
+            <div class="logo-icon">🏺</div>
+            <div>
+                <h1>Glaze</h1>
+                <div class="header-subtitle">Ceramic Glaze Formulator</div>
+            </div>
         </div>
-        <div>
-            <span class="badge badge-info">Cone 06-13</span>
+        <div class="header-actions">
+            <span class="badge badge-primary" data-tooltip="Supported firing ranges">Cone 06 - 13</span>
+            <button class="secondary small" onclick="showQuickStart()">
+                <span>Quick Start</span>
+            </button>
         </div>
     </header>
 
     <nav class="tabs">
-        <button class="tab active" data-tab="materials">Materials</button>
-        <button class="tab" data-tab="recipe">Recipe Builder</button>
-        <button class="tab" data-tab="analysis">Analysis</button>
-        <button class="tab" data-tab="substitutions">Substitutions</button>
-        <button class="tab" data-tab="search">Glazy Search</button>
+        <button class="tab active" data-tab="recipe">
+            <span class="tab-icon">🧪</span>
+            <span>Recipe Builder</span>
+        </button>
+        <button class="tab" data-tab="materials">
+            <span class="tab-icon">📦</span>
+            <span>Materials</span>
+        </button>
+        <button class="tab" data-tab="analysis">
+            <span class="tab-icon">📊</span>
+            <span>Analysis</span>
+        </button>
+        <button class="tab" data-tab="substitutions">
+            <span class="tab-icon">🔄</span>
+            <span>Substitutions</span>
+        </button>
+        <button class="tab" data-tab="search">
+            <span class="tab-icon">🔍</span>
+            <span>Glazy Search</span>
+        </button>
     </nav>
 
     <main>
-        <!-- MATERIALS TAB -->
-        <section id="materials" class="tab-content active">
-            <div class="grid grid-3">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Material Database</h3>
-                        <span id="material-count" class="badge badge-info">0 materials</span>
-                    </div>
-                    <div class="search-box">
-                        <input type="text" id="material-search" placeholder="Search materials...">
-                        <select id="material-type-filter">
-                            <option value="">All Types</option>
-                        </select>
-                    </div>
-                    <div id="material-list" class="material-list">
-                        <div class="loading active">
-                            <div class="spinner"></div>
-                            Loading materials...
-                        </div>
-                    </div>
+        <!-- RECIPE BUILDER TAB (Now First) -->
+        <section id="recipe" class="tab-content active">
+            <!-- Quick Start Templates -->
+            <div class="card mb-1">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <span class="card-title-icon">⚡</span>
+                        Quick Start Templates
+                    </h3>
+                    <span class="text-muted text-sm">Click to load a base recipe</span>
                 </div>
-
-                <div class="card" style="grid-column: span 2;">
-                    <div class="card-header">
-                        <h3 class="card-title">Material Details</h3>
-                        <button class="small secondary" id="add-to-recipe-btn" style="display:none;">+ Add to Recipe</button>
+                <div class="templates-grid" id="templates-grid">
+                    <div class="template-card" data-template="basic-clear">
+                        <div class="template-name">Basic Clear</div>
+                        <div class="template-desc">Simple glossy clear glaze</div>
+                        <span class="badge badge-success template-badge">Cone 6</span>
                     </div>
-                    <div id="material-details">
-                        <div class="empty-state">
-                            Select a material to view its oxide analysis and details
-                        </div>
+                    <div class="template-card" data-template="satin-white">
+                        <div class="template-name">Satin White</div>
+                        <div class="template-desc">Smooth satin finish</div>
+                        <span class="badge badge-success template-badge">Cone 6</span>
+                    </div>
+                    <div class="template-card" data-template="celadon">
+                        <div class="template-name">Celadon</div>
+                        <div class="template-desc">Classic jade green</div>
+                        <span class="badge badge-primary template-badge">Cone 10</span>
+                    </div>
+                    <div class="template-card" data-template="tenmoku">
+                        <div class="template-name">Tenmoku</div>
+                        <div class="template-desc">Iron-rich brown/black</div>
+                        <span class="badge badge-primary template-badge">Cone 10</span>
+                    </div>
+                    <div class="template-card" data-template="shino">
+                        <div class="template-name">Shino</div>
+                        <div class="template-desc">Orange-peel texture</div>
+                        <span class="badge badge-primary template-badge">Cone 10</span>
                     </div>
                 </div>
             </div>
-        </section>
 
-        <!-- RECIPE BUILDER TAB -->
-        <section id="recipe" class="tab-content">
             <div class="grid grid-2">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Recipe Builder</h3>
-                        <button class="small secondary" id="clear-recipe-btn">Clear</button>
+                        <h3 class="card-title">
+                            <span class="card-title-icon">📝</span>
+                            Recipe Builder
+                        </h3>
+                        <div class="flex-gap">
+                            <button class="small secondary" id="clear-recipe-btn">Clear</button>
+                            <button class="small" id="save-recipe-btn">Save</button>
+                        </div>
                     </div>
+
                     <div class="form-group">
                         <label>Recipe Name</label>
-                        <input type="text" id="recipe-name" placeholder="My Glaze Recipe">
+                        <input type="text" id="recipe-name" placeholder="My Glaze Recipe" value="">
                     </div>
+
                     <div class="form-group">
-                        <label>Target Cone</label>
+                        <label>Target Cone <span class="label-hint">(click to select)</span></label>
                         <div class="cone-select" id="cone-select">
                             <button class="cone-btn" data-cone="06">06</button>
                             <button class="cone-btn" data-cone="05">05</button>
@@ -620,42 +1045,135 @@
                             <button class="cone-btn" data-cone="10">10</button>
                             <button class="cone-btn" data-cone="11">11</button>
                             <button class="cone-btn" data-cone="12">12</button>
-                            <button class="cone-btn" data-cone="13">13</button>
                         </div>
                     </div>
+
                     <div class="form-group">
-                        <label>Ingredients</label>
+                        <label>Ingredients <span class="label-hint">(use sliders or type percentages)</span></label>
                         <div id="recipe-ingredients" class="recipe-ingredients">
-                            <!-- Ingredients added dynamically -->
+                            <div class="empty-state" style="padding: 1.5rem;">
+                                <div class="empty-state-icon">📦</div>
+                                <p>No ingredients yet</p>
+                                <p class="text-muted" style="font-size: 0.85rem; margin-top: 0.5rem;">
+                                    Use a template above or add ingredients manually
+                                </p>
+                            </div>
                         </div>
-                        <button class="small secondary mt-1" id="add-ingredient-btn">+ Add Ingredient</button>
+                        <button class="secondary mt-1" id="add-ingredient-btn">
+                            <span>+</span> Add Ingredient
+                        </button>
                     </div>
+
                     <div class="flex-between mt-1">
-                        <span id="recipe-total">Total: 0%</span>
-                        <button id="calculate-umf-btn" class="success">Calculate UMF</button>
+                        <div>
+                            <span id="recipe-total" class="font-mono">Total: 0%</span>
+                            <span id="recipe-status" class="badge badge-warning ml-auto" style="margin-left: 0.5rem;">Needs 100%</span>
+                        </div>
+                        <button id="calculate-umf-btn" class="success">
+                            Calculate UMF
+                        </button>
                     </div>
                 </div>
 
                 <div>
+                    <!-- Live Preview -->
+                    <div class="live-preview" id="live-preview" style="display: none;">
+                        <div class="live-preview-header">
+                            <span class="live-preview-title">Live Preview</span>
+                            <span class="badge badge-success" id="live-surface">--</span>
+                        </div>
+                        <div class="live-preview-stats">
+                            <div class="live-stat">
+                                <div class="live-stat-value" id="live-sio2">--</div>
+                                <div class="live-stat-label">SiO₂</div>
+                            </div>
+                            <div class="live-stat">
+                                <div class="live-stat-value" id="live-al2o3">--</div>
+                                <div class="live-stat-label">Al₂O₃</div>
+                            </div>
+                            <div class="live-stat">
+                                <div class="live-stat-value" id="live-ratio">--</div>
+                                <div class="live-stat-label">Si:Al</div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="card mb-1">
                         <div class="card-header">
-                            <h3 class="card-title">Unity Molecular Formula</h3>
+                            <h3 class="card-title">
+                                <span class="card-title-icon">⚗️</span>
+                                Unity Molecular Formula
+                            </h3>
                         </div>
                         <div id="umf-display">
                             <div class="empty-state">
-                                Add ingredients and click Calculate UMF to see the unity formula
+                                <div class="empty-state-icon">⚗️</div>
+                                <p>Add ingredients and click Calculate UMF</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Stull Chart Position</h3>
+                            <h3 class="card-title">
+                                <span class="card-title-icon">📈</span>
+                                Stull Chart Position
+                            </h3>
+                            <span class="text-muted text-sm" data-tooltip="Shows predicted surface based on SiO2 and Al2O3 ratio">
+                                Hover for info
+                            </span>
                         </div>
                         <div id="stull-chart" class="stull-chart">
                             <div class="empty-state">
-                                Calculate UMF to see position on Stull chart
+                                <p>Calculate UMF to see chart position</p>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MATERIALS TAB -->
+        <section id="materials" class="tab-content">
+            <div class="grid grid-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-title-icon">📦</span>
+                            Material Database
+                        </h3>
+                        <span id="material-count" class="badge badge-primary">0</span>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.75rem;">
+                        <input type="text" id="material-search" placeholder="🔍 Search materials...">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.75rem;">
+                        <select id="material-type-filter">
+                            <option value="">All Types</option>
+                        </select>
+                    </div>
+                    <div id="material-list" class="material-list">
+                        <div class="loading active">
+                            <div class="spinner"></div>
+                            Loading materials...
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="grid-column: span 2;">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-title-icon">🔬</span>
+                            Material Details
+                        </h3>
+                        <button class="small" id="add-to-recipe-btn" style="display:none;">
+                            + Add to Recipe
+                        </button>
+                    </div>
+                    <div id="material-details">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🔬</div>
+                            <p>Select a material to view its oxide analysis</p>
                         </div>
                     </div>
                 </div>
@@ -667,24 +1185,32 @@
             <div class="grid grid-2">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Recipe Analysis</h3>
-                        <button id="analyze-recipe-btn" class="small">Analyze Recipe</button>
+                        <h3 class="card-title">
+                            <span class="card-title-icon">📊</span>
+                            Recipe Analysis
+                        </h3>
+                        <button id="analyze-recipe-btn" class="small">Analyze</button>
                     </div>
                     <div id="analysis-results">
                         <div class="empty-state">
-                            Build a recipe and click Analyze to see detailed chemistry analysis
+                            <div class="empty-state-icon">📊</div>
+                            <p>Build a recipe and click Analyze</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Outcome Prediction</h3>
-                        <button id="predict-outcome-btn" class="small">Predict Outcome</button>
+                        <h3 class="card-title">
+                            <span class="card-title-icon">🎯</span>
+                            Outcome Prediction
+                        </h3>
+                        <button id="predict-outcome-btn" class="small">Predict</button>
                     </div>
                     <div id="prediction-results">
                         <div class="empty-state">
-                            Click Predict Outcome to see expected surface, color, and defect risks
+                            <div class="empty-state-icon">🎯</div>
+                            <p>Click Predict to see expected results</p>
                         </div>
                     </div>
                 </div>
@@ -696,7 +1222,10 @@
             <div class="grid grid-2">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Unavailable Materials</h3>
+                        <h3 class="card-title">
+                            <span class="card-title-icon">⚠️</span>
+                            Unavailable Materials
+                        </h3>
                         <button id="refresh-unavailable-btn" class="small secondary">Refresh</button>
                     </div>
                     <div id="unavailable-list">
@@ -709,7 +1238,10 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Find Substitutes</h3>
+                        <h3 class="card-title">
+                            <span class="card-title-icon">🔄</span>
+                            Find Substitutes
+                        </h3>
                     </div>
                     <div class="form-group">
                         <label>Material to Substitute</label>
@@ -719,7 +1251,7 @@
                     </div>
                     <div id="substitute-results">
                         <div class="empty-state">
-                            Select a material to find available substitutes
+                            <p>Select a material to find substitutes</p>
                         </div>
                     </div>
                 </div>
@@ -727,12 +1259,15 @@
 
             <div class="card mt-1">
                 <div class="card-header">
-                    <h3 class="card-title">Recipe Availability Check</h3>
-                    <button id="check-recipe-availability-btn" class="small">Check Current Recipe</button>
+                    <h3 class="card-title">
+                        <span class="card-title-icon">✅</span>
+                        Recipe Availability Check
+                    </h3>
+                    <button id="check-recipe-availability-btn" class="small">Check Recipe</button>
                 </div>
                 <div id="recipe-availability-results">
                     <div class="empty-state">
-                        Build a recipe and click Check to verify all materials are available
+                        <p>Build a recipe and click Check to verify availability</p>
                     </div>
                 </div>
             </div>
@@ -742,12 +1277,15 @@
         <section id="search" class="tab-content">
             <div class="card mb-1">
                 <div class="card-header">
-                    <h3 class="card-title">Search Glazy.org</h3>
+                    <h3 class="card-title">
+                        <span class="card-title-icon">🔍</span>
+                        Search Glazy.org
+                    </h3>
                 </div>
                 <div class="grid grid-4">
                     <div class="form-group">
                         <label>Search Query</label>
-                        <input type="text" id="glazy-search-query" placeholder="e.g., celadon, tenmoku, shino...">
+                        <input type="text" id="glazy-search-query" placeholder="celadon, tenmoku, shino...">
                     </div>
                     <div class="form-group">
                         <label>Cone</label>
@@ -764,7 +1302,6 @@
                             <option value="">Any</option>
                             <option value="oxidation">Oxidation</option>
                             <option value="reduction">Reduction</option>
-                            <option value="neutral">Neutral</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -777,22 +1314,60 @@
                         </select>
                     </div>
                 </div>
-                <button id="glazy-search-btn">Search Glazy</button>
+                <button id="glazy-search-btn">
+                    <span>🔍</span> Search Glazy
+                </button>
             </div>
 
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Search Results</h3>
-                    <span id="glazy-result-count" class="badge badge-info">0 results</span>
+                    <span id="glazy-result-count" class="badge badge-primary">0 results</span>
                 </div>
                 <div id="glazy-results">
                     <div class="empty-state">
-                        Enter search criteria and click Search to find recipes on Glazy.org
+                        <div class="empty-state-icon">🔍</div>
+                        <p>Enter search criteria to find recipes</p>
                     </div>
                 </div>
             </div>
         </section>
     </main>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Quick Start Modal -->
+    <div class="modal-overlay" id="quickstart-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Welcome to Glaze!</h2>
+                <button class="modal-close" onclick="hideQuickStart()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h4 style="margin-bottom: 1rem;">Getting Started</h4>
+                <ol style="padding-left: 1.5rem; line-height: 2;">
+                    <li>Select a <strong>template</strong> or add ingredients manually</li>
+                    <li>Adjust <strong>percentages</strong> (should total 100%)</li>
+                    <li>Click <strong>Calculate UMF</strong> to see the formula</li>
+                    <li>Check <strong>Analysis</strong> tab for recommendations</li>
+                </ol>
+                <h4 style="margin: 1.5rem 0 1rem;">Keyboard Shortcuts</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                    <div><kbd>Ctrl</kbd> + <kbd>Enter</kbd> - Calculate UMF</div>
+                    <div><kbd>Ctrl</kbd> + <kbd>S</kbd> - Save Recipe</div>
+                    <div><kbd>Ctrl</kbd> + <kbd>N</kbd> - New Recipe</div>
+                    <div><kbd>?</kbd> - Show Help</div>
+                </div>
+                <button class="mt-1" onclick="hideQuickStart()" style="width: 100%;">
+                    Got it, let's start!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Button -->
+    <button class="help-trigger" onclick="showQuickStart()" data-tooltip="Help & Shortcuts">?</button>
 
     <script>
         const API_BASE = '';
@@ -803,6 +1378,88 @@
         let recipeIngredients = [];
         let targetCone = '6';
         let currentUMF = null;
+        let debounceTimer = null;
+
+        // Templates
+        const TEMPLATES = {
+            'basic-clear': {
+                name: 'Basic Clear Cone 6',
+                cone: '6',
+                ingredients: [
+                    { name: 'Custer Feldspar', percentage: 25 },
+                    { name: 'Silica', percentage: 30 },
+                    { name: 'Whiting', percentage: 20 },
+                    { name: 'EPK', percentage: 15 },
+                    { name: 'Gerstley Borate', percentage: 10 },
+                ]
+            },
+            'satin-white': {
+                name: 'Satin White Cone 6',
+                cone: '6',
+                ingredients: [
+                    { name: 'Nepheline Syenite', percentage: 35 },
+                    { name: 'Silica', percentage: 25 },
+                    { name: 'Whiting', percentage: 15 },
+                    { name: 'EPK', percentage: 15 },
+                    { name: 'Zinc Oxide', percentage: 5 },
+                    { name: 'Talc', percentage: 5 },
+                ]
+            },
+            'celadon': {
+                name: 'Celadon Cone 10',
+                cone: '10',
+                ingredients: [
+                    { name: 'Custer Feldspar', percentage: 40 },
+                    { name: 'Silica', percentage: 30 },
+                    { name: 'Whiting', percentage: 15 },
+                    { name: 'EPK', percentage: 15 },
+                ]
+            },
+            'tenmoku': {
+                name: 'Tenmoku Cone 10',
+                cone: '10',
+                ingredients: [
+                    { name: 'Custer Feldspar', percentage: 40 },
+                    { name: 'Silica', percentage: 20 },
+                    { name: 'Whiting', percentage: 20 },
+                    { name: 'EPK', percentage: 20 },
+                ]
+            },
+            'shino': {
+                name: 'Shino Cone 10',
+                cone: '10',
+                ingredients: [
+                    { name: 'Nepheline Syenite', percentage: 70 },
+                    { name: 'EPK', percentage: 20 },
+                    { name: 'Spodumene', percentage: 10 },
+                ]
+            },
+        };
+
+        // Toast notification system
+        function showToast(message, type = 'info', duration = 3000) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <span>${type === 'success' ? '✓' : type === 'error' ? '✕' : type === 'warning' ? '⚠' : 'ℹ'}</span>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+
+        // Quick Start Modal
+        function showQuickStart() {
+            document.getElementById('quickstart-modal').classList.add('active');
+        }
+
+        function hideQuickStart() {
+            document.getElementById('quickstart-modal').classList.remove('active');
+        }
 
         // Tab switching
         document.querySelectorAll('.tab').forEach(tab => {
@@ -820,10 +1477,45 @@
                 document.querySelectorAll('.cone-btn').forEach(b => b.classList.remove('selected'));
                 e.target.classList.add('selected');
                 targetCone = e.target.dataset.cone;
+                debouncedCalculateUMF();
             }
         });
 
-        // Load materials on start
+        // Template selection
+        document.getElementById('templates-grid').addEventListener('click', (e) => {
+            const card = e.target.closest('.template-card');
+            if (card) {
+                const templateId = card.dataset.template;
+                const template = TEMPLATES[templateId];
+                if (template) {
+                    // Clear and load template
+                    document.querySelectorAll('.template-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+
+                    document.getElementById('recipe-name').value = template.name;
+
+                    // Set cone
+                    document.querySelectorAll('.cone-btn').forEach(b => b.classList.remove('selected'));
+                    document.querySelector(`.cone-btn[data-cone="${template.cone}"]`)?.classList.add('selected');
+                    targetCone = template.cone;
+
+                    // Load ingredients
+                    recipeIngredients = template.ingredients.map((ing, i) => ({
+                        id: Date.now() + i,
+                        name: ing.name,
+                        percentage: ing.percentage
+                    }));
+                    renderRecipeIngredients();
+
+                    showToast(`Loaded "${template.name}" template`, 'success');
+
+                    // Auto-calculate
+                    setTimeout(calculateUMF, 500);
+                }
+            }
+        });
+
+        // Load materials
         async function loadMaterials() {
             try {
                 const response = await fetch(`${API_BASE}/api/materials`);
@@ -831,7 +1523,7 @@
                 materials = data.materials || [];
                 renderMaterialList();
                 populateMaterialSelect();
-                document.getElementById('material-count').textContent = `${materials.length} materials`;
+                document.getElementById('material-count').textContent = `${materials.length}`;
             } catch (error) {
                 console.error('Failed to load materials:', error);
                 document.getElementById('material-list').innerHTML =
@@ -874,10 +1566,14 @@
             }
 
             listEl.innerHTML = filtered.map(m => `
-                <div class="material-item ${selectedMaterial?.name === m.name ? 'selected' : ''}"
-                     data-name="${m.name}">
-                    <div class="material-name">${m.name}</div>
-                    <div class="material-type">${(m.material_type || 'unknown').replace(/_/g, ' ')}</div>
+                <div class="material-item ${selectedMaterial?.name === m.name ? 'selected' : ''}" data-name="${m.name}">
+                    <div class="material-info">
+                        <div class="material-name">${m.name}</div>
+                        <div class="material-type">${(m.material_type || 'unknown').replace(/_/g, ' ')}</div>
+                    </div>
+                    <button class="small secondary material-add-btn" onclick="event.stopPropagation(); quickAddMaterial('${m.name}')">
+                        + Add
+                    </button>
                 </div>
             `).join('');
 
@@ -886,15 +1582,21 @@
             });
         }
 
+        function quickAddMaterial(name) {
+            addIngredient(name, 10);
+            showToast(`Added ${name} to recipe`, 'success');
+        }
+
         async function selectMaterial(name) {
             try {
                 const response = await fetch(`${API_BASE}/api/materials/${encodeURIComponent(name)}`);
                 selectedMaterial = await response.json();
                 renderMaterialDetails();
                 renderMaterialList();
-                document.getElementById('add-to-recipe-btn').style.display = 'inline-block';
+                document.getElementById('add-to-recipe-btn').style.display = 'inline-flex';
             } catch (error) {
-                console.error('Failed to load material details:', error);
+                console.error('Failed to load material:', error);
+                showToast('Failed to load material details', 'error');
             }
         }
 
@@ -913,9 +1615,6 @@
                 { name: 'Fe2O3', value: analysis.Fe2O3 },
                 { name: 'B2O3', value: analysis.B2O3 },
                 { name: 'ZnO', value: analysis.ZnO },
-                { name: 'BaO', value: analysis.BaO },
-                { name: 'Li2O', value: analysis.Li2O },
-                { name: 'TiO2', value: analysis.TiO2 },
             ].filter(o => o.value && o.value > 0);
 
             const maxOxide = Math.max(...oxides.map(o => o.value), 1);
@@ -923,28 +1622,25 @@
             document.getElementById('material-details').innerHTML = `
                 <div class="grid grid-2">
                     <div>
-                        <h4 style="color: var(--accent); margin-bottom: 1rem;">${m.name}</h4>
-                        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
-                            Type: <span class="badge badge-info">${(m.material_type || 'unknown').replace(/_/g, ' ')}</span>
+                        <h4 style="color: var(--accent-light); margin-bottom: 1rem; font-size: 1.25rem;">${m.name}</h4>
+                        <p style="margin-bottom: 1rem;">
+                            <span class="badge badge-primary">${(m.material_type || 'unknown').replace(/_/g, ' ')}</span>
                         </p>
-                        ${m.description ? `<p style="margin-bottom: 1rem;">${m.description}</p>` : ''}
+                        ${m.description ? `<p style="color: var(--text-secondary); margin-bottom: 1rem;">${m.description}</p>` : ''}
                         ${m.typical_percentage_min !== undefined ? `
-                            <p style="color: var(--text-secondary);">
-                                Typical usage: ${m.typical_percentage_min}% - ${m.typical_percentage_max}%
+                            <p style="color: var(--text-muted); font-size: 0.9rem;">
+                                Typical usage: <strong>${m.typical_percentage_min}% - ${m.typical_percentage_max}%</strong>
                             </p>
                         ` : ''}
                         ${m.warnings ? `
-                            <p class="text-warning mt-1">Warning: ${m.warnings}</p>
-                        ` : ''}
-                        ${m.substitutes && m.substitutes.length ? `
-                            <div class="mt-1">
-                                <p style="color: var(--text-secondary);">Substitutes:</p>
-                                ${m.substitutes.map(s => `<span class="badge badge-success" style="margin: 0.25rem;">${s}</span>`).join('')}
+                            <div class="warning-item mt-1">
+                                <span>⚠️</span>
+                                <span>${m.warnings}</span>
                             </div>
                         ` : ''}
                     </div>
                     <div>
-                        <h4 style="color: var(--text-secondary); margin-bottom: 1rem;">Oxide Analysis</h4>
+                        <h4 style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">OXIDE ANALYSIS</h4>
                         ${oxides.map(o => `
                             <div class="oxide-bar">
                                 <span class="oxide-label">${o.name}</span>
@@ -955,7 +1651,7 @@
                             </div>
                         `).join('')}
                         ${analysis.LOI ? `
-                            <div class="oxide-bar">
+                            <div class="oxide-bar" style="margin-top: 1rem;">
                                 <span class="oxide-label">LOI</span>
                                 <div class="oxide-track">
                                     <div class="oxide-fill" style="width: ${(analysis.LOI / maxOxide) * 100}%; background: var(--text-muted)"></div>
@@ -980,53 +1676,91 @@
         }
 
         // Recipe management
-        function addIngredient(name = '', percentage = '') {
+        function addIngredient(name = '', percentage = 0) {
             const id = Date.now();
             recipeIngredients.push({ id, name, percentage });
             renderRecipeIngredients();
+            document.getElementById('live-preview').style.display = 'block';
         }
 
         function removeIngredient(id) {
             recipeIngredients = recipeIngredients.filter(i => i.id !== id);
             renderRecipeIngredients();
+            if (recipeIngredients.length === 0) {
+                document.getElementById('live-preview').style.display = 'none';
+            }
+            debouncedCalculateUMF();
         }
 
         function renderRecipeIngredients() {
             const container = document.getElementById('recipe-ingredients');
 
             if (recipeIngredients.length === 0) {
-                container.innerHTML = '<div class="text-muted">No ingredients added yet</div>';
+                container.innerHTML = `
+                    <div class="empty-state" style="padding: 1.5rem;">
+                        <div class="empty-state-icon">📦</div>
+                        <p>No ingredients yet</p>
+                        <p class="text-muted" style="font-size: 0.85rem; margin-top: 0.5rem;">
+                            Use a template above or add ingredients manually
+                        </p>
+                    </div>
+                `;
                 updateRecipeTotal();
                 return;
             }
 
             container.innerHTML = recipeIngredients.map(ing => `
-                <div class="ingredient-row">
+                <div class="ingredient-row" data-id="${ing.id}">
                     <select class="ingredient-select" data-id="${ing.id}">
                         <option value="">Select material...</option>
                         ${materials.map(m => `
                             <option value="${m.name}" ${m.name === ing.name ? 'selected' : ''}>${m.name}</option>
                         `).join('')}
                     </select>
+                    <div class="ingredient-slider">
+                        <input type="range" class="ingredient-range" data-id="${ing.id}"
+                               value="${ing.percentage}" min="0" max="100" step="1">
+                    </div>
                     <input type="number" class="ingredient-pct" data-id="${ing.id}"
-                           value="${ing.percentage}" placeholder="%" min="0" max="100" step="0.1">
-                    <button class="remove-btn" data-id="${ing.id}">X</button>
+                           value="${ing.percentage}" placeholder="%" min="0" max="100" step="0.1"
+                           style="width: 70px;">
+                    <button class="remove-btn icon-btn" data-id="${ing.id}" title="Remove">✕</button>
                 </div>
             `).join('');
 
+            // Event listeners
             container.querySelectorAll('.ingredient-select').forEach(select => {
                 select.addEventListener('change', (e) => {
                     const ing = recipeIngredients.find(i => i.id === parseInt(e.target.dataset.id));
                     if (ing) ing.name = e.target.value;
                     updateRecipeTotal();
+                    debouncedCalculateUMF();
                 });
             });
 
             container.querySelectorAll('.ingredient-pct').forEach(input => {
-                input.addEventListener('change', (e) => {
+                input.addEventListener('input', (e) => {
                     const ing = recipeIngredients.find(i => i.id === parseInt(e.target.dataset.id));
-                    if (ing) ing.percentage = parseFloat(e.target.value) || 0;
+                    if (ing) {
+                        ing.percentage = parseFloat(e.target.value) || 0;
+                        // Sync slider
+                        container.querySelector(`.ingredient-range[data-id="${ing.id}"]`).value = ing.percentage;
+                    }
                     updateRecipeTotal();
+                    debouncedCalculateUMF();
+                });
+            });
+
+            container.querySelectorAll('.ingredient-range').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    const ing = recipeIngredients.find(i => i.id === parseInt(e.target.dataset.id));
+                    if (ing) {
+                        ing.percentage = parseFloat(e.target.value) || 0;
+                        // Sync number input
+                        container.querySelector(`.ingredient-pct[data-id="${ing.id}"]`).value = ing.percentage;
+                    }
+                    updateRecipeTotal();
+                    debouncedCalculateUMF();
                 });
             });
 
@@ -1042,15 +1776,41 @@
         function updateRecipeTotal() {
             const total = recipeIngredients.reduce((sum, ing) => sum + (ing.percentage || 0), 0);
             const totalEl = document.getElementById('recipe-total');
+            const statusEl = document.getElementById('recipe-status');
+
             totalEl.textContent = `Total: ${total.toFixed(1)}%`;
-            totalEl.className = total === 100 ? 'text-success' : (total > 100 ? 'text-danger' : 'text-warning');
+
+            if (Math.abs(total - 100) < 0.5) {
+                totalEl.className = 'font-mono text-success';
+                statusEl.textContent = 'Ready';
+                statusEl.className = 'badge badge-success';
+            } else if (total > 100) {
+                totalEl.className = 'font-mono text-danger';
+                statusEl.textContent = `Over by ${(total - 100).toFixed(1)}%`;
+                statusEl.className = 'badge badge-danger';
+            } else {
+                totalEl.className = 'font-mono text-warning';
+                statusEl.textContent = `Needs ${(100 - total).toFixed(1)}% more`;
+                statusEl.className = 'badge badge-warning';
+            }
+        }
+
+        // Debounced UMF calculation for live preview
+        function debouncedCalculateUMF() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                if (recipeIngredients.filter(i => i.name && i.percentage > 0).length > 0) {
+                    calculateUMF(true); // silent mode
+                }
+            }, 500);
         }
 
         document.getElementById('add-ingredient-btn').addEventListener('click', () => addIngredient());
 
         document.getElementById('add-to-recipe-btn').addEventListener('click', () => {
             if (selectedMaterial) {
-                addIngredient(selectedMaterial.name, '');
+                addIngredient(selectedMaterial.name, 10);
+                showToast(`Added ${selectedMaterial.name} to recipe`, 'success');
                 document.querySelector('.tab[data-tab="recipe"]').click();
             }
         });
@@ -1058,20 +1818,24 @@
         document.getElementById('clear-recipe-btn').addEventListener('click', () => {
             recipeIngredients = [];
             renderRecipeIngredients();
+            document.getElementById('recipe-name').value = '';
             document.getElementById('umf-display').innerHTML =
-                '<div class="empty-state">Add ingredients and click Calculate UMF</div>';
+                '<div class="empty-state"><div class="empty-state-icon">⚗️</div><p>Add ingredients and click Calculate UMF</p></div>';
             document.getElementById('stull-chart').innerHTML =
-                '<div class="empty-state">Calculate UMF to see position on Stull chart</div>';
+                '<div class="empty-state"><p>Calculate UMF to see chart position</p></div>';
+            document.getElementById('live-preview').style.display = 'none';
+            document.querySelectorAll('.template-card').forEach(c => c.classList.remove('selected'));
             currentUMF = null;
+            showToast('Recipe cleared', 'info');
         });
 
         // UMF Calculation
-        document.getElementById('calculate-umf-btn').addEventListener('click', calculateUMF);
+        document.getElementById('calculate-umf-btn').addEventListener('click', () => calculateUMF(false));
 
-        async function calculateUMF() {
+        async function calculateUMF(silent = false) {
             const validIngredients = recipeIngredients.filter(i => i.name && i.percentage > 0);
             if (validIngredients.length === 0) {
-                alert('Please add ingredients with percentages');
+                if (!silent) showToast('Please add ingredients with percentages', 'warning');
                 return;
             }
 
@@ -1080,6 +1844,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
+                        name: document.getElementById('recipe-name').value || 'Untitled',
                         ingredients: validIngredients.map(i => ({
                             material_name: i.name,
                             percentage: i.percentage
@@ -1087,55 +1852,75 @@
                     })
                 });
 
-                const data = await response.json();
-                if (data.error) {
-                    alert(data.error);
-                    return;
-                }
+                if (!response.ok) throw new Error('Failed to calculate');
 
-                currentUMF = data.umf;
-                renderUMF(data.umf);
-                renderStullChart(data.umf);
+                const data = await response.json();
+                currentUMF = data;
+                renderUMF(data);
+                renderStullChart(data);
+                updateLivePreview(data);
+
+                if (!silent) showToast('UMF calculated successfully', 'success');
             } catch (error) {
                 console.error('Failed to calculate UMF:', error);
-                alert('Failed to calculate UMF');
+                if (!silent) showToast('Failed to calculate UMF', 'error');
             }
         }
 
-        function renderUMF(umf) {
+        function updateLivePreview(data) {
+            const preview = document.getElementById('live-preview');
+            preview.style.display = 'block';
+
+            document.getElementById('live-sio2').textContent = (data.SiO2 || 0).toFixed(2);
+            document.getElementById('live-al2o3').textContent = (data.Al2O3 || 0).toFixed(3);
+            document.getElementById('live-ratio').textContent = (data.silica_alumina_ratio || 0).toFixed(1);
+
+            // Predict surface
+            const al = data.Al2O3 || 0;
+            const si = data.SiO2 || 0;
+            let surface = 'Unknown';
+            if (al < 0.35 && si > 3) surface = 'Glossy';
+            else if (al > 0.4 || si < 3) surface = 'Matte';
+            else surface = 'Satin';
+
+            const surfaceEl = document.getElementById('live-surface');
+            surfaceEl.textContent = surface;
+            surfaceEl.className = `badge badge-${surface === 'Glossy' ? 'success' : surface === 'Matte' ? 'warning' : 'primary'}`;
+        }
+
+        function renderUMF(data) {
             const fluxes = [
-                { name: 'Na2O', value: umf.Na2O },
-                { name: 'K2O', value: umf.K2O },
-                { name: 'Li2O', value: umf.Li2O },
-                { name: 'CaO', value: umf.CaO },
-                { name: 'MgO', value: umf.MgO },
-                { name: 'ZnO', value: umf.ZnO },
-                { name: 'BaO', value: umf.BaO },
-                { name: 'SrO', value: umf.SrO },
+                { name: 'Na₂O', value: data.Na2O },
+                { name: 'K₂O', value: data.K2O },
+                { name: 'Li₂O', value: data.Li2O },
+                { name: 'CaO', value: data.CaO },
+                { name: 'MgO', value: data.MgO },
+                { name: 'ZnO', value: data.ZnO },
+                { name: 'BaO', value: data.BaO },
             ].filter(o => o.value && o.value > 0.001);
 
             const stabilizers = [
-                { name: 'Al2O3', value: umf.Al2O3 },
-                { name: 'B2O3', value: umf.B2O3 },
+                { name: 'Al₂O₃', value: data.Al2O3 },
+                { name: 'B₂O₃', value: data.B2O3 },
             ].filter(o => o.value && o.value > 0.001);
-
-            const glassFormers = [
-                { name: 'SiO2', value: umf.SiO2 },
-            ];
 
             document.getElementById('umf-display').innerHTML = `
                 <div class="umf-display">
                     <div class="umf-section">
-                        <h4>Fluxes (RO/R2O) = 1.0</h4>
+                        <h4>Fluxes (R₂O/RO) = 1.0</h4>
                         ${fluxes.map(o => `
                             <div class="umf-oxide">
                                 <span class="name">${o.name}</span>
                                 <span class="value">${o.value.toFixed(3)}</span>
                             </div>
                         `).join('')}
+                        <div class="umf-oxide umf-total">
+                            <span class="name">Total</span>
+                            <span class="value">1.000</span>
+                        </div>
                     </div>
                     <div class="umf-section">
-                        <h4>Stabilizers (R2O3)</h4>
+                        <h4>Stabilizers (R₂O₃)</h4>
                         ${stabilizers.map(o => `
                             <div class="umf-oxide">
                                 <span class="name">${o.name}</span>
@@ -1144,32 +1929,23 @@
                         `).join('')}
                     </div>
                     <div class="umf-section">
-                        <h4>Glass Formers (RO2)</h4>
-                        ${glassFormers.map(o => `
-                            <div class="umf-oxide">
-                                <span class="name">${o.name}</span>
-                                <span class="value">${o.value.toFixed(3)}</span>
-                            </div>
-                        `).join('')}
-                        <div class="umf-oxide mt-1" style="border-top: 1px solid var(--border); padding-top: 0.5rem;">
+                        <h4>Glass Formers (RO₂)</h4>
+                        <div class="umf-oxide">
+                            <span class="name">SiO₂</span>
+                            <span class="value">${(data.SiO2 || 0).toFixed(3)}</span>
+                        </div>
+                        <div class="umf-oxide umf-total">
                             <span class="name">Si:Al</span>
-                            <span class="value">${(umf.silica_alumina_ratio || 0).toFixed(2)}</span>
+                            <span class="value">${(data.silica_alumina_ratio || 0).toFixed(2)}</span>
                         </div>
                     </div>
                 </div>
             `;
         }
 
-        function renderStullChart(umf) {
-            const al2o3 = umf.Al2O3 || 0;
-            const sio2 = umf.SiO2 || 0;
-
-            // Stull chart regions
-            const regions = {
-                'Glossy': { x: [2.5, 5], y: [0.2, 0.5], color: 'rgba(74, 222, 128, 0.3)' },
-                'Satin': { x: [2, 3.5], y: [0.3, 0.55], color: 'rgba(251, 191, 36, 0.3)' },
-                'Matte': { x: [1.5, 3], y: [0.4, 0.7], color: 'rgba(233, 69, 96, 0.3)' },
-            };
+        function renderStullChart(data) {
+            const al2o3 = data.Al2O3 || 0;
+            const sio2 = data.SiO2 || 0;
 
             const trace = {
                 x: [sio2],
@@ -1178,47 +1954,46 @@
                 type: 'scatter',
                 marker: {
                     size: 20,
-                    color: '#e94560',
+                    color: '#7c3aed',
                     symbol: 'diamond',
                     line: { width: 2, color: '#fff' }
                 },
                 name: 'Your Recipe',
-                hovertemplate: `SiO2: ${sio2.toFixed(2)}<br>Al2O3: ${al2o3.toFixed(3)}<extra></extra>`
+                hovertemplate: `SiO₂: ${sio2.toFixed(2)}<br>Al₂O₃: ${al2o3.toFixed(3)}<extra></extra>`
             };
 
             const layout = {
-                title: { text: '', font: { color: '#eee' } },
-                paper_bgcolor: '#16213e',
-                plot_bgcolor: '#1a1a2e',
+                paper_bgcolor: '#1a1a2e',
+                plot_bgcolor: '#0f0f1a',
                 xaxis: {
-                    title: 'SiO2',
+                    title: { text: 'SiO₂', font: { color: '#94a3b8' } },
                     range: [0, 6],
-                    gridcolor: '#2d3748',
-                    color: '#aaa'
+                    gridcolor: '#334155',
+                    color: '#94a3b8',
+                    tickfont: { color: '#94a3b8' }
                 },
                 yaxis: {
-                    title: 'Al2O3',
+                    title: { text: 'Al₂O₃', font: { color: '#94a3b8' } },
                     range: [0, 1],
-                    gridcolor: '#2d3748',
-                    color: '#aaa'
+                    gridcolor: '#334155',
+                    color: '#94a3b8',
+                    tickfont: { color: '#94a3b8' }
                 },
-                margin: { t: 20, r: 20, b: 50, l: 50 },
+                margin: { t: 20, r: 20, b: 50, l: 60 },
                 showlegend: false,
                 shapes: [
-                    // Glossy region
-                    { type: 'rect', x0: 2.5, x1: 5, y0: 0.15, y1: 0.45,
-                      fillcolor: 'rgba(74, 222, 128, 0.15)', line: { width: 0 } },
-                    // Matte region
-                    { type: 'rect', x0: 1.5, x1: 3, y0: 0.45, y1: 0.8,
-                      fillcolor: 'rgba(251, 191, 36, 0.15)', line: { width: 0 } },
+                    { type: 'rect', x0: 2.5, x1: 5, y0: 0.15, y1: 0.4,
+                      fillcolor: 'rgba(16, 185, 129, 0.15)', line: { color: '#10b981', width: 1 } },
+                    { type: 'rect', x0: 1.5, x1: 3.5, y0: 0.4, y1: 0.7,
+                      fillcolor: 'rgba(245, 158, 11, 0.15)', line: { color: '#f59e0b', width: 1 } },
                 ],
                 annotations: [
-                    { x: 3.75, y: 0.3, text: 'Glossy', showarrow: false, font: { color: '#4ade80', size: 12 } },
-                    { x: 2.25, y: 0.6, text: 'Matte', showarrow: false, font: { color: '#fbbf24', size: 12 } },
+                    { x: 3.75, y: 0.27, text: 'GLOSSY', showarrow: false, font: { color: '#10b981', size: 11 } },
+                    { x: 2.5, y: 0.55, text: 'MATTE', showarrow: false, font: { color: '#f59e0b', size: 11 } },
                 ]
             };
 
-            Plotly.newPlot('stull-chart', [trace], layout, { responsive: true });
+            Plotly.newPlot('stull-chart', [trace], layout, { responsive: true, displayModeBar: false });
         }
 
         // Analysis
@@ -1227,7 +2002,7 @@
         async function analyzeRecipe() {
             const validIngredients = recipeIngredients.filter(i => i.name && i.percentage > 0);
             if (validIngredients.length === 0) {
-                alert('Please add ingredients to the recipe first');
+                showToast('Please add ingredients first', 'warning');
                 return;
             }
 
@@ -1247,9 +2022,10 @@
 
                 const data = await response.json();
                 renderAnalysis(data);
+                showToast('Analysis complete', 'success');
             } catch (error) {
-                console.error('Failed to analyze recipe:', error);
-                alert('Failed to analyze recipe');
+                console.error('Failed to analyze:', error);
+                showToast('Failed to analyze recipe', 'error');
             }
         }
 
@@ -1258,64 +2034,62 @@
 
             document.getElementById('analysis-results').innerHTML = `
                 <div class="analysis-section">
-                    <h4>Chemistry Summary</h4>
                     <div class="grid grid-3">
                         <div class="prediction-card">
-                            <div class="prediction-header">
-                                <span class="prediction-title">Si:Al Ratio</span>
-                            </div>
+                            <div class="prediction-title">Si:Al Ratio</div>
                             <div class="prediction-value">${(analysis.silica_alumina_ratio || 0).toFixed(2)}</div>
                         </div>
                         <div class="prediction-card">
-                            <div class="prediction-header">
-                                <span class="prediction-title">Predicted Surface</span>
-                            </div>
+                            <div class="prediction-title">Predicted Surface</div>
                             <div class="prediction-value">${analysis.predicted_surface || 'Unknown'}</div>
                         </div>
                         <div class="prediction-card">
-                            <div class="prediction-header">
-                                <span class="prediction-title">Cone Range</span>
-                            </div>
+                            <div class="prediction-title">Cone Range</div>
                             <div class="prediction-value">${analysis.cone_range || 'N/A'}</div>
                         </div>
                     </div>
                 </div>
 
-                ${analysis.issues && analysis.issues.length ? `
+                ${analysis.issues?.length ? `
                     <div class="analysis-section">
-                        <h4>Issues</h4>
+                        <h4>⚠️ Issues Found</h4>
                         ${analysis.issues.map(issue => `
                             <div class="issue-item">
-                                <span class="text-danger">!</span>
+                                <span class="issue-icon">❌</span>
                                 <span>${issue}</span>
                             </div>
                         `).join('')}
                     </div>
                 ` : ''}
 
-                ${analysis.warnings && analysis.warnings.length ? `
+                ${analysis.warnings?.length ? `
                     <div class="analysis-section">
-                        <h4>Warnings</h4>
-                        ${analysis.warnings.map(warning => `
+                        <h4>⚡ Warnings</h4>
+                        ${analysis.warnings.map(w => `
                             <div class="warning-item">
-                                <span class="text-warning">!</span>
-                                <span>${warning}</span>
+                                <span class="issue-icon">⚠️</span>
+                                <span>${w}</span>
                             </div>
                         `).join('')}
                     </div>
                 ` : ''}
 
-                ${analysis.recommendations && analysis.recommendations.length ? `
+                ${analysis.recommendations?.length ? `
                     <div class="analysis-section">
-                        <h4>Recommendations</h4>
-                        ${analysis.recommendations.map(rec => `
+                        <h4>✨ Recommendations</h4>
+                        ${analysis.recommendations.map(r => `
                             <div class="recommendation-item">
-                                <span class="text-success">+</span>
-                                <span>${rec}</span>
+                                <span class="issue-icon">💡</span>
+                                <span>${r}</span>
                             </div>
                         `).join('')}
                     </div>
-                ` : ''}
+                ` : `
+                    <div class="recommendation-item">
+                        <span class="issue-icon">✅</span>
+                        <span>Recipe looks good! No issues detected.</span>
+                    </div>
+                `}
             `;
         }
 
@@ -1325,7 +2099,7 @@
         async function predictOutcome() {
             const validIngredients = recipeIngredients.filter(i => i.name && i.percentage > 0);
             if (validIngredients.length === 0) {
-                alert('Please add ingredients to the recipe first');
+                showToast('Please add ingredients first', 'warning');
                 return;
             }
 
@@ -1345,9 +2119,10 @@
 
                 const data = await response.json();
                 renderPrediction(data);
+                showToast('Prediction complete', 'success');
             } catch (error) {
-                console.error('Failed to predict outcome:', error);
-                alert('Failed to predict outcome');
+                console.error('Failed to predict:', error);
+                showToast('Failed to predict outcome', 'error');
             }
         }
 
@@ -1356,23 +2131,21 @@
             const defects = prediction.defect_risks || {};
 
             document.getElementById('prediction-results').innerHTML = `
-                <div class="grid grid-2">
+                <div class="grid grid-2 mb-1">
                     <div class="prediction-card">
                         <div class="prediction-header">
                             <span class="prediction-title">Predicted Surface</span>
-                            <span class="badge badge-info">${((prediction.confidence || 0) * 100).toFixed(0)}% confidence</span>
+                            <span class="badge badge-primary">${((prediction.confidence || 0) * 100).toFixed(0)}%</span>
                         </div>
                         <div class="prediction-value">${prediction.predicted_surface || 'Unknown'}</div>
                     </div>
                     <div class="prediction-card">
-                        <div class="prediction-header">
-                            <span class="prediction-title">Predicted Color</span>
-                        </div>
+                        <div class="prediction-title">Predicted Color</div>
                         <div class="prediction-value">${prediction.predicted_color || 'Clear/Base'}</div>
                     </div>
                 </div>
 
-                <h4 style="color: var(--accent); margin: 1rem 0;">Defect Risks</h4>
+                <h4 style="margin-bottom: 0.75rem;">Defect Risks</h4>
                 <div class="grid grid-2">
                     ${Object.entries(defects).map(([defect, risk]) => `
                         <div class="prediction-card">
@@ -1384,18 +2157,11 @@
                             </div>
                             <div class="risk-meter">
                                 <div class="risk-fill ${risk > 0.5 ? 'risk-high' : risk > 0.3 ? 'risk-medium' : 'risk-low'}"
-                                     style="width: ${risk * 100}%"></div>
+                                     style="width: ${Math.max(5, risk * 100)}%"></div>
                             </div>
                         </div>
                     `).join('')}
                 </div>
-
-                ${prediction.application_recommendations ? `
-                    <h4 style="color: var(--accent); margin: 1rem 0;">Application Tips</h4>
-                    <ul style="padding-left: 1.5rem; color: var(--text-secondary);">
-                        ${prediction.application_recommendations.map(r => `<li>${r}</li>`).join('')}
-                    </ul>
-                ` : ''}
             `;
         }
 
@@ -1404,30 +2170,29 @@
             try {
                 const response = await fetch(`${API_BASE}/api/substitutions/unavailable`);
                 const data = await response.json();
-                renderUnavailableMaterials(data.materials || []);
+                renderUnavailableMaterials(data || []);
             } catch (error) {
-                console.error('Failed to load unavailable materials:', error);
                 document.getElementById('unavailable-list').innerHTML =
-                    '<div class="empty-state text-danger">Failed to load</div>';
+                    '<div class="empty-state text-success">✓ All materials available</div>';
             }
         }
 
         function renderUnavailableMaterials(mats) {
-            if (mats.length === 0) {
+            if (!mats.length) {
                 document.getElementById('unavailable-list').innerHTML =
-                    '<div class="empty-state text-success">All materials available!</div>';
+                    '<div class="empty-state text-success">✓ All materials available!</div>';
                 return;
             }
 
             document.getElementById('unavailable-list').innerHTML = mats.map(m => `
                 <div class="substitution-item">
                     <div class="substitution-header">
-                        <span class="substitution-name">${m.name}</span>
+                        <span class="substitution-name">${m.material || m.name}</span>
                         <span class="badge ${m.status === 'discontinued' ? 'badge-danger' : 'badge-warning'}">
                             ${m.status}
                         </span>
                     </div>
-                    <p class="text-muted" style="font-size: 0.9rem;">${m.reason || ''}</p>
+                    ${m.reason ? `<p class="text-muted" style="font-size: 0.85rem;">${m.reason}</p>` : ''}
                 </div>
             `).join('');
         }
@@ -1438,7 +2203,7 @@
             const name = e.target.value;
             if (!name) {
                 document.getElementById('substitute-results').innerHTML =
-                    '<div class="empty-state">Select a material to find substitutes</div>';
+                    '<div class="empty-state"><p>Select a material to find substitutes</p></div>';
                 return;
             }
 
@@ -1447,7 +2212,7 @@
                 const data = await response.json();
                 renderSubstituteResults(data);
             } catch (error) {
-                console.error('Failed to find substitutes:', error);
+                showToast('Failed to find substitutes', 'error');
             }
         });
 
@@ -1459,20 +2224,20 @@
                     <div class="prediction-header">
                         <span class="prediction-title">Status</span>
                         <span class="badge ${data.status === 'available' ? 'badge-success' : 'badge-warning'}">
-                            ${data.status}
+                            ${data.status || 'Unknown'}
                         </span>
                     </div>
                 </div>
 
                 ${subs.length ? `
-                    <h4 style="color: var(--text-secondary); margin-bottom: 0.75rem;">Available Substitutes</h4>
+                    <h4 style="margin-bottom: 0.75rem;">Available Substitutes</h4>
                     ${subs.map(s => `
                         <div class="substitution-item">
                             <div class="substitution-header">
                                 <span class="substitution-name">${s.name}</span>
                                 <span class="substitution-ratio">${s.ratio ? `${s.ratio}:1` : '1:1'}</span>
                             </div>
-                            ${s.notes ? `<p class="text-muted" style="font-size: 0.9rem;">${s.notes}</p>` : ''}
+                            ${s.notes ? `<p class="text-muted" style="font-size: 0.85rem;">${s.notes}</p>` : ''}
                         </div>
                     `).join('')}
                 ` : '<div class="text-muted">No substitutes found</div>'}
@@ -1482,15 +2247,12 @@
         document.getElementById('check-recipe-availability-btn').addEventListener('click', async () => {
             const validIngredients = recipeIngredients.filter(i => i.name && i.percentage > 0);
             if (validIngredients.length === 0) {
-                alert('Please add ingredients to the recipe first');
+                showToast('Please add ingredients first', 'warning');
                 return;
             }
 
-            // Convert to dict format expected by API: { material_name: percentage }
             const recipeDict = {};
-            validIngredients.forEach(i => {
-                recipeDict[i.name] = i.percentage;
-            });
+            validIngredients.forEach(i => { recipeDict[i.name] = i.percentage; });
 
             try {
                 const response = await fetch(`${API_BASE}/api/substitutions/check-recipe`, {
@@ -1499,19 +2261,12 @@
                     body: JSON.stringify(recipeDict)
                 });
 
-                if (!response.ok) {
-                    throw new Error(`Server error: ${response.status}`);
-                }
+                if (!response.ok) throw new Error('Check failed');
 
                 const data = await response.json();
                 renderRecipeAvailability(data);
             } catch (error) {
-                console.error('Failed to check availability:', error);
-                document.getElementById('recipe-availability-results').innerHTML = `
-                    <div class="empty-state text-error">
-                        Error checking availability: ${error.message}
-                    </div>
-                `;
+                showToast('Failed to check availability', 'error');
             }
         });
 
@@ -1520,16 +2275,18 @@
 
             if (data.all_available || issues.length === 0) {
                 document.getElementById('recipe-availability-results').innerHTML = `
-                    <div class="empty-state text-success">
-                        ✓ All materials in your recipe are available!
+                    <div class="recommendation-item">
+                        <span>✅</span>
+                        <span>All materials in your recipe are available!</span>
                     </div>
                 `;
                 return;
             }
 
             document.getElementById('recipe-availability-results').innerHTML = `
-                <div class="text-warning mb-1">
-                    ⚠️ ${issues.length} material(s) may have availability issues:
+                <div class="warning-item mb-1">
+                    <span>⚠️</span>
+                    <span>${issues.length} material(s) may have availability issues</span>
                 </div>
                 ${issues.map(i => `
                     <div class="substitution-item">
@@ -1537,11 +2294,6 @@
                             <span class="substitution-name">${i.material}</span>
                             <span class="badge badge-warning">${i.status}</span>
                         </div>
-                        ${i.substitutes && i.substitutes.length ? `
-                            <p class="text-muted" style="font-size: 0.9rem;">
-                                Substitutes: ${i.substitutes.join(', ')}
-                            </p>
-                        ` : ''}
                     </div>
                 `).join('')}
             `;
@@ -1569,8 +2321,9 @@
                 const response = await fetch(`${API_BASE}/api/glazy/search?${params}`);
                 const data = await response.json();
                 renderGlazyResults(data.recipes || []);
+                showToast(`Found ${(data.recipes || []).length} recipes`, 'success');
             } catch (error) {
-                console.error('Failed to search Glazy:', error);
+                showToast('Failed to search Glazy', 'error');
                 document.getElementById('glazy-results').innerHTML =
                     '<div class="empty-state text-danger">Failed to search Glazy</div>';
             }
@@ -1599,12 +2352,12 @@
                     <tbody>
                         ${recipes.map(r => `
                             <tr>
-                                <td>${r.name}</td>
-                                <td>${r.cone || 'N/A'}</td>
+                                <td><strong>${r.name}</strong></td>
+                                <td><span class="badge badge-primary">${r.cone || 'N/A'}</span></td>
                                 <td>${r.atmosphere || 'N/A'}</td>
                                 <td>${r.surface || 'N/A'}</td>
                                 <td>
-                                    <button class="small secondary" onclick="importGlazyRecipe('${r.glazy_id}')">
+                                    <button class="small" onclick="importGlazyRecipe('${r.glazy_id}')">
                                         Import
                                     </button>
                                 </td>
@@ -1629,14 +2382,40 @@
                     document.getElementById('recipe-name').value = recipe.name || '';
                     renderRecipeIngredients();
                     document.querySelector('.tab[data-tab="recipe"]').click();
+                    showToast(`Imported "${recipe.name}"`, 'success');
                 }
             } catch (error) {
-                console.error('Failed to import recipe:', error);
-                alert('Failed to import recipe from Glazy');
+                showToast('Failed to import recipe', 'error');
             }
         }
 
-        // Event listeners for search/filter
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '?' && !e.ctrlKey && !e.metaKey) {
+                const activeElement = document.activeElement;
+                if (activeElement.tagName !== 'INPUT' && activeElement.tagName !== 'TEXTAREA') {
+                    e.preventDefault();
+                    showQuickStart();
+                }
+            }
+
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                calculateUMF(false);
+            }
+
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                showToast('Recipe saved (feature coming soon)', 'info');
+            }
+
+            if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                e.preventDefault();
+                document.getElementById('clear-recipe-btn').click();
+            }
+        });
+
+        // Event listeners
         document.getElementById('material-search').addEventListener('input', renderMaterialList);
         document.getElementById('material-type-filter').addEventListener('change', renderMaterialList);
 
@@ -1644,6 +2423,12 @@
         loadMaterials();
         loadMaterialTypes();
         loadUnavailableMaterials();
+
+        // Show quick start on first visit
+        if (!localStorage.getItem('glaze-visited')) {
+            setTimeout(showQuickStart, 500);
+            localStorage.setItem('glaze-visited', 'true');
+        }
     </script>
 </body>
 </html>
