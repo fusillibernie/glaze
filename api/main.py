@@ -2,7 +2,7 @@
 
 import os
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
@@ -852,7 +852,7 @@ async def upload_result_photo(
         "filename": filename,
         "url": f"/uploads/{filename}",
         "caption": caption,
-        "uploaded_at": datetime.utcnow().isoformat(),
+        "uploaded_at": datetime.now(timezone.utc).isoformat(),
     }
 
 
@@ -869,7 +869,7 @@ async def submit_result(result: ResultInput = Body(...), photo_ids: list[str] = 
             photos.append(ResultPhoto(
                 photo_id=pid,
                 url=f"/uploads/{f.name}",
-                uploaded_at=datetime.utcnow(),
+                uploaded_at=datetime.now(timezone.utc),
             ))
             break
 
@@ -891,7 +891,7 @@ async def submit_result(result: ResultInput = Body(...), photo_ids: list[str] = 
         defects=[GlazeDefect(d) for d in result.defects],
         photos=photos,
         notes=result.notes,
-        fired_at=datetime.utcnow(),
+        fired_at=datetime.now(timezone.utc),
     )
 
     # Add to predictor database

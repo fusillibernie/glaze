@@ -1486,32 +1486,42 @@
                 return;
             }
 
+            // Convert to dict format expected by API: { material_name: percentage }
+            const recipeDict = {};
+            validIngredients.forEach(i => {
+                recipeDict[i.name] = i.percentage;
+            });
+
             try {
                 const response = await fetch(`${API_BASE}/api/substitutions/check-recipe`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        ingredients: validIngredients.map(i => ({
-                            material_name: i.name,
-                            percentage: i.percentage
-                        }))
-                    })
+                    body: JSON.stringify(recipeDict)
                 });
+
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
 
                 const data = await response.json();
                 renderRecipeAvailability(data);
             } catch (error) {
                 console.error('Failed to check availability:', error);
+                document.getElementById('recipe-availability-results').innerHTML = `
+                    <div class="empty-state text-error">
+                        Error checking availability: ${error.message}
+                    </div>
+                `;
             }
         });
 
         function renderRecipeAvailability(data) {
-            const issues = data.unavailable || [];
+            const issues = data.issues || [];
 
-            if (issues.length === 0) {
+            if (data.all_available || issues.length === 0) {
                 document.getElementById('recipe-availability-results').innerHTML = `
                     <div class="empty-state text-success">
-                        All materials in your recipe are available!
+                        ✓ All materials in your recipe are available!
                     </div>
                 `;
                 return;
@@ -1519,7 +1529,7 @@
 
             document.getElementById('recipe-availability-results').innerHTML = `
                 <div class="text-warning mb-1">
-                    ${issues.length} material(s) may have availability issues:
+                    ⚠️ ${issues.length} material(s) may have availability issues:
                 </div>
                 ${issues.map(i => `
                     <div class="substitution-item">

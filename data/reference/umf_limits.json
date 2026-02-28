@@ -1,0 +1,128 @@
+{
+  "source": "Glazy.org - Compiled from Val Cushing and Hesselberth & Roy limit formulas",
+  "description": "Unity Molecular Formula (UMF) limit ranges for stable glazes by cone temperature",
+  "limits": {
+    "cone_5_6": {
+      "cushing_glossy": {
+        "KNaO": {"min": 0.05, "max": 0.6},
+        "CaO": {"min": 0.05, "max": 0.6},
+        "MgO": {"min": 0.0, "max": 0.1},
+        "Al2O3": {"min": 0.1, "max": 0.3},
+        "B2O3": {"min": 0.0, "max": 1.0},
+        "SiO2": {"min": 1.5, "max": 4.0}
+      },
+      "cushing_satin": {
+        "KNaO": {"min": 0.05, "max": 0.35},
+        "CaO": {"min": 0.05, "max": 0.7},
+        "MgO": {"min": 0.0, "max": 0.35},
+        "Al2O3": {"min": 0.2, "max": 0.4},
+        "B2O3": {"min": 0.0, "max": 0.5},
+        "SiO2": {"min": 2.0, "max": 3.5}
+      },
+      "cushing_matte": {
+        "KNaO": {"min": 0.05, "max": 0.3},
+        "CaO": {"min": 0.05, "max": 0.8},
+        "MgO": {"min": 0.0, "max": 0.45},
+        "Al2O3": {"min": 0.2, "max": 0.5},
+        "B2O3": {"min": 0.0, "max": 0.5},
+        "SiO2": {"min": 2.0, "max": 3.0}
+      },
+      "hesselberth_roy": {
+        "KNaO": {"min": 0.01, "max": 0.03},
+        "CaO": {"min": 0.2, "max": 0.6},
+        "MgO": {"min": 0.25, "max": 0.4},
+        "Al2O3": {"min": 0.0, "max": 0.2},
+        "B2O3": {"min": 0.15, "max": 0.35},
+        "SiO2": {"min": 2.5, "max": 4.0},
+        "notes": "Optimized for durability and food safety"
+      },
+      "practical_target": {
+        "notes": "Practical cone 6 target for stable functional glazes",
+        "flux_ratio_KNaO_CaO": "0.3:0.7",
+        "B2O3_typical": 0.15,
+        "SiO2_Al2O3_ratio": {"glossy": "7-9", "satin": "5-7", "matte": "3-5"}
+      }
+    },
+    "cone_9_10": {
+      "cushing_glossy": {
+        "KNaO": {"min": 0.05, "max": 0.5},
+        "CaO": {"min": 0.05, "max": 0.8},
+        "MgO": {"min": 0.0, "max": 0.15},
+        "Al2O3": {"min": 0.2, "max": 0.5},
+        "B2O3": {"min": 0.0, "max": 0.5},
+        "SiO2": {"min": 2.0, "max": 6.0}
+      },
+      "cushing_satin": {
+        "KNaO": {"min": 0.05, "max": 0.4},
+        "CaO": {"min": 0.05, "max": 0.8},
+        "MgO": {"min": 0.0, "max": 0.5},
+        "Al2O3": {"min": 0.25, "max": 0.6},
+        "B2O3": {"min": 0.0, "max": 0.4},
+        "SiO2": {"min": 2.0, "max": 5.0}
+      },
+      "cushing_matte": {
+        "KNaO": {"min": 0.05, "max": 0.3},
+        "CaO": {"min": 0.05, "max": 0.9},
+        "MgO": {"min": 0.0, "max": 0.6},
+        "Al2O3": {"min": 0.25, "max": 0.8},
+        "B2O3": {"min": 0.0, "max": 0.2},
+        "SiO2": {"min": 2.0, "max": 5.0}
+      },
+      "hesselberth_roy": {
+        "KNaO": {"min": 0.1, "max": 0.3},
+        "CaO": {"min": 0.3, "max": 0.7},
+        "MgO": {"min": 0.0, "max": 0.3},
+        "Al2O3": {"min": 0.3, "max": 0.6},
+        "B2O3": {"min": 0.0, "max": 0.3},
+        "SiO2": {"min": 3.0, "max": 5.0}
+      }
+    }
+  },
+  "oxide_roles": {
+    "SiO2": {
+      "name": "Silica",
+      "role": "glass_former",
+      "effects": "Forms glass structure, increases melting point, reduces thermal expansion"
+    },
+    "Al2O3": {
+      "name": "Alumina",
+      "role": "intermediate",
+      "effects": "Increases viscosity, prevents crystallization, improves durability"
+    },
+    "B2O3": {
+      "name": "Boron",
+      "role": "flux",
+      "effects": "Lowers melting point, essential at cone 6, reduces thermal expansion"
+    },
+    "KNaO": {
+      "name": "Alkalis (K2O + Na2O)",
+      "role": "flux",
+      "effects": "Strong flux, increases thermal expansion (crazing risk)"
+    },
+    "CaO": {
+      "name": "Calcium",
+      "role": "flux",
+      "effects": "Primary high-temp flux, promotes hardness, reduces crazing"
+    },
+    "MgO": {
+      "name": "Magnesia",
+      "role": "flux",
+      "effects": "High-temp flux, promotes smooth buttery surface, can cause crawling if too high"
+    },
+    "ZnO": {
+      "name": "Zinc",
+      "role": "flux",
+      "effects": "Active flux, promotes crystallization, can cause crawling"
+    },
+    "BaO": {
+      "name": "Barium",
+      "role": "flux",
+      "effects": "Promotes crystal development in mattes, toxic if soluble"
+    },
+    "Li2O": {
+      "name": "Lithium",
+      "role": "flux",
+      "effects": "Powerful flux, reduces thermal expansion, promotes color development"
+    }
+  }
+}
