@@ -49,6 +49,10 @@ class GlazeCategory(Enum):
     LINER = "liner"  # Food-safe liner
     CRAWL = "crawl"  # Intentional crawling effect
 
+    # Atmospheric/Woodfire
+    FLASHING_SLIP = "flashing_slip"  # Slips for atmospheric firings
+    WOODFIRE = "woodfire"  # Specifically for wood firing
+
     # Catch-all
     OTHER = "other"
 
@@ -263,6 +267,10 @@ class GlazeClassifier:
             return GlazeCategory.RUTILE_BLUE
         if "crawl" in name_lower:
             return GlazeCategory.CRAWL
+        if "flash" in name_lower and "slip" in name_lower:
+            return GlazeCategory.FLASHING_SLIP
+        if "woodfire" in name_lower or "wood fire" in name_lower:
+            return GlazeCategory.WOODFIRE
         if "liner" in name_lower or "clear" in name_lower:
             return GlazeCategory.CLEAR_GLOSSY
         if "breaking" in name_lower or "float" in name_lower:

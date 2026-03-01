@@ -87,6 +87,7 @@ class GlazeType(Enum):
     SLIP = "slip"
     ENGOBE = "engobe"
     CRAWL = "crawl"
+    FLASHING_SLIP = "flashing_slip"  # Slips that flash in atmospheric firings
     OTHER = "other"
 
 
@@ -307,4 +308,71 @@ CONE_10_WOOD = FiringSchedule(
     hold_time_minutes=30,
     cooling_rate="slow",
     notes="Ash deposits affect surface",
+)
+
+# Woodfire firing schedules
+CONE_10_WOOD_ANAGAMA = FiringSchedule(
+    name="Anagama Cone 10-12",
+    cone=ConeTemperature.CONE_10,
+    atmosphere=AtmosphereType.REDUCTION,
+    firing_type=FiringType.WOOD,
+    peak_temp_c=1320,
+    hold_time_minutes=120,
+    cooling_rate="slow",
+    notes="Traditional Japanese single-chamber kiln. 3-5 day firing typical.",
+)
+
+CONE_10_WOOD_NOBORIGAMA = FiringSchedule(
+    name="Noborigama Cone 10",
+    cone=ConeTemperature.CONE_10,
+    atmosphere=AtmosphereType.REDUCTION,
+    firing_type=FiringType.WOOD,
+    peak_temp_c=1305,
+    hold_time_minutes=60,
+    cooling_rate="slow",
+    notes="Multi-chamber climbing kiln. Variable atmosphere across chambers.",
+)
+
+CONE_11_WOOD_HOT = FiringSchedule(
+    name="Wood Fire Cone 11 Hot",
+    cone=ConeTemperature.CONE_11,
+    atmosphere=AtmosphereType.HEAVY_REDUCTION,
+    firing_type=FiringType.WOOD,
+    peak_temp_c=1315,
+    hold_time_minutes=45,
+    cooling_rate="slow",
+    notes="Hot spots in kiln near firebox. Heavy ash deposits.",
+)
+
+CONE_9_WOOD_BACK = FiringSchedule(
+    name="Wood Fire Cone 9 Back",
+    cone=ConeTemperature.CONE_9,
+    atmosphere=AtmosphereType.LIGHT_REDUCTION,
+    firing_type=FiringType.WOOD,
+    peak_temp_c=1280,
+    hold_time_minutes=30,
+    cooling_rate="slow",
+    notes="Back of kiln, lighter ash deposits, more flash potential.",
+)
+
+CONE_10_WOOD_SALT = FiringSchedule(
+    name="Wood Salt Fire Cone 10",
+    cone=ConeTemperature.CONE_10,
+    atmosphere=AtmosphereType.SALT,
+    firing_type=FiringType.WOOD_SALT,
+    peak_temp_c=1305,
+    hold_time_minutes=30,
+    cooling_rate="slow",
+    notes="Salt added during firing for orange peel texture.",
+)
+
+CONE_10_WOOD_SODA = FiringSchedule(
+    name="Wood Soda Fire Cone 10",
+    cone=ConeTemperature.CONE_10,
+    atmosphere=AtmosphereType.SODA,
+    firing_type=FiringType.WOOD_SODA,
+    peak_temp_c=1305,
+    hold_time_minutes=30,
+    cooling_rate="slow",
+    notes="Soda ash sprayed for softer orange peel effect than salt.",
 )

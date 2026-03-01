@@ -1,0 +1,214 @@
+{
+  "woodfire_schedules": [
+    {
+      "name": "Anagama Standard",
+      "kiln_type": "anagama",
+      "description": "Traditional Japanese single-chamber wood kiln",
+      "target_cone": "10-12",
+      "peak_temp_c": 1320,
+      "peak_temp_f": 2408,
+      "typical_duration_hours": "72-120",
+      "atmosphere": "variable_reduction",
+      "firing_notes": {
+        "preheat": "Slow warmup for 12-24 hours to 500C",
+        "body_reduction": "Heavy stoking creates reduction. Start at cone 010.",
+        "climb": "Push temp 20-30C per hour in final stages",
+        "soak": "Hold at peak for 2-4 hours for ash deposit buildup",
+        "cooling": "Slow cool over 2-3 days minimum"
+      },
+      "kiln_positions": [
+        {"position": "front_firebox", "typical_cone": "11-12", "characteristics": "Heaviest ash, most reduction, dramatic effects"},
+        {"position": "middle", "typical_cone": "10", "characteristics": "Good ash deposit, balanced atmosphere"},
+        {"position": "back", "typical_cone": "9-10", "characteristics": "Lighter ash, more flashing, subtle effects"},
+        {"position": "side_stoke", "typical_cone": "10-11", "characteristics": "Direct flame, good flash, variable"}
+      ],
+      "notes": "Results vary dramatically by position. Front pieces get heavy ash deposits."
+    },
+    {
+      "name": "Noborigama Standard",
+      "kiln_type": "noborigama",
+      "description": "Multi-chamber climbing kiln",
+      "target_cone": "10",
+      "peak_temp_c": 1305,
+      "peak_temp_f": 2381,
+      "typical_duration_hours": "48-72",
+      "atmosphere": "variable_reduction",
+      "firing_notes": {
+        "first_chamber": "Fire like anagama, heaviest ash",
+        "middle_chambers": "Heat from previous chamber, side stoking",
+        "back_chambers": "Lighter firing, more oxidation possible",
+        "cooling": "Brick up chambers as they finish"
+      },
+      "kiln_positions": [
+        {"position": "first_chamber", "typical_cone": "11", "characteristics": "Anagama-like, heavy ash"},
+        {"position": "second_chamber", "typical_cone": "10", "characteristics": "Moderate ash, good flash"},
+        {"position": "third_chamber", "typical_cone": "10", "characteristics": "Light ash, subtle effects"},
+        {"position": "back_chambers", "typical_cone": "9-10", "characteristics": "Clean firing, minimal ash"}
+      ],
+      "notes": "Each chamber fires progressively cleaner. Good for variety in one firing."
+    },
+    {
+      "name": "Train Kiln Fast Fire",
+      "kiln_type": "train",
+      "description": "Fast-fire train-style wood kiln",
+      "target_cone": "10",
+      "peak_temp_c": 1300,
+      "peak_temp_f": 2372,
+      "typical_duration_hours": "18-24",
+      "atmosphere": "reduction",
+      "firing_notes": {
+        "warmup": "Can go faster than anagama, 4-8 hours to 500C",
+        "body": "Aggressive stoking, 40-50C per hour climb",
+        "peak": "Short soak, 30-60 minutes",
+        "cooling": "Can cool faster, 24-48 hours"
+      },
+      "kiln_positions": [
+        {"position": "front", "typical_cone": "10-11", "characteristics": "Direct flame, good ash"},
+        {"position": "middle", "typical_cone": "10", "characteristics": "Even heat, balanced"},
+        {"position": "back", "typical_cone": "9-10", "characteristics": "Lighter, more flash"}
+      ],
+      "notes": "More predictable than anagama. Good for production work."
+    },
+    {
+      "name": "Bourry Box Standard",
+      "kiln_type": "bourry_box",
+      "description": "Side-stoke Bourry box design",
+      "target_cone": "10",
+      "peak_temp_c": 1305,
+      "peak_temp_f": 2381,
+      "typical_duration_hours": "12-18",
+      "atmosphere": "oxidation_reduction_cycle",
+      "firing_notes": {
+        "warmup": "Moderate preheat, 6-8 hours",
+        "stoking_cycle": "Stoke, let burn down, repeat. Creates ox/red cycles.",
+        "peak": "Soak 30-60 minutes",
+        "cooling": "Standard slow cool"
+      },
+      "kiln_positions": [
+        {"position": "flame_side", "typical_cone": "10", "characteristics": "Direct flame, ash buildup"},
+        {"position": "off_flame", "typical_cone": "10", "characteristics": "Softer effects, good flash"},
+        {"position": "top", "typical_cone": "10", "characteristics": "Less ash, clean firing"}
+      ],
+      "notes": "Efficient design. Good for smaller loads and faster turnaround."
+    },
+    {
+      "name": "Salt/Wood Hybrid",
+      "kiln_type": "wood_salt",
+      "description": "Wood kiln with salt introduction",
+      "target_cone": "10",
+      "peak_temp_c": 1300,
+      "peak_temp_f": 2372,
+      "typical_duration_hours": "24-36",
+      "atmosphere": "reduction_salt",
+      "firing_notes": {
+        "body_fire": "Standard wood firing to cone 8",
+        "salt_introduction": "Add salt at cone 9-10, 1-2 lbs per cubic foot",
+        "salting_method": "Throw into firebox or through ports",
+        "post_salt": "Continue firing 30-60 minutes",
+        "cooling": "Slow cool for best orange peel"
+      },
+      "kiln_positions": [
+        {"position": "near_firebox", "typical_cone": "10", "characteristics": "Heavy salt, orange peel texture"},
+        {"position": "middle", "typical_cone": "10", "characteristics": "Moderate salt, good texture"},
+        {"position": "back", "typical_cone": "9-10", "characteristics": "Light salt, subtle texture"}
+      ],
+      "notes": "Salt creates orange peel texture on exposed clay. Protect with wadding."
+    },
+    {
+      "name": "Soda/Wood Hybrid",
+      "kiln_type": "wood_soda",
+      "description": "Wood kiln with soda introduction",
+      "target_cone": "10",
+      "peak_temp_c": 1300,
+      "peak_temp_f": 2372,
+      "typical_duration_hours": "24-36",
+      "atmosphere": "reduction_soda",
+      "firing_notes": {
+        "body_fire": "Standard wood firing to cone 8-9",
+        "soda_introduction": "Spray soda ash solution at cone 9-10",
+        "soda_mix": "1 part soda ash to 3 parts water",
+        "application": "Spray through ports every 5-10 minutes",
+        "post_soda": "Continue firing 30-60 minutes"
+      },
+      "kiln_positions": [
+        {"position": "near_ports", "typical_cone": "10", "characteristics": "Heavy soda buildup"},
+        {"position": "middle", "typical_cone": "10", "characteristics": "Moderate soda, even coverage"},
+        {"position": "back", "typical_cone": "9-10", "characteristics": "Light soda, subtle"}
+      ],
+      "notes": "Soda gives softer orange peel than salt. More environmentally friendly."
+    },
+    {
+      "name": "Low Fire Wood (Pit Style)",
+      "kiln_type": "pit_fire",
+      "description": "Low temperature wood/sawdust firing",
+      "target_cone": "018-010",
+      "peak_temp_c": 700,
+      "peak_temp_f": 1292,
+      "typical_duration_hours": "4-12",
+      "atmosphere": "smoky_reduction",
+      "firing_notes": {
+        "packing": "Nestle pieces in sawdust with colorants",
+        "ignition": "Light from top, burn down slowly",
+        "atmosphere": "Heavy smoke creates carbon marks",
+        "cooling": "Can be fast or slow depending on desired effects"
+      },
+      "colorant_additions": [
+        {"material": "Copper Carbonate", "effect": "Blue-green flashes"},
+        {"material": "Salt", "effect": "Orange flashes"},
+        {"material": "Seaweed", "effect": "Sodium flashes"},
+        {"material": "Banana Peels", "effect": "Yellow flashes"},
+        {"material": "Steel Wool", "effect": "Iron marks"}
+      ],
+      "notes": "Not for functional ware. Decorative only. Results are unpredictable."
+    },
+    {
+      "name": "Cone 6 Wood Fire",
+      "kiln_type": "wood_mid",
+      "description": "Mid-fire wood kiln for cone 6",
+      "target_cone": "6",
+      "peak_temp_c": 1222,
+      "peak_temp_f": 2232,
+      "typical_duration_hours": "12-24",
+      "atmosphere": "variable_reduction",
+      "firing_notes": {
+        "warmup": "Standard 8-12 hour preheat",
+        "climb": "Steady stoking to reach temp",
+        "peak": "Short soak at cone 6",
+        "cooling": "Slow cool for best results"
+      },
+      "kiln_positions": [
+        {"position": "front", "typical_cone": "6-7", "characteristics": "Good ash for mid fire"},
+        {"position": "back", "typical_cone": "5-6", "characteristics": "Subtle effects"}
+      ],
+      "notes": "Less dramatic than cone 10 but still produces wood fire character."
+    }
+  ],
+  "temperature_reference": {
+    "cones": {
+      "018": {"temp_c": 696, "temp_f": 1285, "category": "low_fire"},
+      "06": {"temp_c": 999, "temp_f": 1830, "category": "low_fire"},
+      "04": {"temp_c": 1060, "temp_f": 1940, "category": "low_fire"},
+      "02": {"temp_c": 1120, "temp_f": 2048, "category": "low_fire"},
+      "1": {"temp_c": 1136, "temp_f": 2077, "category": "mid_fire"},
+      "3": {"temp_c": 1168, "temp_f": 2134, "category": "mid_fire"},
+      "5": {"temp_c": 1196, "temp_f": 2185, "category": "mid_fire"},
+      "6": {"temp_c": 1222, "temp_f": 2232, "category": "mid_fire"},
+      "7": {"temp_c": 1240, "temp_f": 2264, "category": "mid_fire"},
+      "8": {"temp_c": 1263, "temp_f": 2305, "category": "high_fire"},
+      "9": {"temp_c": 1280, "temp_f": 2336, "category": "high_fire"},
+      "10": {"temp_c": 1305, "temp_f": 2381, "category": "high_fire"},
+      "11": {"temp_c": 1315, "temp_f": 2399, "category": "high_fire"},
+      "12": {"temp_c": 1326, "temp_f": 2419, "category": "high_fire"},
+      "13": {"temp_c": 1346, "temp_f": 2455, "category": "high_fire"}
+    },
+    "woodfire_typical_range": {
+      "anagama_front": "cone 11-13",
+      "anagama_middle": "cone 10-11",
+      "anagama_back": "cone 9-10",
+      "train_kiln": "cone 10",
+      "bourry_box": "cone 10",
+      "salt_wood": "cone 10",
+      "soda_wood": "cone 10"
+    }
+  }
+}
