@@ -1,0 +1,436 @@
+{
+  "woodfire_glazes": [
+    {
+      "name": "Anagama Natural Ash",
+      "description": "Designed to interact with natural ash deposits",
+      "cone": "10-12",
+      "atmosphere": "wood",
+      "surface": "glossy_variable",
+      "ingredients": [
+        {"material": "Custer Feldspar", "percentage": 45.0},
+        {"material": "Silica (Flint)", "percentage": 25.0},
+        {"material": "Whiting (Calcium Carbonate)", "percentage": 15.0},
+        {"material": "EPK Kaolin", "percentage": 15.0}
+      ],
+      "kiln_position": "front_to_middle",
+      "expected_result": "Ash landing creates glossy pools and drips",
+      "notes": "Simple recipe allows ash to dominate. Apply thin to let ash build."
+    },
+    {
+      "name": "Wood Ash Celadon",
+      "description": "Traditional ash glaze for cone 10 reduction",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "glossy",
+      "ingredients": [
+        {"material": "Custer Feldspar", "percentage": 40.0},
+        {"material": "Wood Ash (Mixed)", "percentage": 40.0},
+        {"material": "Ball Clay (OM4)", "percentage": 20.0}
+      ],
+      "colorants": [
+        {"material": "Red Iron Oxide", "percentage": 1.5}
+      ],
+      "kiln_position": "middle_to_back",
+      "expected_result": "celadon green with ash variations",
+      "notes": "Wash ash thoroughly. Results vary with ash source. Oak ash is classic."
+    },
+    {
+      "name": "Nuka (Rice Ash)",
+      "description": "Japanese-style rice hull ash glaze",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "satin_opalescent",
+      "ingredients": [
+        {"material": "Rice Hull Ash", "percentage": 50.0},
+        {"material": "Custer Feldspar", "percentage": 35.0},
+        {"material": "Ball Clay (OM4)", "percentage": 15.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "milky white/cream with opalescent quality",
+      "notes": "Rice hull ash is high in silica. Creates unique soft opalescence."
+    },
+    {
+      "name": "Igayaki Style",
+      "description": "Based on Iga ware tradition",
+      "cone": "11-12",
+      "atmosphere": "wood",
+      "surface": "crusty_natural",
+      "ingredients": [
+        {"material": "Custer Feldspar", "percentage": 50.0},
+        {"material": "Silica (Flint)", "percentage": 20.0},
+        {"material": "EPK Kaolin", "percentage": 20.0},
+        {"material": "Whiting (Calcium Carbonate)", "percentage": 10.0}
+      ],
+      "kiln_position": "firebox",
+      "expected_result": "heavy ash buildup with crusty texture",
+      "notes": "For firebox placement. Ash creates natural glaze. Apply thin or bare."
+    },
+    {
+      "name": "Shigaraki Style",
+      "description": "Simple base for Shigaraki-inspired effects",
+      "cone": "10-11",
+      "atmosphere": "wood",
+      "surface": "variable",
+      "ingredients": [
+        {"material": "Custer Feldspar", "percentage": 40.0},
+        {"material": "Wood Ash (Mixed)", "percentage": 30.0},
+        {"material": "Silica (Flint)", "percentage": 15.0},
+        {"material": "Ball Clay (OM4)", "percentage": 15.0}
+      ],
+      "kiln_position": "any",
+      "expected_result": "natural variations from ash and flame",
+      "notes": "Traditional Japanese aesthetic. Let kiln do the work."
+    },
+    {
+      "name": "Carbon Trap Shino",
+      "description": "Shino glaze designed for carbon trapping",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "satin_with_carbon",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 42.0},
+        {"material": "Spodumene", "percentage": 28.0},
+        {"material": "Ball Clay (OM4)", "percentage": 14.0},
+        {"material": "Soda Ash", "percentage": 16.0}
+      ],
+      "kiln_position": "middle_to_back",
+      "expected_result": "orange flash with black carbon trap patterns",
+      "notes": "Apply thick. Carbon traps in reduction pockets. Best in wood kiln."
+    },
+    {
+      "name": "Iron Saturate Wood Fire",
+      "description": "High iron glaze for wood kiln tenmoku effects",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "glossy_to_matte",
+      "ingredients": [
+        {"material": "Custer Feldspar", "percentage": 40.0},
+        {"material": "Silica (Flint)", "percentage": 20.0},
+        {"material": "Whiting (Calcium Carbonate)", "percentage": 15.0},
+        {"material": "EPK Kaolin", "percentage": 15.0},
+        {"material": "Talc", "percentage": 10.0}
+      ],
+      "colorants": [
+        {"material": "Red Iron Oxide", "percentage": 10.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "brown-black with rust breaking and ash interaction",
+      "notes": "Iron interacts dramatically with ash deposits and flame."
+    },
+    {
+      "name": "Oribe Wood Fire",
+      "description": "Green copper glaze adapted for wood firing",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "glossy",
+      "ingredients": [
+        {"material": "Custer Feldspar", "percentage": 40.0},
+        {"material": "Wood Ash (Mixed)", "percentage": 25.0},
+        {"material": "Silica (Flint)", "percentage": 15.0},
+        {"material": "Whiting (Calcium Carbonate)", "percentage": 10.0},
+        {"material": "EPK Kaolin", "percentage": 10.0}
+      ],
+      "colorants": [
+        {"material": "Copper Carbonate", "percentage": 3.0}
+      ],
+      "kiln_position": "back",
+      "expected_result": "copper green with possible red flashes in reduction",
+      "notes": "Position in lighter reduction area for green. Heavy reduction goes red."
+    },
+    {
+      "name": "Bizen Hidasuki Influence",
+      "description": "Base for straw-wrap firing effects",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "dry_natural",
+      "ingredients": [
+        {"material": "Custer Feldspar", "percentage": 50.0},
+        {"material": "Silica (Flint)", "percentage": 30.0},
+        {"material": "EPK Kaolin", "percentage": 20.0}
+      ],
+      "kiln_position": "any",
+      "expected_result": "orange stripes where straw was wrapped",
+      "notes": "Apply thin. Wrap with rice straw before firing for hidasuki marks."
+    },
+    {
+      "name": "50/50 Ash Glaze",
+      "description": "Simple 50/50 ash and feldspar formula",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "glossy_to_satin",
+      "ingredients": [
+        {"material": "Wood Ash (Mixed)", "percentage": 50.0},
+        {"material": "Custer Feldspar", "percentage": 50.0}
+      ],
+      "kiln_position": "middle_to_back",
+      "expected_result": "green to amber depending on ash type",
+      "notes": "Classic simple formula. Results depend entirely on ash source."
+    },
+    {
+      "name": "Oak Ash Special",
+      "description": "Optimized for oak wood ash",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "glossy",
+      "ingredients": [
+        {"material": "Oak Wood Ash", "percentage": 45.0},
+        {"material": "Custer Feldspar", "percentage": 35.0},
+        {"material": "Ball Clay (OM4)", "percentage": 15.0},
+        {"material": "Silica (Flint)", "percentage": 5.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "warm amber to brown",
+      "notes": "Oak ash is high in calcium. Gives rich warm tones."
+    },
+    {
+      "name": "Apple Wood Ash Glaze",
+      "description": "Using apple wood ash for unique character",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "satin",
+      "ingredients": [
+        {"material": "Apple Wood Ash", "percentage": 40.0},
+        {"material": "Custer Feldspar", "percentage": 35.0},
+        {"material": "Ball Clay (OM4)", "percentage": 15.0},
+        {"material": "Silica (Flint)", "percentage": 10.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "soft gray-green satin",
+      "notes": "Fruit wood ashes give different chemistry than hardwoods."
+    },
+    {
+      "name": "Pine Ash Yellow",
+      "description": "Pine ash for warm yellow tones",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "satin_to_matte",
+      "ingredients": [
+        {"material": "Pine Wood Ash", "percentage": 50.0},
+        {"material": "Custer Feldspar", "percentage": 30.0},
+        {"material": "Ball Clay (OM4)", "percentage": 20.0}
+      ],
+      "kiln_position": "back",
+      "expected_result": "warm yellow to amber",
+      "notes": "Pine ash tends toward yellow. High in silica."
+    },
+    {
+      "name": "Mixed Hardwood Ash Base",
+      "description": "Versatile ash glaze using mixed hardwood",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "glossy_variable",
+      "ingredients": [
+        {"material": "Wood Ash (Mixed)", "percentage": 40.0},
+        {"material": "Custer Feldspar", "percentage": 30.0},
+        {"material": "Silica (Flint)", "percentage": 15.0},
+        {"material": "Ball Clay (OM4)", "percentage": 15.0}
+      ],
+      "kiln_position": "any",
+      "expected_result": "variable green to amber",
+      "notes": "Mixed ash gives good average results. Collect from your firing."
+    },
+    {
+      "name": "Fake Ash (Synthetic)",
+      "description": "Synthetic ash substitute for consistent results",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "glossy",
+      "ingredients": [
+        {"material": "Custer Feldspar", "percentage": 40.0},
+        {"material": "Whiting (Calcium Carbonate)", "percentage": 20.0},
+        {"material": "Silica (Flint)", "percentage": 20.0},
+        {"material": "EPK Kaolin", "percentage": 10.0},
+        {"material": "Dolomite", "percentage": 5.0},
+        {"material": "Talc", "percentage": 5.0}
+      ],
+      "kiln_position": "any",
+      "expected_result": "consistent ash-like surface",
+      "notes": "When you want ash glaze look without variability of real ash."
+    },
+    {
+      "name": "Namako (Sea Cucumber)",
+      "description": "Blue ash glaze in the namako tradition",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "satin",
+      "ingredients": [
+        {"material": "Wood Ash (Mixed)", "percentage": 35.0},
+        {"material": "Custer Feldspar", "percentage": 30.0},
+        {"material": "Silica (Flint)", "percentage": 20.0},
+        {"material": "Ball Clay (OM4)", "percentage": 15.0}
+      ],
+      "colorants": [
+        {"material": "Cobalt Oxide", "percentage": 0.5},
+        {"material": "Rutile", "percentage": 3.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "blue-gray with mottled texture",
+      "notes": "Rutile breaks the cobalt for sea cucumber texture."
+    },
+    {
+      "name": "Salt/Wood Hybrid Glaze",
+      "description": "Base glaze for salt/wood combination firing",
+      "cone": "10",
+      "atmosphere": "wood_salt",
+      "surface": "orange_peel",
+      "ingredients": [
+        {"material": "Custer Feldspar", "percentage": 40.0},
+        {"material": "Silica (Flint)", "percentage": 25.0},
+        {"material": "EPK Kaolin", "percentage": 20.0},
+        {"material": "Whiting (Calcium Carbonate)", "percentage": 15.0}
+      ],
+      "kiln_position": "any",
+      "expected_result": "orange peel texture with ash pooling",
+      "notes": "High alumina for good salt texture. Ash deposits melt into glaze."
+    },
+    {
+      "name": "Soda/Wood Hybrid Glaze",
+      "description": "For wood firing with soda introduction",
+      "cone": "10",
+      "atmosphere": "wood_soda",
+      "surface": "soft_orange_peel",
+      "ingredients": [
+        {"material": "Custer Feldspar", "percentage": 45.0},
+        {"material": "Silica (Flint)", "percentage": 25.0},
+        {"material": "EPK Kaolin", "percentage": 15.0},
+        {"material": "Whiting (Calcium Carbonate)", "percentage": 10.0},
+        {"material": "Talc", "percentage": 5.0}
+      ],
+      "kiln_position": "any",
+      "expected_result": "softer orange peel than salt",
+      "notes": "Soda gives more subtle texture than salt. Wood adds depth."
+    },
+    {
+      "name": "Firebox Runny",
+      "description": "Designed to run and drip in firebox heat",
+      "cone": "11-12",
+      "atmosphere": "wood",
+      "surface": "glossy_runny",
+      "ingredients": [
+        {"material": "Custer Feldspar", "percentage": 50.0},
+        {"material": "Whiting (Calcium Carbonate)", "percentage": 25.0},
+        {"material": "Silica (Flint)", "percentage": 15.0},
+        {"material": "EPK Kaolin", "percentage": 10.0}
+      ],
+      "kiln_position": "firebox",
+      "expected_result": "dramatic runs and pooling",
+      "notes": "Low alumina makes it run. Use on tall forms for dramatic drips."
+    },
+    {
+      "name": "Back-of-Kiln Dry",
+      "description": "Higher firing glaze for cooler kiln areas",
+      "cone": "9-10",
+      "atmosphere": "wood",
+      "surface": "satin_to_matte",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 45.0},
+        {"material": "Whiting (Calcium Carbonate)", "percentage": 20.0},
+        {"material": "Silica (Flint)", "percentage": 15.0},
+        {"material": "EPK Kaolin", "percentage": 15.0},
+        {"material": "Talc", "percentage": 5.0}
+      ],
+      "kiln_position": "back",
+      "expected_result": "mature satin surface at cone 9",
+      "notes": "Extra flux to mature in cooler back positions."
+    },
+    {
+      "name": "Kaki (Persimmon)",
+      "description": "Traditional Japanese iron red glaze",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "glossy_to_satin",
+      "ingredients": [
+        {"material": "Custer Feldspar", "percentage": 35.0},
+        {"material": "Wood Ash (Mixed)", "percentage": 30.0},
+        {"material": "Silica (Flint)", "percentage": 15.0},
+        {"material": "Whiting (Calcium Carbonate)", "percentage": 10.0},
+        {"material": "EPK Kaolin", "percentage": 10.0}
+      ],
+      "colorants": [
+        {"material": "Red Iron Oxide", "percentage": 8.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "rich persimmon red-orange",
+      "notes": "High iron with ash creates kaki color in reduction."
+    },
+    {
+      "name": "Tetsu-yu (Iron Glaze)",
+      "description": "Classic Japanese iron glaze for wood firing",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "glossy_variable",
+      "ingredients": [
+        {"material": "Custer Feldspar", "percentage": 40.0},
+        {"material": "Silica (Flint)", "percentage": 20.0},
+        {"material": "Whiting (Calcium Carbonate)", "percentage": 15.0},
+        {"material": "Ball Clay (OM4)", "percentage": 15.0},
+        {"material": "Talc", "percentage": 10.0}
+      ],
+      "colorants": [
+        {"material": "Red Iron Oxide", "percentage": 12.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "deep brown-black with rust spots",
+      "notes": "Heavy iron creates tenmoku-like effects with ash interaction."
+    },
+    {
+      "name": "Ash Catcher Clear",
+      "description": "Clear glaze designed to showcase natural ash",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "glossy_clear",
+      "ingredients": [
+        {"material": "Custer Feldspar", "percentage": 35.0},
+        {"material": "Silica (Flint)", "percentage": 30.0},
+        {"material": "Whiting (Calcium Carbonate)", "percentage": 15.0},
+        {"material": "EPK Kaolin", "percentage": 15.0},
+        {"material": "Zinc Oxide", "percentage": 5.0}
+      ],
+      "kiln_position": "front_to_middle",
+      "expected_result": "clear base with visible ash landing patterns",
+      "notes": "Clear shows ash deposits as distinct marks and streaks."
+    },
+    {
+      "name": "Guinea Fowl",
+      "description": "Spotted wood fire glaze effect",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "satin_spotted",
+      "ingredients": [
+        {"material": "Custer Feldspar", "percentage": 40.0},
+        {"material": "Wood Ash (Mixed)", "percentage": 25.0},
+        {"material": "Dolomite", "percentage": 15.0},
+        {"material": "Silica (Flint)", "percentage": 10.0},
+        {"material": "EPK Kaolin", "percentage": 10.0}
+      ],
+      "colorants": [
+        {"material": "Rutile", "percentage": 5.0},
+        {"material": "Red Iron Oxide", "percentage": 2.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "tan with scattered dark spots",
+      "notes": "Rutile and dolomite create spotted pattern like guinea fowl feathers."
+    },
+    {
+      "name": "Ember Yellow",
+      "description": "Warm yellow for wood fire atmosphere",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "satin",
+      "ingredients": [
+        {"material": "Custer Feldspar", "percentage": 40.0},
+        {"material": "Silica (Flint)", "percentage": 25.0},
+        {"material": "Dolomite", "percentage": 15.0},
+        {"material": "EPK Kaolin", "percentage": 15.0},
+        {"material": "Talc", "percentage": 5.0}
+      ],
+      "colorants": [
+        {"material": "Rutile", "percentage": 6.0},
+        {"material": "Red Iron Oxide", "percentage": 1.0}
+      ],
+      "kiln_position": "middle_to_back",
+      "expected_result": "warm ember yellow with variation",
+      "notes": "Rutile creates warm yellow. Ash interaction adds depth."
+    }
+  ]
+}
