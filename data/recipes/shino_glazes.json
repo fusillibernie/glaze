@@ -1,0 +1,565 @@
+{
+  "shino_glazes": [
+    {
+      "name": "Malcolm Davis Carbon Trap Shino",
+      "description": "The iconic American shino that revolutionized carbon trapping",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "satin_carbon_trap",
+      "image": "images/shino_glazes/malcolm_davis_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 42.0},
+        {"material": "Spodumene", "percentage": 28.0},
+        {"material": "Ball Clay (OM4)", "percentage": 14.0},
+        {"material": "Soda Ash", "percentage": 16.0}
+      ],
+      "kiln_position": "middle_to_back",
+      "expected_result": "orange flash with dramatic black carbon trap patterns",
+      "application": "Apply thick (3-4 coats) for best carbon trap",
+      "notes": "The definitive American shino. Soda ash is soluble - mix fresh each time. Best results in wood kiln with heavy reduction."
+    },
+    {
+      "name": "Virginia Scotchie Shino",
+      "description": "Reliable shino with good orange flash",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "satin_flash",
+      "image": "images/shino_glazes/virginia_scotchie_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 46.0},
+        {"material": "Spodumene", "percentage": 24.0},
+        {"material": "Ball Clay (OM4)", "percentage": 18.0},
+        {"material": "Soda Ash", "percentage": 12.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "warm orange with subtle carbon",
+      "application": "Dip or brush, medium thickness",
+      "notes": "More forgiving than Malcolm Davis. Good for beginners to shino."
+    },
+    {
+      "name": "Tom Coleman Shino",
+      "description": "West coast variation with excellent flash",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "glossy_to_satin",
+      "image": "images/shino_glazes/tom_coleman_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 40.0},
+        {"material": "Spodumene", "percentage": 30.0},
+        {"material": "Ball Clay (OM4)", "percentage": 15.0},
+        {"material": "Soda Ash", "percentage": 15.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "rich orange to rust with glossy areas",
+      "application": "Dip thick",
+      "notes": "Higher spodumene gives more flux. Tends toward glossier surface."
+    },
+    {
+      "name": "Traditional Japanese Shino",
+      "description": "Based on Mino region originals",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "soft_matte",
+      "image": "images/shino_glazes/traditional_japanese_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 80.0},
+        {"material": "Ball Clay (OM4)", "percentage": 20.0}
+      ],
+      "kiln_position": "any",
+      "expected_result": "milky white to pale orange",
+      "application": "Brush thick",
+      "notes": "Simple traditional formula. Relies heavily on kiln atmosphere for color."
+    },
+    {
+      "name": "Nezumi (Gray Mouse) Shino",
+      "description": "Gray shino achieved through iron addition",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "satin_gray",
+      "image": "images/shino_glazes/nezumi_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 42.0},
+        {"material": "Spodumene", "percentage": 26.0},
+        {"material": "Ball Clay (OM4)", "percentage": 16.0},
+        {"material": "Soda Ash", "percentage": 14.0}
+      ],
+      "colorants": [
+        {"material": "Red Iron Oxide", "percentage": 2.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "gray to gray-green with orange blush",
+      "application": "Dip or brush thick",
+      "notes": "Iron creates gray undertone. Flash still shows through as orange."
+    },
+    {
+      "name": "Beni (Red) Shino",
+      "description": "Red-orange shino variation",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "satin_red",
+      "image": "images/shino_glazes/beni_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 40.0},
+        {"material": "Spodumene", "percentage": 28.0},
+        {"material": "Ball Clay (OM4)", "percentage": 14.0},
+        {"material": "Soda Ash", "percentage": 16.0}
+      ],
+      "colorants": [
+        {"material": "Red Iron Oxide", "percentage": 4.0}
+      ],
+      "kiln_position": "middle_to_front",
+      "expected_result": "deep red-orange to rust",
+      "application": "Apply thick",
+      "notes": "Higher iron intensifies red-orange. Best in heavier reduction."
+    },
+    {
+      "name": "Shino with Ash",
+      "description": "Shino modified with wood ash for texture",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "textured_satin",
+      "image": "images/shino_glazes/shino_with_ash.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 38.0},
+        {"material": "Spodumene", "percentage": 24.0},
+        {"material": "Ball Clay (OM4)", "percentage": 14.0},
+        {"material": "Soda Ash", "percentage": 14.0},
+        {"material": "Wood Ash (Mixed)", "percentage": 10.0}
+      ],
+      "kiln_position": "front_to_middle",
+      "expected_result": "textured surface with ash runs",
+      "application": "Dip",
+      "notes": "Ash addition creates integration with natural ash deposits."
+    },
+    {
+      "name": "High Soda Shino",
+      "description": "Extra soda ash for dramatic carbon trapping",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "heavy_carbon_trap",
+      "image": "images/shino_glazes/high_soda_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 38.0},
+        {"material": "Spodumene", "percentage": 26.0},
+        {"material": "Ball Clay (OM4)", "percentage": 14.0},
+        {"material": "Soda Ash", "percentage": 22.0}
+      ],
+      "kiln_position": "back",
+      "expected_result": "intense carbon trapping with orange flash",
+      "application": "Apply very thick (4-5 coats)",
+      "notes": "Very high soda content. Mix immediately before use. Dramatic results but less predictable."
+    },
+    {
+      "name": "Low Soda Shino",
+      "description": "Reduced soda for more stable mixing",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "satin_subtle",
+      "image": "images/shino_glazes/low_soda_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 48.0},
+        {"material": "Spodumene", "percentage": 28.0},
+        {"material": "Ball Clay (OM4)", "percentage": 16.0},
+        {"material": "Soda Ash", "percentage": 8.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "subtle orange flash, less carbon trap",
+      "application": "Dip or brush",
+      "notes": "More stable in bucket. Longer working time. Subtler effects."
+    },
+    {
+      "name": "Lithium Shino",
+      "description": "Lithium flux variation for brighter colors",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "bright_satin",
+      "image": "images/shino_glazes/lithium_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 40.0},
+        {"material": "Spodumene", "percentage": 35.0},
+        {"material": "Ball Clay (OM4)", "percentage": 15.0},
+        {"material": "Soda Ash", "percentage": 10.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "bright orange with pink undertones",
+      "application": "Dip",
+      "notes": "Higher spodumene (lithium source) gives brighter, more saturated flash."
+    },
+    {
+      "name": "Petalite Shino",
+      "description": "Uses petalite as lithium source",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "smooth_satin",
+      "image": "images/shino_glazes/petalite_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 40.0},
+        {"material": "Petalite", "percentage": 28.0},
+        {"material": "Ball Clay (OM4)", "percentage": 16.0},
+        {"material": "Soda Ash", "percentage": 16.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "smoother surface than spodumene version",
+      "application": "Dip or brush",
+      "notes": "Petalite gives slightly different melt than spodumene. Smoother texture."
+    },
+    {
+      "name": "F4 Feldspar Shino",
+      "description": "Using F4 feldspar instead of nepheline syenite",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "satin_warm",
+      "image": "images/shino_glazes/f4_feldspar_shino.jpg",
+      "ingredients": [
+        {"material": "F4 Feldspar", "percentage": 44.0},
+        {"material": "Spodumene", "percentage": 26.0},
+        {"material": "Ball Clay (OM4)", "percentage": 16.0},
+        {"material": "Soda Ash", "percentage": 14.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "warmer tone than nepheline syenite version",
+      "application": "Dip",
+      "notes": "F4 gives slightly warmer undertone. Good substitute when neph sy unavailable."
+    },
+    {
+      "name": "Custer Feldspar Shino",
+      "description": "Traditional American feldspar variation",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "classic_satin",
+      "image": "images/shino_glazes/custer_shino.jpg",
+      "ingredients": [
+        {"material": "Custer Feldspar", "percentage": 45.0},
+        {"material": "Spodumene", "percentage": 25.0},
+        {"material": "Ball Clay (OM4)", "percentage": 16.0},
+        {"material": "Soda Ash", "percentage": 14.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "classic orange flash",
+      "application": "Dip thick",
+      "notes": "Custer gives reliable results. Slightly more refractory than neph sy."
+    },
+    {
+      "name": "Kaolin-Rich Shino",
+      "description": "Extra clay for thicker application",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "thick_matte",
+      "image": "images/shino_glazes/kaolin_rich_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 38.0},
+        {"material": "Spodumene", "percentage": 24.0},
+        {"material": "Ball Clay (OM4)", "percentage": 12.0},
+        {"material": "EPK Kaolin", "percentage": 12.0},
+        {"material": "Soda Ash", "percentage": 14.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "thicker, more matte surface",
+      "application": "Brush very thick",
+      "notes": "Extra clay allows thicker application without running. More crawl potential."
+    },
+    {
+      "name": "EPK Shino",
+      "description": "Using EPK kaolin instead of ball clay",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "white_base_flash",
+      "image": "images/shino_glazes/epk_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 44.0},
+        {"material": "Spodumene", "percentage": 26.0},
+        {"material": "EPK Kaolin", "percentage": 16.0},
+        {"material": "Soda Ash", "percentage": 14.0}
+      ],
+      "kiln_position": "middle_to_back",
+      "expected_result": "whiter base with orange flash",
+      "application": "Dip",
+      "notes": "EPK gives whiter base than ball clay. Flash shows as contrast."
+    },
+    {
+      "name": "Grolleg Shino",
+      "description": "Fine white shino with china clay",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "fine_white_flash",
+      "image": "images/shino_glazes/grolleg_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 42.0},
+        {"material": "Spodumene", "percentage": 26.0},
+        {"material": "Grolleg Kaolin", "percentage": 18.0},
+        {"material": "Soda Ash", "percentage": 14.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "very white base with delicate flash",
+      "application": "Spray thin coats",
+      "notes": "Grolleg creates finest, whitest shino base. Flash is subtle and refined."
+    },
+    {
+      "name": "Tennessee Ball Clay Shino",
+      "description": "Using Tennessee ball clay for warmer tone",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "warm_satin",
+      "image": "images/shino_glazes/tennessee_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 42.0},
+        {"material": "Spodumene", "percentage": 26.0},
+        {"material": "Tennessee Ball Clay", "percentage": 18.0},
+        {"material": "Soda Ash", "percentage": 14.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "warmer, more amber base tone",
+      "application": "Dip",
+      "notes": "Tennessee ball clay adds iron for warmer undertone."
+    },
+    {
+      "name": "Goldart Shino",
+      "description": "Using Goldart for tan undertone",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "tan_flash",
+      "image": "images/shino_glazes/goldart_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 40.0},
+        {"material": "Spodumene", "percentage": 26.0},
+        {"material": "Goldart Clay", "percentage": 20.0},
+        {"material": "Soda Ash", "percentage": 14.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "tan to orange with iron specks",
+      "application": "Dip or brush",
+      "notes": "Goldart adds warmth and some iron speckling."
+    },
+    {
+      "name": "Shino Black",
+      "description": "Dark shino variation",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "dark_satin",
+      "image": "images/shino_glazes/shino_black.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 38.0},
+        {"material": "Spodumene", "percentage": 24.0},
+        {"material": "Ball Clay (OM4)", "percentage": 16.0},
+        {"material": "Soda Ash", "percentage": 14.0}
+      ],
+      "colorants": [
+        {"material": "Red Iron Oxide", "percentage": 6.0},
+        {"material": "Cobalt Carbonate", "percentage": 1.0},
+        {"material": "Manganese Dioxide", "percentage": 1.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "dark brown to black with metallic highlights",
+      "application": "Brush",
+      "notes": "Combined colorants create dark base. Flash shows as metallic sheen."
+    },
+    {
+      "name": "Cobalt Shino",
+      "description": "Blue-gray shino variation",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "blue_gray_satin",
+      "image": "images/shino_glazes/cobalt_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 42.0},
+        {"material": "Spodumene", "percentage": 26.0},
+        {"material": "Ball Clay (OM4)", "percentage": 16.0},
+        {"material": "Soda Ash", "percentage": 14.0}
+      ],
+      "colorants": [
+        {"material": "Cobalt Carbonate", "percentage": 0.5}
+      ],
+      "kiln_position": "middle_to_back",
+      "expected_result": "blue-gray with orange flash halos",
+      "application": "Dip",
+      "notes": "Small amount of cobalt creates blue undertone. Orange flash contrasts dramatically."
+    },
+    {
+      "name": "Rutile Shino",
+      "description": "Rutile addition for crystalline effects",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "crystalline_satin",
+      "image": "images/shino_glazes/rutile_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 40.0},
+        {"material": "Spodumene", "percentage": 26.0},
+        {"material": "Ball Clay (OM4)", "percentage": 14.0},
+        {"material": "Soda Ash", "percentage": 14.0}
+      ],
+      "colorants": [
+        {"material": "Rutile", "percentage": 6.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "tan with crystalline streaks and orange flash",
+      "application": "Dip thick",
+      "notes": "Rutile creates micro-crystalline streaks. Adds depth to flash."
+    },
+    {
+      "name": "Cone 6 Shino",
+      "description": "Mid-fire adaptation of shino",
+      "cone": "6",
+      "atmosphere": "reduction",
+      "surface": "satin",
+      "image": "images/shino_glazes/cone6_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 35.0},
+        {"material": "Spodumene", "percentage": 20.0},
+        {"material": "Frit 3134", "percentage": 15.0},
+        {"material": "Ball Clay (OM4)", "percentage": 16.0},
+        {"material": "Soda Ash", "percentage": 14.0}
+      ],
+      "kiln_position": "any",
+      "expected_result": "orange flash, less dramatic than cone 10",
+      "application": "Dip",
+      "notes": "Frit addition helps melt at lower temp. Works in gas reduction. Less carbon trap potential."
+    },
+    {
+      "name": "Electric Kiln Shino",
+      "description": "Adapted for oxidation firing",
+      "cone": "10",
+      "atmosphere": "oxidation",
+      "surface": "cream_satin",
+      "image": "images/shino_glazes/electric_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 44.0},
+        {"material": "Spodumene", "percentage": 26.0},
+        {"material": "Ball Clay (OM4)", "percentage": 16.0},
+        {"material": "Soda Ash", "percentage": 14.0}
+      ],
+      "kiln_position": "any",
+      "expected_result": "cream to pale tan, no flash",
+      "application": "Dip",
+      "notes": "No flash or carbon trap in oxidation. Cream/white surface only."
+    },
+    {
+      "name": "Firebox Shino",
+      "description": "Designed for hot firebox placement",
+      "cone": "11-12",
+      "atmosphere": "wood",
+      "surface": "variable_heavy_ash",
+      "image": "images/shino_glazes/firebox_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 40.0},
+        {"material": "Spodumene", "percentage": 24.0},
+        {"material": "EPK Kaolin", "percentage": 10.0},
+        {"material": "Ball Clay (OM4)", "percentage": 12.0},
+        {"material": "Soda Ash", "percentage": 14.0}
+      ],
+      "kiln_position": "firebox",
+      "expected_result": "heavy ash interaction, dramatic variations",
+      "application": "Dip thick",
+      "notes": "Extra kaolin for higher temps. Ash builds up and melts into shino."
+    },
+    {
+      "name": "Back-of-Kiln Shino",
+      "description": "Extra flux for cooler positions",
+      "cone": "9",
+      "atmosphere": "wood",
+      "surface": "subtle_flash",
+      "image": "images/shino_glazes/back_kiln_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 36.0},
+        {"material": "Spodumene", "percentage": 30.0},
+        {"material": "Ball Clay (OM4)", "percentage": 14.0},
+        {"material": "Soda Ash", "percentage": 18.0},
+        {"material": "Whiting (Calcium Carbonate)", "percentage": 2.0}
+      ],
+      "kiln_position": "back",
+      "expected_result": "matures at cone 9, subtle flash",
+      "application": "Dip",
+      "notes": "Extra flux to mature in cooler back. Whiting aids melt."
+    },
+    {
+      "name": "Crawling Shino",
+      "description": "Designed to crawl intentionally",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "crawled_texture",
+      "image": "images/shino_glazes/crawling_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 35.0},
+        {"material": "Spodumene", "percentage": 22.0},
+        {"material": "Ball Clay (OM4)", "percentage": 10.0},
+        {"material": "EPK Kaolin", "percentage": 15.0},
+        {"material": "Soda Ash", "percentage": 18.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "intentional crawl texture with exposed clay",
+      "application": "Apply very thick, don't compress",
+      "notes": "High shrinkage formula. Don't burnish or compress. Creates lichen-like texture."
+    },
+    {
+      "name": "Stable Shino",
+      "description": "Longer bucket life, less soda",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "satin_moderate",
+      "image": "images/shino_glazes/stable_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 50.0},
+        {"material": "Spodumene", "percentage": 26.0},
+        {"material": "Ball Clay (OM4)", "percentage": 18.0},
+        {"material": "Soda Ash", "percentage": 6.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "moderate flash, consistent results",
+      "application": "Dip or brush",
+      "notes": "Low soda for longer bucket life. More predictable, less dramatic."
+    },
+    {
+      "name": "Oxide Wash Shino Base",
+      "description": "Base shino for oxide wash decoration",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "decorated_base",
+      "image": "images/shino_glazes/oxide_wash_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 44.0},
+        {"material": "Spodumene", "percentage": 26.0},
+        {"material": "Ball Clay (OM4)", "percentage": 16.0},
+        {"material": "Soda Ash", "percentage": 14.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "base for iron or oxide wash decoration",
+      "application": "Dip, then apply oxide wash before firing",
+      "notes": "Apply shino, then brush iron oxide wash for traditional decoration. Oxide shows through flash."
+    },
+    {
+      "name": "Double-Dip Shino",
+      "description": "Formula optimized for layering",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "layered_variation",
+      "image": "images/shino_glazes/double_dip_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 45.0},
+        {"material": "Spodumene", "percentage": 25.0},
+        {"material": "Ball Clay (OM4)", "percentage": 16.0},
+        {"material": "Soda Ash", "percentage": 14.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "variations where thickness changes",
+      "application": "Dip once, let dry, dip partial second coat",
+      "notes": "Partial second dip creates thickness variation. Thin areas flash orange, thick areas trap carbon."
+    },
+    {
+      "name": "Hakeme Shino",
+      "description": "For brush stroke decoration",
+      "cone": "10",
+      "atmosphere": "wood",
+      "surface": "brushstroke_texture",
+      "image": "images/shino_glazes/hakeme_shino.jpg",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 40.0},
+        {"material": "Spodumene", "percentage": 24.0},
+        {"material": "Ball Clay (OM4)", "percentage": 20.0},
+        {"material": "Soda Ash", "percentage": 16.0}
+      ],
+      "kiln_position": "middle",
+      "expected_result": "visible brushstrokes with varying flash",
+      "application": "Brush with wide hakeme brush",
+      "notes": "Extra clay for brushability. Thick strokes trap carbon, thin areas flash."
+    }
+  ]
+}

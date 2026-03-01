@@ -8,6 +8,7 @@ This directory contains images for glaze and slip recipes.
 images/
 ├── flashing_slips/      # Images of flashing slip results
 ├── woodfire_glazes/     # Images of woodfire glaze results
+├── shino_glazes/        # Images of shino glaze results
 └── README.md
 ```
 
