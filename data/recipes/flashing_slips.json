@@ -6,6 +6,7 @@
       "cone": "10",
       "atmosphere": "wood",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/helmer_flash.jpg",
       "ingredients": [
         {"material": "OM4 Ball Clay", "percentage": 50.0},
         {"material": "Nepheline Syenite", "percentage": 25.0},
@@ -22,6 +23,7 @@
       "cone": "10",
       "atmosphere": "wood",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/malcolm_davis_flash.jpg",
       "ingredients": [
         {"material": "OM4 Ball Clay", "percentage": 40.0},
         {"material": "Nepheline Syenite", "percentage": 30.0},
@@ -39,6 +41,7 @@
       "cone": "10",
       "atmosphere": "wood",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/goldart_flash.jpg",
       "ingredients": [
         {"material": "Goldart Clay", "percentage": 60.0},
         {"material": "Nepheline Syenite", "percentage": 25.0},
@@ -54,6 +57,7 @@
       "cone": "10",
       "atmosphere": "wood",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/porcelain_flash.jpg",
       "ingredients": [
         {"material": "EPK Kaolin", "percentage": 40.0},
         {"material": "Nepheline Syenite", "percentage": 30.0},
@@ -70,6 +74,7 @@
       "cone": "10",
       "atmosphere": "wood",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/high_iron_flash.jpg",
       "ingredients": [
         {"material": "OM4 Ball Clay", "percentage": 35.0},
         {"material": "Redart Clay", "percentage": 25.0},
@@ -87,6 +92,7 @@
       "cone": "10",
       "atmosphere": "wood",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/shino_flash.jpg",
       "ingredients": [
         {"material": "Nepheline Syenite", "percentage": 45.0},
         {"material": "OM4 Ball Clay", "percentage": 30.0},
@@ -103,6 +109,7 @@
       "cone": "10",
       "atmosphere": "wood",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/avery_flash.jpg",
       "ingredients": [
         {"material": "OM4 Ball Clay", "percentage": 45.0},
         {"material": "Custer Feldspar", "percentage": 25.0},
@@ -119,6 +126,7 @@
       "cone": "10",
       "atmosphere": "soda",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/soda_flash.jpg",
       "ingredients": [
         {"material": "EPK Kaolin", "percentage": 35.0},
         {"material": "OM4 Ball Clay", "percentage": 25.0},
@@ -135,6 +143,7 @@
       "cone": "10",
       "atmosphere": "salt",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/salt_flash.jpg",
       "ingredients": [
         {"material": "OM4 Ball Clay", "percentage": 40.0},
         {"material": "Nepheline Syenite", "percentage": 30.0},
@@ -151,6 +160,7 @@
       "cone": "10",
       "atmosphere": "wood",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/black_flash.jpg",
       "ingredients": [
         {"material": "OM4 Ball Clay", "percentage": 35.0},
         {"material": "Nepheline Syenite", "percentage": 25.0},
@@ -170,6 +180,7 @@
       "cone": "10",
       "atmosphere": "wood",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/hawthorn_flash.jpg",
       "ingredients": [
         {"material": "Hawthorn Bond Fire Clay", "percentage": 45.0},
         {"material": "OM4 Ball Clay", "percentage": 25.0},
@@ -186,6 +197,7 @@
       "cone": "10",
       "atmosphere": "wood",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/tennessee_flash.jpg",
       "ingredients": [
         {"material": "Tennessee Ball Clay", "percentage": 55.0},
         {"material": "Custer Feldspar", "percentage": 25.0},
@@ -202,6 +214,7 @@
       "cone": "10",
       "atmosphere": "wood",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/barnard_flash.jpg",
       "ingredients": [
         {"material": "Barnard Clay", "percentage": 40.0},
         {"material": "OM4 Ball Clay", "percentage": 25.0},
@@ -218,6 +231,7 @@
       "cone": "10",
       "atmosphere": "wood",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/alberta_flash.jpg",
       "ingredients": [
         {"material": "Alberta Slip", "percentage": 50.0},
         {"material": "OM4 Ball Clay", "percentage": 25.0},
@@ -234,6 +248,7 @@
       "cone": "10",
       "atmosphere": "wood",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/simple_kaolin_flash.jpg",
       "ingredients": [
         {"material": "EPK Kaolin", "percentage": 50.0},
         {"material": "Custer Feldspar", "percentage": 35.0},
@@ -249,6 +264,7 @@
       "cone": "10",
       "atmosphere": "wood",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/tile6_flash.jpg",
       "ingredients": [
         {"material": "Tile 6 Ball Clay", "percentage": 50.0},
         {"material": "Nepheline Syenite", "percentage": 30.0},
@@ -264,6 +280,7 @@
       "cone": "10",
       "atmosphere": "wood",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/xx_saggar_flash.jpg",
       "ingredients": [
         {"material": "XX Saggar Clay", "percentage": 45.0},
         {"material": "OM4 Ball Clay", "percentage": 20.0},
@@ -280,6 +297,7 @@
       "cone": "10",
       "atmosphere": "wood",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/lithium_flash.jpg",
       "ingredients": [
         {"material": "OM4 Ball Clay", "percentage": 40.0},
         {"material": "Spodumene", "percentage": 25.0},
@@ -297,6 +315,7 @@
       "cone": "10",
       "atmosphere": "wood",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/grolleg_flash.jpg",
       "ingredients": [
         {"material": "Grolleg Kaolin", "percentage": 45.0},
         {"material": "Nepheline Syenite", "percentage": 30.0},
@@ -313,6 +332,7 @@
       "cone": "11-12",
       "atmosphere": "wood",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/firebox_flash.jpg",
       "ingredients": [
         {"material": "OM4 Ball Clay", "percentage": 35.0},
         {"material": "EPK Kaolin", "percentage": 25.0},
@@ -329,6 +349,7 @@
       "cone": "9",
       "atmosphere": "wood",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/back_kiln_flash.jpg",
       "ingredients": [
         {"material": "OM4 Ball Clay", "percentage": 40.0},
         {"material": "Nepheline Syenite", "percentage": 35.0},
@@ -345,6 +366,7 @@
       "cone": "10",
       "atmosphere": "wood",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/buncheong_flash.jpg",
       "ingredients": [
         {"material": "EPK Kaolin", "percentage": 50.0},
         {"material": "Custer Feldspar", "percentage": 30.0},
@@ -360,6 +382,7 @@
       "cone": "10",
       "atmosphere": "wood",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/rutile_flash.jpg",
       "ingredients": [
         {"material": "OM4 Ball Clay", "percentage": 40.0},
         {"material": "Nepheline Syenite", "percentage": 25.0},
@@ -377,6 +400,7 @@
       "cone": "10",
       "atmosphere": "wood",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/ash_wash_flash.jpg",
       "ingredients": [
         {"material": "OM4 Ball Clay", "percentage": 35.0},
         {"material": "Wood Ash (Mixed)", "percentage": 25.0},
@@ -394,6 +418,7 @@
       "cone": "10",
       "atmosphere": "wood",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/blue_flash.jpg",
       "ingredients": [
         {"material": "OM4 Ball Clay", "percentage": 45.0},
         {"material": "Nepheline Syenite", "percentage": 30.0},
@@ -411,6 +436,7 @@
       "cone": "10",
       "atmosphere": "wood",
       "type": "flashing_slip",
+      "image": "images/flashing_slips/green_flash.jpg",
       "ingredients": [
         {"material": "OM4 Ball Clay", "percentage": 45.0},
         {"material": "Nepheline Syenite", "percentage": 30.0},
