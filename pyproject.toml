@@ -8,22 +8,28 @@ dependencies = [
     "fastapi>=0.109.0",
     "uvicorn>=0.27.0",
     "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
     "httpx>=0.26.0",
-    "sqlalchemy>=2.0.0",
     "pillow>=10.0.0",
     "numpy>=1.24.0",
-    "pandas>=2.0.0",
+    "scipy>=1.11.0",
     "jinja2>=3.1.0",
-    "python-multipart>=0.0.6",
+    "python-multipart>=0.0.9",
     "aiofiles>=23.0.0",
-    "pywebview>=5.0.0",
+    "slowapi>=0.1.9",
+    "hishel>=0.0.30",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=7.4.0",
     "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "hypothesis>=6.100.0",
     "httpx>=0.26.0",
+]
+ml = [
+    "scikit-learn>=1.3.0",
 ]
 
 [build-system]

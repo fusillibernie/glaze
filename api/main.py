@@ -6,11 +6,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Query, Body
+from fastapi import FastAPI, HTTPException, Request, UploadFile, File, Form, Query, Body
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 from src.models.materials import Material, MaterialType
 from src.models.glaze import (
@@ -36,11 +39,16 @@ from src.services.substitution_service import SubstitutionService, AvailabilityS
 from src.integrations.glazy_client import GlazyClient
 
 
+limiter = Limiter(key_func=get_remote_address)
+
 app = FastAPI(
     title="Glaze Formulator API",
     description="Ceramic glaze formulation and analysis tool",
     version="1.0.0",
 )
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
@@ -554,7 +562,9 @@ async def add_colorant_to_recipe(
 # ============== Glazy Integration Endpoints ==============
 
 @app.get("/api/glazy/search")
+@limiter.limit("30/minute")
 async def search_glazy(
+    request: Request,
     query: Optional[str] = None,
     cone: Optional[str] = None,
     atmosphere: Optional[str] = None,
@@ -586,7 +596,8 @@ async def search_glazy(
 
 
 @app.get("/api/glazy/recipe/{glazy_id}")
-async def get_glazy_recipe(glazy_id: int):
+@limiter.limit("30/minute")
+async def get_glazy_recipe(request: Request, glazy_id: int):
     """Fetch a recipe from Glazy.org."""
     recipe = glazy_client.get_recipe(glazy_id)
     if not recipe:
@@ -612,7 +623,8 @@ async def get_glazy_recipe(glazy_id: int):
 
 
 @app.get("/api/glazy/material/{glazy_id}")
-async def get_glazy_material(glazy_id: int):
+@limiter.limit("30/minute")
+async def get_glazy_material(request: Request, glazy_id: int):
     """Fetch a material from Glazy.org."""
     material = glazy_client.get_material(glazy_id)
     if not material:
@@ -1085,6 +1097,82 @@ def _convert_recipe_input(recipe: RecipeInput) -> GlazeRecipe:
         expected_surface=GlazeSurface(recipe.expected_surface),
         notes=recipe.notes,
     )
+
+
+# ============== Visualization Endpoints ==============
+
+@app.get("/api/visualization/stull-chart")
+async def get_stull_chart_data():
+    """Return data for rendering the Stull chart (Al2O3 vs SiO2).
+
+    Includes Stull region boundaries and all indexed glazes.
+    """
+    # Stull region boundary lines (Al2O3 on x, SiO2 on y)
+    # Regions defined by Si:Al ratio = SiO2 / Al2O3
+    regions = [
+        {
+            "name": "runny",
+            "label": "Runny (Si:Al > 12)",
+            "color": "rgba(239,68,68,0.15)",
+            "si_al_min": 12,
+            "si_al_max": None,
+        },
+        {
+            "name": "glossy",
+            "label": "Glossy (Si:Al 8–12)",
+            "color": "rgba(34,197,94,0.15)",
+            "si_al_min": 8,
+            "si_al_max": 12,
+        },
+        {
+            "name": "satin",
+            "label": "Satin (Si:Al 6–8)",
+            "color": "rgba(234,179,8,0.15)",
+            "si_al_min": 6,
+            "si_al_max": 8,
+        },
+        {
+            "name": "matte",
+            "label": "Matte (Si:Al < 6)",
+            "color": "rgba(168,85,247,0.15)",
+            "si_al_min": None,
+            "si_al_max": 6,
+        },
+    ]
+
+    # Build glaze points from classifier index
+    glazes = []
+    try:
+        for recipe in classifier._recipe_index:
+            if recipe.umf:
+                umf = recipe.umf
+                al = umf.Al2O3
+                si = umf.SiO2
+                if al > 0 and si > 0:
+                    glazes.append({
+                        "name": recipe.name,
+                        "al2o3": round(al, 4),
+                        "sio2": round(si, 4),
+                        "si_al_ratio": round(si / al, 2),
+                        "region": umf.stull_point.surface_prediction if umf.stull_point else None,
+                        "cone": recipe.target_cone.value if recipe.target_cone else None,
+                    })
+    except (AttributeError, TypeError):
+        pass
+
+    return {
+        "regions": regions,
+        "glazes": glazes,
+        "axes": {
+            "x": {"label": "Al₂O₃", "min": 0.1, "max": 0.7},
+            "y": {"label": "SiO₂", "min": 1.0, "max": 6.0},
+        },
+        "reference_lines": [
+            {"si_al": 6, "label": "Matte boundary"},
+            {"si_al": 8, "label": "Satin boundary"},
+            {"si_al": 12, "label": "Runny boundary"},
+        ],
+    }
 
 
 def _cone_to_celsius(cone: str) -> int:

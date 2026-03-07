@@ -1,6 +1,8 @@
 """Outcome prediction based on glaze data and firing results."""
 
+import json
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Optional
 
 from ..models.glaze import (
@@ -51,24 +53,64 @@ class OutcomePrediction:
             self.similar_results = []
 
 
+_DEFAULT_RESULTS_PATH = Path(__file__).parent.parent.parent / "data" / "results" / "firing_results.json"
+
+
 class OutcomePredictor:
     """Predict glaze firing outcomes based on historical data."""
 
-    def __init__(self, results_database: Optional[list[FiringResult]] = None):
+    def __init__(
+        self,
+        results_database: Optional[list[FiringResult]] = None,
+        results_path: Optional[Path] = None,
+    ):
         """Initialize the predictor.
 
         Args:
             results_database: Historical firing results for prediction.
+            results_path: Path to JSON file for persisting results.
         """
-        self.results = results_database or []
+        self.results_path = results_path or _DEFAULT_RESULTS_PATH
+        self.results = results_database or self._load_results()
+
+    def _load_results(self) -> list[FiringResult]:
+        """Load persisted results from disk."""
+        if not self.results_path.exists():
+            return []
+        try:
+            with open(self.results_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            # Results stored as plain dicts; reconstruct minimal FiringResult objects
+            results = []
+            for item in data:
+                try:
+                    results.append(FiringResult.from_dict(item))
+                except Exception:
+                    pass
+            return results
+        except Exception:
+            return []
+
+    def _save_results(self) -> None:
+        """Persist results to disk."""
+        self.results_path.parent.mkdir(parents=True, exist_ok=True)
+        serializable = []
+        for r in self.results:
+            try:
+                serializable.append(r.to_dict())
+            except Exception:
+                pass
+        with open(self.results_path, "w", encoding="utf-8") as f:
+            json.dump(serializable, f, indent=2, default=str)
 
     def add_result(self, result: FiringResult) -> None:
-        """Add a firing result to the database.
+        """Add a firing result to the database and persist.
 
         Args:
             result: Firing result to add.
         """
         self.results.append(result)
+        self._save_results()
 
     def predict_outcome(
         self,

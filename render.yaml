@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: glaze
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: PORT
+        value: 8000
+    disk:
+      name: glaze-data
+      mountPath: /app/data
+      sizeGB: 1
