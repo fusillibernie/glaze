@@ -307,7 +307,7 @@ class GlazeClassifier:
     def _has_cobalt_colorant(self, recipe: GlazeRecipe) -> bool:
         """Check if recipe has cobalt colorant."""
         for c in recipe.colorants:
-            if "cobalt" in c.material_name.lower() or "co" in c.material_name.lower():
+            if "cobalt" in c.material_name.lower() or c.material_name.lower().strip() == "co":
                 return True
         return False
 

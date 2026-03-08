@@ -460,9 +460,9 @@ async def analyze_recipe(recipe: RecipeInput) -> ChemistryResponse:
 
 @app.post("/api/recipes/predict")
 async def predict_outcome(
-    recipe: RecipeInput,
-    firing: FiringInput,
-    clay_body: str = "stoneware",
+    recipe: RecipeInput = Body(...),
+    firing: FiringInput = Body(...),
+    clay_body: str = Body("stoneware"),
 ) -> PredictionResponse:
     """Predict firing outcome."""
     glaze_recipe = _convert_recipe_input(recipe)
@@ -1147,23 +1147,18 @@ async def get_stull_chart_data():
 
     # Build glaze points from classifier index
     glazes = []
-    try:
-        for recipe in classifier._recipe_index:
-            if recipe.umf:
-                umf = recipe.umf
-                al = umf.Al2O3
-                si = umf.SiO2
-                if al > 0 and si > 0:
-                    glazes.append({
-                        "name": recipe.name,
-                        "al2o3": round(al, 4),
-                        "sio2": round(si, 4),
-                        "si_al_ratio": round(si / al, 2),
-                        "region": umf.stull_point.surface_prediction if umf.stull_point else None,
-                        "cone": recipe.target_cone.value if recipe.target_cone else None,
-                    })
-    except (AttributeError, TypeError):
-        pass
+    for classification in classifier._recipe_index.values():
+        if classification.stull:
+            al = classification.stull.al2o3
+            si = classification.stull.sio2
+            if al > 0 and si > 0:
+                glazes.append({
+                    "name": classification.recipe_name,
+                    "al2o3": round(al, 4),
+                    "sio2": round(si, 4),
+                    "si_al_ratio": round(classification.stull.si_al_ratio, 2),
+                    "region": classification.stull.region.value,
+                })
 
     return {
         "regions": regions,
