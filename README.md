@@ -1,5 +1,10 @@
 # Glaze Formulator
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/fusillibernie/glaze?quickstart=1)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/fusillibernie/glaze)
+
+> **Try it now** -- Click either badge above to launch the app in your browser. No install needed. The server starts automatically and opens the UI on port 8000.
+
 A ceramic glaze formulation and analysis tool that uses data from Glazy.org, scientific research, and literature to help create and predict ceramic glaze outcomes.
 
 ## Features
@@ -44,7 +49,6 @@ A ceramic glaze formulation and analysis tool that uses data from Glazy.org, sci
 ## Installation
 
 ```bash
-cd C:\Users\pwong\projects\glaze
 pip install -e .
 ```
 

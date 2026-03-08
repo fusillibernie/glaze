@@ -9,6 +9,7 @@
     }
   },
   "postCreateCommand": "pip install -e '.[dev]'",
+  "postStartCommand": "nohup uvicorn api.main:app --host 0.0.0.0 --port 8000 > /tmp/server.log 2>&1 &",
   "customizations": {
     "vscode": {
       "extensions": [
