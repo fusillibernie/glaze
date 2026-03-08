@@ -52,8 +52,7 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=["http://localhost:8000", "http://127.0.0.1:8000"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -848,14 +847,20 @@ async def upload_result_photo(
             detail=f"File type not allowed. Allowed: {allowed_types}",
         )
 
-    # Generate unique filename
-    ext = file.filename.split(".")[-1] if "." in file.filename else "jpg"
+    # Read and validate file size (max 10 MB)
+    content = await file.read()
+    max_size = 10 * 1024 * 1024
+    if len(content) > max_size:
+        raise HTTPException(status_code=413, detail="File too large. Maximum size is 10 MB.")
+
+    # Derive safe extension from content type
+    ext_map = {"image/jpeg": "jpg", "image/png": "png", "image/webp": "webp"}
+    ext = ext_map.get(file.content_type, "jpg")
     photo_id = str(uuid.uuid4())
     filename = f"{photo_id}.{ext}"
     filepath = UPLOADS_DIR / filename
 
     # Save file
-    content = await file.read()
     with open(filepath, "wb") as f:
         f.write(content)
 

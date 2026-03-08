@@ -307,7 +307,6 @@ The `data/recipes/base_glazes.json` includes classic recipes:
 ## Running Tests
 
 ```bash
-cd C:\Users\pwong\projects\glaze
 pytest tests/ -v
 ```
 
