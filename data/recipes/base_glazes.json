@@ -242,6 +242,242 @@
         }
       ],
       "notes": "Good satin surface with zinc. Avoid red stains (zinc kills reds)."
+    },
+    {
+      "name": "Pete Pinnell Fake Ash",
+      "description": "Popular cone 6 satin/matte with an ash-like quality without using actual ash",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "surface": "satin to matte",
+      "ingredients": [
+        {"material": "Nepheline Syenite", "percentage": 35.0},
+        {"material": "Frit 3134", "percentage": 18.0},
+        {"material": "EPK Kaolin", "percentage": 17.0},
+        {"material": "Silica (Flint)", "percentage": 13.0},
+        {"material": "Dolomite", "percentage": 10.0},
+        {"material": "Bone Ash", "percentage": 4.0},
+        {"material": "Talc", "percentage": 3.0}
+      ],
+      "variations": [
+        {
+          "name": "Fake Ash Celadon",
+          "colorants": [{"material": "Red Iron Oxide", "percentage": 2.0}],
+          "expected_color": "celadon green to amber"
+        },
+        {
+          "name": "Fake Ash Rutile Blue",
+          "colorants": [
+            {"material": "Rutile", "percentage": 4.0},
+            {"material": "Cobalt Carbonate", "percentage": 0.5}
+          ],
+          "expected_color": "blue with brown mottling"
+        }
+      ],
+      "notes": "Very versatile base. Satin surface with depth. Bone ash gives slight opalescence. Good for layering."
+    },
+    {
+      "name": "Coleman Porcelain Clear",
+      "description": "Tom Coleman's classic high-fire clear glaze for porcelain",
+      "cone": "10",
+      "atmosphere": "reduction",
+      "surface": "glossy",
+      "ingredients": [
+        {"material": "Custer Feldspar", "percentage": 38.0},
+        {"material": "Silica (Flint)", "percentage": 28.0},
+        {"material": "Whiting (Calcium Carbonate)", "percentage": 18.0},
+        {"material": "EPK Kaolin", "percentage": 11.0},
+        {"material": "Zinc Oxide", "percentage": 5.0}
+      ],
+      "variations": [
+        {
+          "name": "Coleman Celadon",
+          "colorants": [{"material": "Red Iron Oxide", "percentage": 1.0}],
+          "expected_color": "classic celadon green"
+        }
+      ],
+      "notes": "Reliable cone 10 clear on porcelain. Zinc helps clarity. May craze on high-expansion bodies."
+    },
+    {
+      "name": "Ohata Kaki / Persimmon",
+      "description": "Iron-saturate persimmon glaze, traditional Japanese kaki style",
+      "cone": "10",
+      "atmosphere": "reduction",
+      "surface": "glossy to satin",
+      "ingredients": [
+        {"material": "Custer Feldspar", "percentage": 35.0},
+        {"material": "Silica (Flint)", "percentage": 20.0},
+        {"material": "Whiting (Calcium Carbonate)", "percentage": 20.0},
+        {"material": "EPK Kaolin", "percentage": 15.0},
+        {"material": "Ball Clay (OM4)", "percentage": 10.0}
+      ],
+      "colorants": [
+        {"material": "Red Iron Oxide", "percentage": 12.0}
+      ],
+      "expected_color": "persimmon orange-red with dark brown pooling",
+      "notes": "Iron saturate glaze. Thick application gives dark tenmoku, thin gives orange persimmon. Temperature sensitive - best at cone 10 flat."
+    },
+    {
+      "name": "Hamada Rust",
+      "description": "Shoji Hamada-inspired tenmoku variant with warm rust breaks",
+      "cone": "10",
+      "atmosphere": "reduction",
+      "surface": "glossy",
+      "ingredients": [
+        {"material": "Custer Feldspar", "percentage": 40.0},
+        {"material": "Silica (Flint)", "percentage": 25.0},
+        {"material": "Whiting (Calcium Carbonate)", "percentage": 15.0},
+        {"material": "EPK Kaolin", "percentage": 10.0},
+        {"material": "Ball Clay (OM4)", "percentage": 10.0}
+      ],
+      "colorants": [
+        {"material": "Red Iron Oxide", "percentage": 9.0}
+      ],
+      "expected_color": "dark brown-black with warm rust breaks on edges",
+      "notes": "Classic tenmoku character. Breaks from dark mirror-black in thick areas to warm rust on thin edges and rims. Apply medium-thick."
+    },
+    {
+      "name": "Cone 6 Dolomite Matte",
+      "description": "Buttery matte white base for cone 6 electric kilns",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "surface": "matte",
+      "ingredients": [
+        {"material": "Custer Feldspar", "percentage": 30.0},
+        {"material": "Frit 3134", "percentage": 15.0},
+        {"material": "Dolomite", "percentage": 15.0},
+        {"material": "EPK Kaolin", "percentage": 15.0},
+        {"material": "Silica (Flint)", "percentage": 15.0},
+        {"material": "Whiting (Calcium Carbonate)", "percentage": 5.0},
+        {"material": "Talc", "percentage": 5.0}
+      ],
+      "variations": [
+        {
+          "name": "Dolomite Matte Green",
+          "colorants": [{"material": "Copper Carbonate", "percentage": 3.0}],
+          "expected_color": "matte green"
+        },
+        {
+          "name": "Dolomite Matte Iron",
+          "colorants": [{"material": "Red Iron Oxide", "percentage": 4.0}],
+          "expected_color": "warm amber matte"
+        }
+      ],
+      "notes": "Smooth matte surface from dolomite and talc providing MgO. May cutlery mark if underfired. Good for functional ware."
+    },
+    {
+      "name": "Oribe Green",
+      "description": "Japanese-style copper green glaze, traditionally used over iron-decorated stoneware",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {"material": "Custer Feldspar", "percentage": 35.0},
+        {"material": "Frit 3134", "percentage": 25.0},
+        {"material": "Silica (Flint)", "percentage": 18.0},
+        {"material": "EPK Kaolin", "percentage": 12.0},
+        {"material": "Whiting (Calcium Carbonate)", "percentage": 10.0}
+      ],
+      "colorants": [
+        {"material": "Copper Carbonate", "percentage": 5.0}
+      ],
+      "expected_color": "deep transparent green",
+      "notes": "Classic Oribe green. Apply over white slip with iron brush decoration for traditional look. Copper may volatilize and affect adjacent glazes."
+    },
+    {
+      "name": "Celadon Base (Cone 10 Reduction)",
+      "description": "Traditional jade-green celadon requiring reduction atmosphere",
+      "cone": "10",
+      "atmosphere": "reduction",
+      "surface": "glossy",
+      "ingredients": [
+        {"material": "Custer Feldspar", "percentage": 42.0},
+        {"material": "Silica (Flint)", "percentage": 26.0},
+        {"material": "Whiting (Calcium Carbonate)", "percentage": 16.0},
+        {"material": "EPK Kaolin", "percentage": 14.0},
+        {"material": "Zinc Oxide", "percentage": 2.0}
+      ],
+      "colorants": [
+        {"material": "Red Iron Oxide", "percentage": 1.5}
+      ],
+      "expected_color": "jade green to blue-green",
+      "notes": "Iron in reduction produces the classic celadon color. Deeper pooling gives darker green. Zinc aids clarity. Apply thick for depth."
+    },
+    {
+      "name": "Ash Glaze Base (40/40/20)",
+      "description": "Classic triaxial ash glaze formula using the traditional 40/40/20 ratio",
+      "cone": "10",
+      "atmosphere": "reduction",
+      "surface": "glossy to satin",
+      "ingredients": [
+        {"material": "Wood Ash (Mixed)", "percentage": 40.0},
+        {"material": "Custer Feldspar", "percentage": 40.0},
+        {"material": "Ball Clay (OM4)", "percentage": 20.0}
+      ],
+      "variations": [
+        {
+          "name": "Ash Iron",
+          "colorants": [{"material": "Red Iron Oxide", "percentage": 2.0}],
+          "expected_color": "amber to dark olive"
+        },
+        {
+          "name": "Ash Nuka",
+          "colorants": [],
+          "expected_color": "milky white with variation",
+          "notes": "Substitute rice hull ash for wood ash"
+        }
+      ],
+      "notes": "The foundational ash glaze ratio. Wash ash thoroughly before use. Results vary significantly with ash source - hardwood vs softwood, species, season."
+    },
+    {
+      "name": "Slip Glaze (Albany Slip Substitute)",
+      "description": "Substitute for the discontinued Albany Slip using commonly available materials",
+      "cone": "6-10",
+      "atmosphere": "oxidation",
+      "surface": "glossy to satin",
+      "ingredients": [
+        {"material": "Red Art", "percentage": 40.0},
+        {"material": "Ball Clay (OM4)", "percentage": 20.0},
+        {"material": "Nepheline Syenite", "percentage": 20.0},
+        {"material": "Silica (Flint)", "percentage": 10.0},
+        {"material": "Whiting (Calcium Carbonate)", "percentage": 5.0},
+        {"material": "Frit 3134", "percentage": 5.0}
+      ],
+      "expected_color": "dark brown to black",
+      "notes": "Mimics the historic Albany Slip character. Works as a liner glaze or standalone. Can be adjusted lighter by reducing Red Art and adding kaolin."
+    },
+    {
+      "name": "Crystalline Base",
+      "description": "Zinc crystal glaze base for growing macrocrystals. Requires controlled cooling schedule.",
+      "cone": "10",
+      "atmosphere": "oxidation",
+      "surface": "glossy with crystals",
+      "ingredients": [
+        {"material": "Frit 3110", "percentage": 50.0},
+        {"material": "Zinc Oxide", "percentage": 25.0},
+        {"material": "Silica (Flint)", "percentage": 25.0}
+      ],
+      "colorants": [
+        {"material": "Copper Carbonate", "percentage": 2.0}
+      ],
+      "expected_color": "green crystals on clear ground",
+      "variations": [
+        {
+          "name": "Crystalline Cobalt",
+          "colorants": [{"material": "Cobalt Carbonate", "percentage": 1.0}],
+          "expected_color": "blue crystals on clear ground"
+        },
+        {
+          "name": "Crystalline Iron",
+          "colorants": [{"material": "Red Iron Oxide", "percentage": 3.0}],
+          "expected_color": "amber-gold crystals"
+        },
+        {
+          "name": "Crystalline Manganese",
+          "colorants": [{"material": "Manganese Dioxide", "percentage": 3.0}],
+          "expected_color": "bronze-purple crystals"
+        }
+      ],
+      "notes": "Very runny - must use catch basins. Requires precise controlled cooling with holds at 1050-1100C for crystal growth. No alumina in formula allows crystal development."
     }
   ]
 }

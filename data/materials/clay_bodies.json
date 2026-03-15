@@ -1,0 +1,472 @@
+{
+  "clay_bodies": [
+    {
+      "name": "Standard Stoneware",
+      "type": "stoneware",
+      "cone_range": "6-10",
+      "description": "General-purpose stoneware body suitable for throwing and handbuilding. Fires to a warm tan in oxidation, gray-brown in reduction.",
+      "color_wet": "gray-brown",
+      "color_fired_oxidation": "warm tan",
+      "color_fired_reduction": "gray-brown",
+      "shrinkage_percent": 12.0,
+      "absorption_percent": 1.5,
+      "typical_composition": {
+        "ball_clay_percent": 25,
+        "stoneware_clay_percent": 35,
+        "feldspar_percent": 20,
+        "silica_percent": 15,
+        "grog_percent": 5
+      },
+      "analysis": {
+        "SiO2": 65.0,
+        "Al2O3": 18.0,
+        "K2O": 3.2,
+        "Na2O": 1.0,
+        "CaO": 0.8,
+        "MgO": 0.6,
+        "Fe2O3": 1.8,
+        "TiO2": 0.9,
+        "LOI": 8.5
+      },
+      "suitable_for": ["throwing", "handbuilding", "slab"],
+      "notes": "Reliable workhorse body. Good plasticity and wide firing range."
+    },
+    {
+      "name": "Porcelain - Grolleg-based",
+      "type": "porcelain",
+      "cone_range": "6-10",
+      "description": "English kaolin porcelain with excellent translucency and very white fired color. Grolleg kaolin provides superior plasticity for a porcelain.",
+      "color_wet": "white",
+      "color_fired_oxidation": "bright white",
+      "color_fired_reduction": "blue-white",
+      "shrinkage_percent": 14.0,
+      "absorption_percent": 0.2,
+      "typical_composition": {
+        "grolleg_kaolin_percent": 50,
+        "silica_percent": 25,
+        "feldspar_percent": 25
+      },
+      "analysis": {
+        "SiO2": 68.5,
+        "Al2O3": 20.5,
+        "K2O": 3.8,
+        "Na2O": 1.2,
+        "CaO": 0.2,
+        "MgO": 0.3,
+        "Fe2O3": 0.4,
+        "TiO2": 0.02,
+        "LOI": 5.0
+      },
+      "suitable_for": ["throwing", "trimming"],
+      "notes": "Premium porcelain. Short working window on the wheel but excellent translucency. Low iron and titanium give very white fired color."
+    },
+    {
+      "name": "Porcelain - Standard",
+      "type": "porcelain",
+      "cone_range": "10",
+      "description": "Classic high-fire porcelain using domestic kaolin and potash feldspar. Less plastic than Grolleg bodies but very reliable at cone 10.",
+      "color_wet": "off-white",
+      "color_fired_oxidation": "cream-white",
+      "color_fired_reduction": "warm white",
+      "shrinkage_percent": 13.5,
+      "absorption_percent": 0.3,
+      "typical_composition": {
+        "epk_kaolin_percent": 50,
+        "silica_percent": 25,
+        "custer_feldspar_percent": 25
+      },
+      "analysis": {
+        "SiO2": 67.0,
+        "Al2O3": 21.8,
+        "K2O": 3.5,
+        "Na2O": 0.9,
+        "CaO": 0.2,
+        "MgO": 0.1,
+        "Fe2O3": 0.3,
+        "TiO2": 0.2,
+        "LOI": 6.0
+      },
+      "suitable_for": ["throwing", "trimming", "casting"],
+      "notes": "Workable domestic porcelain. Slightly warmer fired color than Grolleg due to higher TiO2."
+    },
+    {
+      "name": "B-Mix (Laguna)",
+      "type": "stoneware",
+      "cone_range": "6",
+      "description": "Laguna Clay's popular mid-fire throwing body. Smooth, light-colored stoneware with excellent plasticity and minimal warping.",
+      "color_wet": "light gray",
+      "color_fired_oxidation": "off-white to light buff",
+      "color_fired_reduction": "light gray",
+      "shrinkage_percent": 11.5,
+      "absorption_percent": 1.0,
+      "typical_composition": {
+        "ball_clay_percent": 30,
+        "stoneware_clay_percent": 25,
+        "feldspar_percent": 25,
+        "silica_percent": 18,
+        "bentonite_percent": 2
+      },
+      "analysis": {
+        "SiO2": 66.5,
+        "Al2O3": 19.2,
+        "K2O": 2.8,
+        "Na2O": 1.5,
+        "CaO": 0.5,
+        "MgO": 0.4,
+        "Fe2O3": 0.8,
+        "TiO2": 0.6,
+        "LOI": 7.5
+      },
+      "suitable_for": ["throwing", "trimming", "handbuilding"],
+      "notes": "Popular commercial body for cone 6. Light color shows glaze colors well. Very forgiving on the wheel."
+    },
+    {
+      "name": "Flameware / Lithium Body",
+      "type": "flameware",
+      "cone_range": "6-10",
+      "description": "Thermal-shock resistant body using petalite or spodumene as a lithium source. Suitable for stovetop cooking vessels.",
+      "color_wet": "off-white",
+      "color_fired_oxidation": "white to cream",
+      "color_fired_reduction": "cream-gray",
+      "shrinkage_percent": 8.0,
+      "absorption_percent": 3.0,
+      "typical_composition": {
+        "petalite_percent": 50,
+        "ball_clay_percent": 25,
+        "talc_percent": 15,
+        "grog_fine_percent": 10
+      },
+      "analysis": {
+        "SiO2": 68.0,
+        "Al2O3": 14.5,
+        "Li2O": 2.8,
+        "MgO": 4.5,
+        "K2O": 0.5,
+        "Na2O": 0.3,
+        "CaO": 0.4,
+        "Fe2O3": 0.5,
+        "TiO2": 0.3,
+        "LOI": 7.5
+      },
+      "suitable_for": ["throwing", "handbuilding", "functional cookware"],
+      "notes": "Low thermal expansion due to lithium and magnesium content. Must use compatible low-expansion glazes. Not all glazes will fit."
+    },
+    {
+      "name": "Raku Body",
+      "type": "raku",
+      "cone_range": "06-2",
+      "description": "Open, grog-heavy body designed to withstand the thermal shock of raku firing. High grog content provides porosity and resistance to cracking.",
+      "color_wet": "buff to tan",
+      "color_fired_oxidation": "buff",
+      "color_fired_reduction": "dark gray to black (smoked)",
+      "shrinkage_percent": 7.0,
+      "absorption_percent": 8.0,
+      "typical_composition": {
+        "fireclay_percent": 40,
+        "ball_clay_percent": 20,
+        "grog_coarse_percent": 20,
+        "grog_fine_percent": 10,
+        "sand_percent": 10
+      },
+      "analysis": {
+        "SiO2": 62.0,
+        "Al2O3": 20.0,
+        "K2O": 1.5,
+        "Na2O": 0.5,
+        "CaO": 0.8,
+        "MgO": 0.5,
+        "Fe2O3": 2.0,
+        "TiO2": 1.0,
+        "LOI": 6.5
+      },
+      "suitable_for": ["handbuilding", "throwing", "sculpture", "raku"],
+      "notes": "Not food safe due to high porosity. The open body withstands rapid temperature changes of raku firing without cracking."
+    },
+    {
+      "name": "Red Earthenware",
+      "type": "earthenware",
+      "cone_range": "06-2",
+      "description": "Classic low-fire terracotta-style body. High iron content produces distinctive red-orange color. Traditional material for functional pottery and tile.",
+      "color_wet": "dark red-brown",
+      "color_fired_oxidation": "red-orange",
+      "color_fired_reduction": "dark brown to black",
+      "shrinkage_percent": 10.0,
+      "absorption_percent": 6.0,
+      "typical_composition": {
+        "red_clay_percent": 60,
+        "ball_clay_percent": 20,
+        "silica_percent": 10,
+        "talc_percent": 5,
+        "grog_fine_percent": 5
+      },
+      "analysis": {
+        "SiO2": 58.0,
+        "Al2O3": 16.5,
+        "K2O": 2.0,
+        "Na2O": 0.8,
+        "CaO": 1.2,
+        "MgO": 1.5,
+        "Fe2O3": 7.0,
+        "TiO2": 1.2,
+        "LOI": 7.0
+      },
+      "suitable_for": ["throwing", "handbuilding", "slab", "tile"],
+      "notes": "Must be glazed for food use due to porosity. Lovely warm color under clear or transparent glazes. Do not overfire past cone 2."
+    },
+    {
+      "name": "White Earthenware",
+      "type": "earthenware",
+      "cone_range": "06-2",
+      "description": "Low-fire white body for majolica and bright-colored glazes. Low iron content for clean white surface.",
+      "color_wet": "white to off-white",
+      "color_fired_oxidation": "white",
+      "color_fired_reduction": "white",
+      "shrinkage_percent": 9.5,
+      "absorption_percent": 7.0,
+      "typical_composition": {
+        "ball_clay_percent": 30,
+        "kaolin_percent": 25,
+        "talc_percent": 25,
+        "silica_percent": 15,
+        "frit_percent": 5
+      },
+      "analysis": {
+        "SiO2": 60.0,
+        "Al2O3": 18.0,
+        "MgO": 5.0,
+        "K2O": 1.5,
+        "Na2O": 1.0,
+        "CaO": 2.5,
+        "Fe2O3": 0.6,
+        "TiO2": 0.5,
+        "LOI": 8.5
+      },
+      "suitable_for": ["throwing", "handbuilding", "slab", "casting"],
+      "notes": "White background ideal for majolica decoration. Talc acts as flux at low temperatures. Must be glazed for food use."
+    },
+    {
+      "name": "Paper Clay - Porcelain",
+      "type": "porcelain",
+      "cone_range": "6-10",
+      "description": "Porcelain body with 5-15% paper fiber (cellulose) added. Provides extraordinary joining strength and crack resistance in construction. Paper burns out in bisque firing.",
+      "color_wet": "white (fibrous texture)",
+      "color_fired_oxidation": "white",
+      "color_fired_reduction": "blue-white",
+      "shrinkage_percent": 13.0,
+      "absorption_percent": 0.5,
+      "typical_composition": {
+        "grolleg_kaolin_percent": 45,
+        "silica_percent": 23,
+        "feldspar_percent": 22,
+        "paper_pulp_percent": 10
+      },
+      "analysis": {
+        "SiO2": 67.0,
+        "Al2O3": 20.0,
+        "K2O": 3.6,
+        "Na2O": 1.1,
+        "CaO": 0.2,
+        "MgO": 0.3,
+        "Fe2O3": 0.4,
+        "TiO2": 0.02,
+        "LOI": 7.5
+      },
+      "suitable_for": ["handbuilding", "sculpture", "slab", "joining"],
+      "notes": "Paper fiber burns out during bisque, leaving tiny voids. Stronger in greenware and bone-dry state than regular porcelain. May smell during bisque."
+    },
+    {
+      "name": "Wood-fire Stoneware",
+      "type": "stoneware",
+      "cone_range": "10-12",
+      "description": "Iron-bearing stoneware formulated for wood firing. Moderate iron shows beautiful flashing and ash interaction. Designed for cone 10-12 with heavy ash deposit.",
+      "color_wet": "brown",
+      "color_fired_oxidation": "tan-brown",
+      "color_fired_reduction": "warm brown with orange flash",
+      "shrinkage_percent": 12.5,
+      "absorption_percent": 1.0,
+      "typical_composition": {
+        "stoneware_clay_percent": 40,
+        "fireclay_percent": 25,
+        "ball_clay_percent": 15,
+        "feldspar_percent": 10,
+        "silica_percent": 5,
+        "sand_percent": 5
+      },
+      "analysis": {
+        "SiO2": 63.0,
+        "Al2O3": 19.5,
+        "K2O": 2.5,
+        "Na2O": 0.8,
+        "CaO": 0.6,
+        "MgO": 0.5,
+        "Fe2O3": 3.0,
+        "TiO2": 1.2,
+        "LOI": 8.0
+      },
+      "suitable_for": ["throwing", "handbuilding", "wood firing"],
+      "notes": "Iron content creates orange-red flashing where exposed to flame. Ash deposits create natural glaze. May bloat if overfired past cone 12."
+    },
+    {
+      "name": "Dark Stoneware / Manganese Body",
+      "type": "stoneware",
+      "cone_range": "6-10",
+      "description": "Dark-burning stoneware with added manganese dioxide and iron. Creates a chocolate-brown to nearly black fired body. Dramatic contrast under light-colored glazes.",
+      "color_wet": "dark brown",
+      "color_fired_oxidation": "dark chocolate brown",
+      "color_fired_reduction": "near black",
+      "shrinkage_percent": 12.5,
+      "absorption_percent": 1.5,
+      "typical_composition": {
+        "stoneware_clay_percent": 35,
+        "ball_clay_percent": 25,
+        "feldspar_percent": 18,
+        "silica_percent": 12,
+        "manganese_dioxide_percent": 5,
+        "red_iron_oxide_percent": 3,
+        "grog_fine_percent": 2
+      },
+      "analysis": {
+        "SiO2": 60.0,
+        "Al2O3": 17.5,
+        "K2O": 2.8,
+        "Na2O": 0.9,
+        "CaO": 0.7,
+        "MgO": 0.5,
+        "Fe2O3": 4.5,
+        "MnO2": 4.0,
+        "TiO2": 0.8,
+        "LOI": 7.5
+      },
+      "suitable_for": ["throwing", "handbuilding", "slab"],
+      "notes": "Manganese can off-gas during firing - ensure good ventilation. Creates stunning contrast under white or light glazes that break on edges."
+    },
+    {
+      "name": "Sculpture Body with Grog",
+      "type": "stoneware",
+      "cone_range": "6",
+      "description": "Heavily grogged sculpture body designed for large-scale work. High grog content reduces shrinkage and warping, provides structural support for thick walls.",
+      "color_wet": "buff-gray",
+      "color_fired_oxidation": "warm buff",
+      "color_fired_reduction": "gray-brown",
+      "shrinkage_percent": 8.5,
+      "absorption_percent": 3.0,
+      "typical_composition": {
+        "fireclay_percent": 30,
+        "ball_clay_percent": 20,
+        "stoneware_clay_percent": 15,
+        "grog_coarse_percent": 15,
+        "grog_fine_percent": 10,
+        "sand_percent": 5,
+        "silica_percent": 5
+      },
+      "analysis": {
+        "SiO2": 64.0,
+        "Al2O3": 19.5,
+        "K2O": 1.8,
+        "Na2O": 0.6,
+        "CaO": 0.7,
+        "MgO": 0.5,
+        "Fe2O3": 2.2,
+        "TiO2": 1.0,
+        "LOI": 5.5
+      },
+      "suitable_for": ["sculpture", "handbuilding", "slab", "coil"],
+      "notes": "Not suitable for throwing due to coarse grog. Low shrinkage minimizes cracking in thick or uneven forms. Can be left unglazed."
+    },
+    {
+      "name": "Translucent Porcelain",
+      "type": "porcelain",
+      "cone_range": "10",
+      "description": "Ultra-refined high-fire porcelain optimized for translucency. Minimal iron and titanium impurities. When thrown or cast thin, transmits light.",
+      "color_wet": "pure white",
+      "color_fired_oxidation": "pure white",
+      "color_fired_reduction": "ice blue-white",
+      "shrinkage_percent": 15.0,
+      "absorption_percent": 0.0,
+      "typical_composition": {
+        "grolleg_kaolin_percent": 45,
+        "silica_percent": 25,
+        "potash_feldspar_percent": 25,
+        "bentonite_percent": 3,
+        "bone_ash_percent": 2
+      },
+      "analysis": {
+        "SiO2": 69.0,
+        "Al2O3": 20.0,
+        "K2O": 4.0,
+        "Na2O": 1.0,
+        "CaO": 1.5,
+        "MgO": 0.2,
+        "P2O5": 0.8,
+        "Fe2O3": 0.2,
+        "TiO2": 0.01,
+        "LOI": 4.5
+      },
+      "suitable_for": ["throwing thin", "casting", "trimming"],
+      "notes": "Extremely high shrinkage demands careful drying. Pieces under 3mm thick will be translucent. Bone ash contributes to translucency and warm quality of light."
+    },
+    {
+      "name": "Anagama Body",
+      "type": "stoneware",
+      "cone_range": "10-12",
+      "description": "Robust stoneware designed for extended anagama/noborigama kiln firings of 3-7 days. High alumina content resists warping during long firings.",
+      "color_wet": "gray-brown",
+      "color_fired_oxidation": "tan",
+      "color_fired_reduction": "gray-brown with orange flash, heavy ash glazing",
+      "shrinkage_percent": 11.5,
+      "absorption_percent": 1.5,
+      "typical_composition": {
+        "fireclay_percent": 35,
+        "stoneware_clay_percent": 25,
+        "ball_clay_percent": 15,
+        "alumina_hydrate_percent": 5,
+        "silica_percent": 10,
+        "sand_percent": 10
+      },
+      "analysis": {
+        "SiO2": 61.0,
+        "Al2O3": 22.0,
+        "K2O": 2.0,
+        "Na2O": 0.6,
+        "CaO": 0.5,
+        "MgO": 0.5,
+        "Fe2O3": 2.5,
+        "TiO2": 1.0,
+        "LOI": 7.5
+      },
+      "suitable_for": ["throwing", "handbuilding", "wood firing", "anagama"],
+      "notes": "High alumina prevents slumping during multi-day firings. Iron content provides warm flashing. Sand adds thermal shock resistance during stoking."
+    },
+    {
+      "name": "Salt/Soda Stoneware",
+      "type": "stoneware",
+      "cone_range": "10",
+      "description": "Body formulated for salt or soda vapor glazing. Moderate alumina to develop the characteristic orange-peel texture when sodium reacts with the clay surface.",
+      "color_wet": "light gray",
+      "color_fired_oxidation": "buff with salt glaze",
+      "color_fired_reduction": "gray with orange-peel salt glaze",
+      "shrinkage_percent": 12.0,
+      "absorption_percent": 1.0,
+      "typical_composition": {
+        "stoneware_clay_percent": 35,
+        "ball_clay_percent": 25,
+        "fireclay_percent": 15,
+        "silica_percent": 15,
+        "feldspar_percent": 10
+      },
+      "analysis": {
+        "SiO2": 64.5,
+        "Al2O3": 20.5,
+        "K2O": 2.2,
+        "Na2O": 0.7,
+        "CaO": 0.5,
+        "MgO": 0.4,
+        "Fe2O3": 1.5,
+        "TiO2": 0.8,
+        "LOI": 8.0
+      },
+      "suitable_for": ["throwing", "handbuilding", "salt firing", "soda firing"],
+      "notes": "Alumina and silica in the body react with sodium vapor to form glaze in situ. Wadding required where pieces touch shelves. Slip decoration responds beautifully to salt/soda."
+    }
+  ]
+}

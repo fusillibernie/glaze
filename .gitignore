@@ -49,6 +49,9 @@ CLAUDE.md
 .env.local
 .env.*.local
 
+# Local launchers
+launch.bat
+
 # OS
 .DS_Store
 Thumbs.db
@@ -57,3 +60,4 @@ Thumbs.db
 data/uploads/
 data/glazy_cache/
 data/results/
+!data/results/firing_results.json

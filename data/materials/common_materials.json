@@ -305,6 +305,196 @@
         "Na2O": 0.3,
         "SiO2": 0.1
       }
+    },
+    {
+      "name": "Red Art",
+      "type": "clay",
+      "description": "Red iron-bearing earthenware clay, commonly used as a colorant in clay bodies and slips",
+      "analysis": {
+        "SiO2": 64.2,
+        "Al2O3": 16.4,
+        "Fe2O3": 5.2,
+        "K2O": 3.5,
+        "Na2O": 0.6,
+        "CaO": 0.3,
+        "MgO": 1.5,
+        "TiO2": 0.8,
+        "LOI": 7.5
+      }
+    },
+    {
+      "name": "Hawthorne Bond",
+      "type": "clay",
+      "description": "Dark-burning fireclay with high iron content, used in stoneware bodies and as a slip material",
+      "analysis": {
+        "SiO2": 57.8,
+        "Al2O3": 25.5,
+        "Fe2O3": 3.5,
+        "K2O": 1.0,
+        "Na2O": 0.3,
+        "CaO": 0.2,
+        "MgO": 0.5,
+        "TiO2": 1.5,
+        "LOI": 9.5
+      }
+    },
+    {
+      "name": "Ferro Frit 3124",
+      "type": "frit",
+      "description": "Calcium borate frit with higher alumina than 3134, good for cone 06-6",
+      "analysis": {
+        "SiO2": 55.3,
+        "B2O3": 14.0,
+        "CaO": 14.3,
+        "Al2O3": 9.9,
+        "Na2O": 6.3,
+        "K2O": 0.2
+      }
+    },
+    {
+      "name": "Ferro Frit 3249",
+      "type": "frit",
+      "description": "Strontium-containing frit, used as a safer alternative to barium frits",
+      "analysis": {
+        "SiO2": 45.0,
+        "SrO": 18.0,
+        "B2O3": 12.0,
+        "Al2O3": 10.0,
+        "CaO": 8.0,
+        "Na2O": 4.5,
+        "ZnO": 2.5
+      }
+    },
+    {
+      "name": "Gillespie Borate",
+      "type": "boron",
+      "description": "Gerstley Borate substitute with more consistent chemistry. Natural calcium borate source.",
+      "analysis": {
+        "B2O3": 25.0,
+        "CaO": 18.0,
+        "SiO2": 16.0,
+        "Na2O": 5.0,
+        "MgO": 3.5,
+        "Al2O3": 1.5,
+        "K2O": 0.5,
+        "Fe2O3": 0.3,
+        "LOI": 28.0
+      }
+    },
+    {
+      "name": "Petalite",
+      "type": "flux",
+      "description": "Lithium aluminum silicate, low thermal expansion, used in flameware and ovenware bodies",
+      "analysis": {
+        "SiO2": 77.5,
+        "Al2O3": 16.6,
+        "Li2O": 4.9,
+        "Na2O": 0.5,
+        "K2O": 0.3,
+        "Fe2O3": 0.05,
+        "LOI": 0.5
+      }
+    },
+    {
+      "name": "Pearl Ash (Potassium Carbonate)",
+      "type": "flux",
+      "description": "Soluble potassium source, used in ash glaze substitutions and some specialized glazes",
+      "analysis": {
+        "K2O": 68.2,
+        "LOI": 31.8
+      }
+    },
+    {
+      "name": "Volcanic Ash",
+      "type": "flux",
+      "description": "Natural volcanic glass, variable composition, can serve as both flux and silica source",
+      "analysis": {
+        "SiO2": 72.0,
+        "Al2O3": 12.5,
+        "K2O": 4.5,
+        "Na2O": 3.5,
+        "Fe2O3": 1.8,
+        "CaO": 1.5,
+        "MgO": 0.5,
+        "TiO2": 0.3,
+        "LOI": 3.0
+      }
+    },
+    {
+      "name": "Wood Ash (Mixed Hardwood)",
+      "type": "flux",
+      "description": "Washed mixed hardwood ash, primary flux in traditional ash glazes. Composition varies by wood species.",
+      "analysis": {
+        "CaO": 40.0,
+        "SiO2": 12.0,
+        "K2O": 10.0,
+        "MgO": 8.0,
+        "P2O5": 5.0,
+        "Na2O": 3.0,
+        "Al2O3": 3.0,
+        "Fe2O3": 1.5,
+        "MnO": 1.5,
+        "LOI": 15.0
+      }
+    },
+    {
+      "name": "Rice Hull Ash",
+      "type": "silica",
+      "description": "High silica ash from rice hulls, used in nuka and other traditional Asian glazes",
+      "analysis": {
+        "SiO2": 90.0,
+        "K2O": 2.5,
+        "CaO": 1.5,
+        "P2O5": 1.0,
+        "MgO": 0.8,
+        "Na2O": 0.3,
+        "Al2O3": 0.5,
+        "Fe2O3": 0.2,
+        "LOI": 3.0
+      }
+    },
+    {
+      "name": "Bone Ash (Calcium Phosphate)",
+      "type": "calcium",
+      "description": "Tricalcium phosphate from calcined animal bones. Essential for bone china bodies and promotes opalescence in glazes.",
+      "analysis": {
+        "CaO": 54.0,
+        "P2O5": 42.5,
+        "MgO": 1.2,
+        "Na2O": 0.8,
+        "LOI": 1.5
+      }
+    },
+    {
+      "name": "Pyrophyllite",
+      "type": "silica",
+      "description": "Aluminum silicate mineral, low thermal expansion, used in whiteware and low-expansion bodies",
+      "analysis": {
+        "SiO2": 66.0,
+        "Al2O3": 28.0,
+        "Fe2O3": 0.5,
+        "TiO2": 0.2,
+        "K2O": 0.3,
+        "LOI": 5.0
+      }
+    },
+    {
+      "name": "Mullite",
+      "type": "alumina",
+      "description": "3Al2O3-2SiO2, refractory aluminum silicate formed at high temperature. Used in kiln furniture and refractory bodies.",
+      "analysis": {
+        "Al2O3": 72.0,
+        "SiO2": 28.0
+      }
+    },
+    {
+      "name": "Magnesium Carbonate",
+      "type": "magnesium",
+      "description": "Pure magnesium source, promotes matte surfaces and crawling when used in excess. Light powder form.",
+      "analysis": {
+        "MgO": 47.8,
+        "LOI": 52.2
+      }
     }
   ]
 }
