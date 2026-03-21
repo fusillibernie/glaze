@@ -19,7 +19,8 @@ from ..models.glaze import (
 from ..models.umf import UMF
 
 
-GLAZY_API_BASE = "https://glazy.org/api"
+GLAZY_API_BASE = "https://api.glazy.org/api"
+GLAZY_CDN = "https://ddms6z64wp3a6.cloudfront.net"
 
 
 @dataclass
@@ -88,7 +89,7 @@ class GlazyClient:
             List of search results.
         """
         # Build query parameters
-        params = {"limit": limit}
+        params = {"limit": limit, "base_type_id": 460}  # 460 = glazes
         if query:
             params["search"] = query
         if cone:
@@ -101,7 +102,7 @@ class GlazyClient:
         # Try API
         try:
             response = self._client.get(
-                f"{GLAZY_API_BASE}/recipes",
+                f"{GLAZY_API_BASE}/search",
                 params=params,
                 headers=self._get_headers(),
             )
@@ -110,21 +111,40 @@ class GlazyClient:
 
             results = []
             for item in data.get("data", []):
+                # Build image URL from selectedImage
+                image_url = item.get("image_url")
+                selected_img = item.get("selectedImage")
+                if not image_url and selected_img and selected_img.get("filename"):
+                    rid = str(item.get("id", ""))
+                    last2 = rid[-2:].zfill(2) if rid else "00"
+                    image_url = f"{GLAZY_CDN}/uploads/recipes/{last2}/s_{selected_img['filename']}"
+
+                # Cone range from new API format
+                cone = item.get("cone")
+                if not cone:
+                    from_cone = item.get("fromOrtonConeName", "")
+                    to_cone = item.get("toOrtonConeName", "")
+                    cone = f"{from_cone} - {to_cone}" if from_cone and to_cone and from_cone != to_cone else from_cone
+
                 results.append(GlazySearchResult(
                     glazy_id=item.get("id"),
                     name=item.get("name", ""),
-                    creator=item.get("user", {}).get("name"),
-                    cone_range=item.get("cone"),
-                    atmosphere=item.get("atmosphere"),
-                    surface=item.get("surface_type"),
-                    image_url=item.get("image_url"),
+                    creator=item.get("createdByUserName") or item.get("user", {}).get("name"),
+                    cone_range=cone,
+                    atmosphere=item.get("atmosphereTypeName") or item.get("atmosphere"),
+                    surface=item.get("surfaceTypeName") or item.get("surface_type"),
+                    image_url=image_url,
                     description=item.get("description"),
                 ))
             return results
 
         except (httpx.HTTPError, json.JSONDecodeError):
             # Return cached results if API fails
-            return self._search_cache(query, cone, atmosphere, surface, limit)
+            cached = self._search_cache(query, cone, atmosphere, surface, limit)
+            if cached:
+                return cached
+            # Fall back to local recipe files
+            return self._search_local_recipes(query, cone, atmosphere, surface, limit)
 
     def get_recipe(self, glazy_id: int) -> Optional[GlazeRecipe]:
         """Fetch a complete recipe from Glazy.org.
@@ -351,5 +371,73 @@ class GlazyClient:
 
             if len(results) >= limit:
                 break
+
+        return results
+
+    def _search_local_recipes(
+        self,
+        query: Optional[str],
+        cone: Optional[str],
+        atmosphere: Optional[str],
+        surface: Optional[str],
+        limit: int,
+    ) -> list[GlazySearchResult]:
+        """Search bundled local recipe JSON files as a fallback."""
+        results = []
+        recipes_dir = Path(__file__).parent.parent.parent / "data" / "recipes"
+        if not recipes_dir.exists():
+            return results
+
+        recipe_id = 100000  # Local recipe IDs start high to avoid collisions
+
+        for json_file in recipes_dir.glob("*.json"):
+            try:
+                with open(json_file, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+
+                # Handle different JSON structures
+                recipes = []
+                for key in data:
+                    if isinstance(data[key], list):
+                        recipes = data[key]
+                        break
+
+                for recipe in recipes:
+                    name = recipe.get("name", "")
+                    r_cone = recipe.get("cone", "")
+                    r_atm = recipe.get("atmosphere", "")
+                    r_surface = recipe.get("surface", "")
+
+                    # Apply filters
+                    if query and query.lower() not in name.lower():
+                        continue
+                    if cone and str(cone) != str(r_cone):
+                        continue
+                    if atmosphere and atmosphere.lower() != r_atm.lower():
+                        continue
+                    if surface and surface.lower() != r_surface.lower():
+                        continue
+
+                    recipe_id += 1
+                    ingredients_desc = ", ".join(
+                        f"{i.get('material', '')} {i.get('percentage', '')}%"
+                        for i in recipe.get("ingredients", [])
+                    )
+                    results.append(GlazySearchResult(
+                        glazy_id=recipe_id,
+                        name=name,
+                        creator="Local Recipe",
+                        cone_range=str(r_cone),
+                        atmosphere=r_atm,
+                        surface=r_surface,
+                        image_url=None,
+                        description=recipe.get("description", ingredients_desc),
+                    ))
+
+                    if len(results) >= limit:
+                        return results
+
+            except (json.JSONDecodeError, IOError):
+                continue
 
         return results

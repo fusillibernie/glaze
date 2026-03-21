@@ -1,11 +1,13 @@
 """FastAPI application for glaze formulation."""
 
+import json
 import os
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
+import httpx
 from fastapi import FastAPI, HTTPException, Request, UploadFile, File, Form, Query, Body
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -37,6 +39,8 @@ from src.services.predictor import OutcomePredictor
 from src.services.classifier import GlazeClassifier, StullRegion, GlazeCategory
 from src.services.substitution_service import SubstitutionService, AvailabilityStatus
 from src.integrations.glazy_client import GlazyClient
+from src.services.glazy_bulk import CommunityRecipeService
+from src.services.recipe_db import RecipeDatabase
 
 
 limiter = Limiter(key_func=get_remote_address)
@@ -69,6 +73,8 @@ predictor = OutcomePredictor()
 classifier = GlazeClassifier()
 substitution_service = SubstitutionService(DATA_DIR / "materials" / "substitutions.json")
 glazy_client = GlazyClient(cache_dir=DATA_DIR / "glazy_cache")
+community_recipes = CommunityRecipeService(DATA_DIR / "glazy_bulk" / "glazy_recipes.json")
+recipe_db = RecipeDatabase(DATA_DIR)
 
 # Mount static files for uploaded photos
 app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
@@ -579,19 +585,21 @@ async def search_glazy(
         limit=limit,
     )
 
-    return [
-        {
-            "glazy_id": r.glazy_id,
-            "name": r.name,
-            "creator": r.creator,
-            "cone_range": r.cone_range,
-            "atmosphere": r.atmosphere,
-            "surface": r.surface,
-            "image_url": r.image_url,
-            "description": r.description,
-        }
-        for r in results
-    ]
+    return {
+        "recipes": [
+            {
+                "glazy_id": r.glazy_id,
+                "name": r.name,
+                "creator": r.creator,
+                "cone_range": r.cone_range,
+                "atmosphere": r.atmosphere,
+                "surface": r.surface,
+                "image_url": r.image_url,
+                "description": r.description,
+            }
+            for r in results
+        ]
+    }
 
 
 @app.get("/api/glazy/recipe/{glazy_id}")
@@ -643,6 +651,127 @@ async def get_glazy_material(request: Request, glazy_id: int):
         },
         "description": material.description,
     }
+
+
+# ============== Recipe Database Endpoints ==============
+
+
+@app.get("/api/recipes/search")
+async def search_recipes(
+    query: Optional[str] = None,
+    cone: Optional[str] = None,
+    atmosphere: Optional[str] = None,
+    surface: Optional[str] = None,
+    source: Optional[str] = None,
+    limit: int = Query(default=50, le=200),
+    offset: int = Query(default=0, ge=0),
+):
+    """Search recipes across all sources (local, glazy-data, sankey)."""
+    results = recipe_db.search(
+        query=query,
+        cone=cone,
+        atmosphere=atmosphere,
+        surface=surface,
+        source=source,
+        limit=limit,
+        offset=offset,
+    )
+    total = recipe_db.count(
+        cone=cone, atmosphere=atmosphere, surface=surface, source=source,
+    )
+    return {
+        "recipes": results,
+        "count": len(results),
+        "total": total,
+        "offset": offset,
+        "limit": limit,
+    }
+
+
+@app.get("/api/recipes/browse")
+async def browse_recipes(
+    cone: Optional[str] = None,
+    atmosphere: Optional[str] = None,
+    surface: Optional[str] = None,
+    source: Optional[str] = None,
+    limit: int = Query(default=50, le=200),
+    offset: int = Query(default=0, ge=0),
+):
+    """Browse recipes with pagination."""
+    return recipe_db.browse(
+        cone=cone,
+        atmosphere=atmosphere,
+        surface=surface,
+        source=source,
+        limit=limit,
+        offset=offset,
+    )
+
+
+@app.get("/api/recipes/statistics")
+async def recipe_statistics():
+    """Get recipe database statistics."""
+    return recipe_db.statistics()
+
+
+@app.get("/api/recipes/sources")
+async def recipe_sources():
+    """Get info about loaded recipe data sources."""
+    return recipe_db.get_sources()
+
+
+@app.get("/api/reference/umf-limits-all")
+async def get_all_umf_limits():
+    """Get all UMF limit formula sets from all sources."""
+    limits_path = DATA_DIR / "reference" / "umf_limits.json"
+    if not limits_path.exists():
+        raise HTTPException(status_code=404, detail="UMF limits file not found")
+    with open(limits_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data
+
+
+@app.get("/api/reference/umf-limits-for-cone/{cone}")
+async def get_umf_limits_for_cone(cone: str):
+    """Get all UMF limit sets applicable to a specific cone."""
+    limits_path = DATA_DIR / "reference" / "umf_limits.json"
+    if not limits_path.exists():
+        raise HTTPException(status_code=404, detail="UMF limits file not found")
+
+    with open(limits_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    all_limits = data.get("limits", {})
+    result = {}
+
+    # Map cone to applicable limit groups
+    try:
+        cone_int = int(cone)
+    except ValueError:
+        cone_int = 6
+
+    for range_key, limit_sets in all_limits.items():
+        # Parse range from key like "cone_5_6", "cone_04_02", "cone_8_10"
+        parts = range_key.replace("cone_", "").split("_")
+        try:
+            if len(parts) == 2:
+                low = int(parts[0])
+                high = int(parts[1])
+                if low <= cone_int <= high:
+                    result.update(limit_sets)
+            elif len(parts) == 1:
+                if int(parts[0]) == cone_int:
+                    result.update(limit_sets)
+        except ValueError:
+            continue
+
+    # Remove non-limit entries (like practical_target with no oxide ranges)
+    filtered = {}
+    for key, limit_set in result.items():
+        if isinstance(limit_set, dict) and "SiO2" in limit_set:
+            filtered[key] = limit_set
+
+    return {"cone": cone, "limits": filtered}
 
 
 # ============== Classification & Search Endpoints ==============
@@ -1068,6 +1197,112 @@ async def get_material_with_function(name: str):
     }
 
 
+# ============== Community Recipes (Glazy Open Data) ==============
+
+@app.get("/api/community/recipes")
+async def search_community_recipes(
+    query: Optional[str] = None,
+    cone: Optional[str] = None,
+    surface: Optional[str] = None,
+    atmosphere: Optional[str] = None,
+    subtype: Optional[str] = None,
+    page: int = Query(1, ge=1),
+    page_size: int = Query(25, ge=1, le=100),
+):
+    """Search and browse 10k+ community glaze recipes from the Glazy open database."""
+    return community_recipes.search(
+        query=query,
+        cone=cone,
+        surface=surface,
+        atmosphere=atmosphere,
+        subtype=subtype,
+        page=page,
+        page_size=page_size,
+    )
+
+
+@app.get("/api/community/recipes/{recipe_id}")
+async def get_community_recipe(recipe_id: int):
+    """Get full details for a community recipe."""
+    result = community_recipes.get_by_id(recipe_id)
+    if not result:
+        raise HTTPException(status_code=404, detail="Community recipe not found")
+    return result
+
+
+@app.get("/api/community/stats")
+async def community_stats():
+    """Get aggregate statistics about community recipes."""
+    return community_recipes.stats()
+
+
+@app.get("/api/community/filters")
+async def community_filters():
+    """Get available filter options for community recipes."""
+    return community_recipes.get_filter_options()
+
+
+@app.get("/api/community/stull-neighbors")
+async def community_stull_neighbors(
+    sio2: float = Query(..., description="SiO2 UMF value"),
+    al2o3: float = Query(..., description="Al2O3 UMF value"),
+    radius: float = Query(0.5, ge=0.1, le=3.0),
+    limit: int = Query(50, ge=1, le=200),
+):
+    """Find community recipes near a point on the Stull chart."""
+    return community_recipes.stull_neighbors(sio2, al2o3, radius, limit)
+
+
+@app.get("/api/community/stull-scatter")
+async def community_stull_scatter(
+    limit: int = Query(500, ge=50, le=2000),
+):
+    """Get a sample of community recipes for Stull chart overlay."""
+    return community_recipes.stull_scatter(limit)
+
+
+GLAZY_CDN = "https://ddms6z64wp3a6.cloudfront.net"
+GLAZY_API_V2 = "https://api.glazy.org/api"
+_image_cache: dict[int, Optional[dict]] = {}
+
+
+@app.get("/api/community/image/{recipe_id}")
+@limiter.limit("60/minute")
+async def get_community_image(request: Request, recipe_id: int):
+    """Get image URL for a community recipe by fetching from Glazy API."""
+    if recipe_id in _image_cache:
+        return _image_cache[recipe_id] or {"image_url": None}
+
+    try:
+        async_client = httpx.AsyncClient(timeout=10.0)
+        resp = await async_client.get(
+            f"{GLAZY_API_V2}/search",
+            params={"id": recipe_id},
+            headers={"Accept": "application/json"},
+        )
+        await async_client.aclose()
+        resp.raise_for_status()
+        data = resp.json()
+        items = data.get("data", [])
+        if items:
+            img = items[0].get("selectedImage")
+            if img and img.get("filename"):
+                last2 = str(recipe_id)[-2:].zfill(2)
+                result = {
+                    "image_url": f"{GLAZY_CDN}/uploads/recipes/{last2}/m_{img['filename']}",
+                    "thumb_url": f"{GLAZY_CDN}/uploads/recipes/{last2}/s_{img['filename']}",
+                    "dominant_color": img.get("dominantHexColor"),
+                    "secondary_color": img.get("secondaryHexColor"),
+                }
+                _image_cache[recipe_id] = result
+                return result
+
+        _image_cache[recipe_id] = None
+        return {"image_url": None}
+    except Exception:
+        return {"image_url": None}
+
+
 # ============== Helper Functions ==============
 
 def _convert_recipe_input(recipe: RecipeInput) -> GlazeRecipe:
@@ -1160,9 +1395,36 @@ async def get_stull_chart_data():
                     "region": classification.stull.region.value,
                 })
 
+    # Load limit overlays for Stull chart
+    limit_overlays = []
+    limits_path = DATA_DIR / "reference" / "umf_limits.json"
+    if limits_path.exists():
+        try:
+            with open(limits_path, "r", encoding="utf-8") as f:
+                limits_data = json.load(f)
+            for range_key, limit_sets in limits_data.get("limits", {}).items():
+                for set_key, limit_set in limit_sets.items():
+                    if isinstance(limit_set, dict) and "SiO2" in limit_set and "Al2O3" in limit_set:
+                        sio2 = limit_set["SiO2"]
+                        al2o3 = limit_set["Al2O3"]
+                        limit_overlays.append({
+                            "name": set_key,
+                            "label": limit_set.get("label", set_key),
+                            "cone_range": range_key,
+                            "surface": limit_set.get("surface", "general"),
+                            "color": limit_set.get("color", "#888"),
+                            "sio2_min": sio2["min"],
+                            "sio2_max": sio2["max"],
+                            "al2o3_min": al2o3["min"],
+                            "al2o3_max": al2o3["max"],
+                        })
+        except (json.JSONDecodeError, IOError):
+            pass
+
     return {
         "regions": regions,
         "glazes": glazes,
+        "limit_overlays": limit_overlays,
         "axes": {
             "x": {"label": "Al₂O₃", "min": 0.1, "max": 0.7},
             "y": {"label": "SiO₂", "min": 1.0, "max": 6.0},
@@ -1193,8 +1455,10 @@ def _atmosphere_description(atm: AtmosphereType) -> str:
         AtmosphereType.OXIDATION: "Clean burning, typical for electric kilns",
         AtmosphereType.REDUCTION: "Oxygen-starved, typical for gas kilns",
         AtmosphereType.NEUTRAL: "Balanced atmosphere",
-        AtmosphereType.WOOD: "Wood-fired with ash deposits",
-        AtmosphereType.SALT: "Salt glazing atmosphere",
-        AtmosphereType.SODA: "Soda firing atmosphere",
+        AtmosphereType.HEAVY_REDUCTION: "Strong reduction, deeper color effects",
+        AtmosphereType.LIGHT_REDUCTION: "Mild reduction, subtle atmosphere effects",
+        AtmosphereType.WOOD: "Wood-fired with ash deposits and natural glazing",
+        AtmosphereType.SALT: "Salt glazing atmosphere, orange-peel texture",
+        AtmosphereType.SODA: "Soda firing atmosphere, softer than salt",
     }
     return descriptions.get(atm, "")

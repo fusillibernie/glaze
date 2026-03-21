@@ -1,33 +1,101 @@
 {
-  "source": "Glazy.org - Compiled from Val Cushing and Hesselberth & Roy limit formulas",
-  "description": "Unity Molecular Formula (UMF) limit ranges for stable glazes by cone temperature",
+  "source": "Compiled from Val Cushing, Hesselberth & Roy, UK Traditional Industry, and Green & Cooper limit formulas",
+  "description": "Unity Molecular Formula (UMF) limit ranges for stable glazes by cone temperature. Multiple sources provided as overlays — sources disagree on exact ranges.",
+  "note": "Present multiple limit overlays rather than picking one as 'correct'. Each source has different priorities (food safety, industrial production, studio pottery).",
   "limits": {
+    "cone_04_02": {
+      "uk_traditional": {
+        "label": "UK Traditional Industry",
+        "surface": "general",
+        "color": "#3b82f6",
+        "KNaO": {"min": 0.0, "max": 0.5},
+        "CaO": {"min": 0.1, "max": 0.6},
+        "ZnO": {"min": 0.0, "max": 0.2},
+        "BaO": {"min": 0.0, "max": 0.3},
+        "MgO": {"min": 0.0, "max": 0.3},
+        "B2O3": {"min": 0.3, "max": 1.1},
+        "Al2O3": {"min": 0.1, "max": 0.4},
+        "SiO2": {"min": 1.5, "max": 3.0}
+      },
+      "green_cooper": {
+        "label": "Green & Cooper",
+        "surface": "general",
+        "color": "#8b5cf6",
+        "KNaO": {"min": 0.0, "max": 0.525},
+        "CaO": {"min": 0.0, "max": 0.3},
+        "ZnO": {"min": 0.0, "max": 0.18},
+        "BaO": {"min": 0.0, "max": 0.28},
+        "MgO": {"min": 0.0, "max": 0.3},
+        "B2O3": {"min": 0.0, "max": 1.0},
+        "Al2O3": {"min": 0.1, "max": 0.45},
+        "SiO2": {"min": 1.375, "max": 3.15}
+      }
+    },
+    "cone_3_7": {
+      "uk_traditional": {
+        "label": "UK Traditional Industry",
+        "surface": "general",
+        "color": "#3b82f6",
+        "KNaO": {"min": 0.1, "max": 0.5},
+        "CaO": {"min": 0.1, "max": 0.7},
+        "ZnO": {"min": 0.0, "max": 0.25},
+        "BaO": {"min": 0.0, "max": 0.3},
+        "MgO": {"min": 0.0, "max": 0.3},
+        "B2O3": {"min": 0.0, "max": 0.4},
+        "Al2O3": {"min": 0.2, "max": 0.35},
+        "SiO2": {"min": 2.5, "max": 3.5}
+      }
+    },
     "cone_5_6": {
       "cushing_glossy": {
+        "label": "Cushing - Glossy",
+        "surface": "glossy",
+        "color": "#10b981",
         "KNaO": {"min": 0.05, "max": 0.6},
+        "Li2O": {"min": 0.0, "max": 0.5},
         "CaO": {"min": 0.05, "max": 0.6},
         "MgO": {"min": 0.0, "max": 0.1},
+        "ZnO": {"min": 0.0, "max": 0.15},
+        "BaO": {"min": 0.0, "max": 0.15},
+        "SrO": {"min": 0.0, "max": 0.15},
         "Al2O3": {"min": 0.1, "max": 0.3},
         "B2O3": {"min": 0.0, "max": 1.0},
         "SiO2": {"min": 1.5, "max": 4.0}
       },
       "cushing_satin": {
+        "label": "Cushing - Satin",
+        "surface": "satin",
+        "color": "#f59e0b",
         "KNaO": {"min": 0.05, "max": 0.35},
+        "Li2O": {"min": 0.0, "max": 0.15},
         "CaO": {"min": 0.05, "max": 0.7},
         "MgO": {"min": 0.0, "max": 0.35},
+        "ZnO": {"min": 0.0, "max": 0.3},
+        "BaO": {"min": 0.0, "max": 0.35},
+        "SrO": {"min": 0.0, "max": 0.35},
         "Al2O3": {"min": 0.2, "max": 0.4},
         "B2O3": {"min": 0.0, "max": 0.5},
         "SiO2": {"min": 2.0, "max": 3.5}
       },
       "cushing_matte": {
+        "label": "Cushing - Matte",
+        "surface": "matte",
+        "color": "#ef4444",
         "KNaO": {"min": 0.05, "max": 0.3},
+        "Li2O": {"min": 0.0, "max": 0.1},
         "CaO": {"min": 0.05, "max": 0.8},
         "MgO": {"min": 0.0, "max": 0.45},
+        "ZnO": {"min": 0.0, "max": 0.4},
+        "BaO": {"min": 0.0, "max": 0.5},
+        "SrO": {"min": 0.0, "max": 0.5},
         "Al2O3": {"min": 0.2, "max": 0.5},
         "B2O3": {"min": 0.0, "max": 0.5},
         "SiO2": {"min": 2.0, "max": 3.0}
       },
       "hesselberth_roy": {
+        "label": "Hesselberth & Roy (Food-Safe)",
+        "surface": "general",
+        "color": "#06b6d4",
         "KNaO": {"min": 0.01, "max": 0.03},
         "CaO": {"min": 0.2, "max": 0.6},
         "MgO": {"min": 0.25, "max": 0.4},
@@ -36,6 +104,19 @@
         "SiO2": {"min": 2.5, "max": 4.0},
         "notes": "Optimized for durability and food safety"
       },
+      "green_cooper": {
+        "label": "Green & Cooper",
+        "surface": "general",
+        "color": "#8b5cf6",
+        "KNaO": {"min": 0.0, "max": 0.375},
+        "CaO": {"min": 0.0, "max": 0.55},
+        "ZnO": {"min": 0.0, "max": 0.3},
+        "BaO": {"min": 0.0, "max": 0.4},
+        "MgO": {"min": 0.0, "max": 0.325},
+        "B2O3": {"min": 0.0, "max": 0.35},
+        "Al2O3": {"min": 0.275, "max": 0.65},
+        "SiO2": {"min": 2.4, "max": 4.7}
+      },
       "practical_target": {
         "notes": "Practical cone 6 target for stable functional glazes",
         "flux_ratio_KNaO_CaO": "0.3:0.7",
@@ -43,38 +124,89 @@
         "SiO2_Al2O3_ratio": {"glossy": "7-9", "satin": "5-7", "matte": "3-5"}
       }
     },
-    "cone_9_10": {
+    "cone_8_10": {
       "cushing_glossy": {
+        "label": "Cushing - Glossy",
+        "surface": "glossy",
+        "color": "#10b981",
         "KNaO": {"min": 0.05, "max": 0.5},
+        "Li2O": {"min": 0.0, "max": 0.4},
         "CaO": {"min": 0.05, "max": 0.8},
         "MgO": {"min": 0.0, "max": 0.15},
+        "ZnO": {"min": 0.0, "max": 0.15},
+        "BaO": {"min": 0.0, "max": 0.15},
+        "SrO": {"min": 0.0, "max": 0.15},
         "Al2O3": {"min": 0.2, "max": 0.5},
         "B2O3": {"min": 0.0, "max": 0.5},
         "SiO2": {"min": 2.0, "max": 6.0}
       },
       "cushing_satin": {
+        "label": "Cushing - Satin",
+        "surface": "satin",
+        "color": "#f59e0b",
         "KNaO": {"min": 0.05, "max": 0.4},
+        "Li2O": {"min": 0.0, "max": 0.2},
         "CaO": {"min": 0.05, "max": 0.8},
         "MgO": {"min": 0.0, "max": 0.5},
+        "ZnO": {"min": 0.0, "max": 0.4},
+        "BaO": {"min": 0.0, "max": 0.5},
+        "SrO": {"min": 0.0, "max": 0.5},
         "Al2O3": {"min": 0.25, "max": 0.6},
         "B2O3": {"min": 0.0, "max": 0.4},
         "SiO2": {"min": 2.0, "max": 5.0}
       },
       "cushing_matte": {
+        "label": "Cushing - Matte",
+        "surface": "matte",
+        "color": "#ef4444",
         "KNaO": {"min": 0.05, "max": 0.3},
+        "Li2O": {"min": 0.0, "max": 0.1},
         "CaO": {"min": 0.05, "max": 0.9},
         "MgO": {"min": 0.0, "max": 0.6},
+        "ZnO": {"min": 0.0, "max": 0.5},
+        "BaO": {"min": 0.0, "max": 0.6},
+        "SrO": {"min": 0.0, "max": 0.6},
         "Al2O3": {"min": 0.25, "max": 0.8},
         "B2O3": {"min": 0.0, "max": 0.2},
         "SiO2": {"min": 2.0, "max": 5.0}
       },
       "hesselberth_roy": {
+        "label": "Hesselberth & Roy (Food-Safe)",
+        "surface": "general",
+        "color": "#06b6d4",
         "KNaO": {"min": 0.1, "max": 0.3},
         "CaO": {"min": 0.3, "max": 0.7},
+        "ZnO": {"min": 0.0, "max": 0.4},
         "MgO": {"min": 0.0, "max": 0.3},
         "Al2O3": {"min": 0.3, "max": 0.6},
         "B2O3": {"min": 0.0, "max": 0.3},
         "SiO2": {"min": 3.0, "max": 5.0}
+      },
+      "uk_traditional": {
+        "label": "UK Traditional Industry",
+        "surface": "general",
+        "color": "#3b82f6",
+        "KNaO": {"min": 0.1, "max": 0.5},
+        "CaO": {"min": 0.35, "max": 0.8},
+        "ZnO": {"min": 0.0, "max": 0.3},
+        "BaO": {"min": 0.0, "max": 0.3},
+        "MgO": {"min": 0.0, "max": 0.4},
+        "B2O3": {"min": 0.0, "max": 0.3},
+        "Al2O3": {"min": 0.3, "max": 0.55},
+        "SiO2": {"min": 3.0, "max": 5.0}
+      },
+      "green_cooper": {
+        "label": "Green & Cooper",
+        "surface": "general",
+        "color": "#8b5cf6",
+        "KNaO": {"min": 0.0, "max": 0.3},
+        "CaO": {"min": 0.0, "max": 0.7},
+        "ZnO": {"min": 0.0, "max": 0.36},
+        "BaO": {"min": 0.0, "max": 0.475},
+        "MgO": {"min": 0.0, "max": 0.34},
+        "B2O3": {"min": 0.0, "max": 0.225},
+        "Al2O3": {"min": 0.45, "max": 0.825},
+        "SiO2": {"min": 3.5, "max": 6.4}
       }
     }
   },
@@ -123,6 +255,11 @@
       "name": "Lithium",
       "role": "flux",
       "effects": "Powerful flux, reduces thermal expansion, promotes color development"
+    },
+    "SrO": {
+      "name": "Strontium",
+      "role": "flux",
+      "effects": "Similar to calcium but promotes smoother surfaces, less common"
     }
   }
 }

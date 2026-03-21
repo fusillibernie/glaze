@@ -963,6 +963,10 @@
             <span class="tab-icon">🔍</span>
             <span>Glazy Search</span>
         </button>
+        <button class="tab" data-tab="community">
+            <span class="tab-icon">🌐</span>
+            <span>Community</span>
+        </button>
     </nav>
 
     <main>
@@ -1122,6 +1126,16 @@
                             <span class="text-muted text-sm" data-tooltip="Shows predicted surface based on SiO2 and Al2O3 ratio">
                                 Hover for info
                             </span>
+                        </div>
+                        <div style="display: flex; gap: 1rem; margin-bottom: 0.5rem; font-size: 0.8rem;">
+                            <label style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer; color: var(--text-secondary);">
+                                <input type="checkbox" id="toggle-limit-overlays" onchange="showLimitOverlays = this.checked; loadStullLimits().then(() => { if (lastUMFData) _renderStullChartWithOverlay(lastUMFData); });">
+                                Show UMF Limits
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer; color: var(--text-secondary);">
+                                <input type="checkbox" id="toggle-community-overlay" onchange="if (this.checked) { loadStullOverlay().then(() => { if (lastUMFData) _renderStullChartWithOverlay(lastUMFData); }); } else { stullOverlayData = []; if (lastUMFData) _renderStullChartWithOverlay(lastUMFData); }">
+                                Show Community Dots
+                            </label>
                         </div>
                         <div id="stull-chart" class="stull-chart">
                             <div class="empty-state">
@@ -1302,6 +1316,12 @@
                             <option value="">Any</option>
                             <option value="oxidation">Oxidation</option>
                             <option value="reduction">Reduction</option>
+                            <option value="neutral">Neutral</option>
+                            <option value="heavy_reduction">Heavy Reduction</option>
+                            <option value="light_reduction">Light Reduction</option>
+                            <option value="wood">Wood</option>
+                            <option value="salt">Salt</option>
+                            <option value="soda">Soda</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -1329,6 +1349,85 @@
                         <div class="empty-state-icon">🔍</div>
                         <p>Enter search criteria to find recipes</p>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- COMMUNITY RECIPES TAB -->
+        <section id="community" class="tab-content">
+            <div class="card mb-1">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <span class="card-title-icon">🌐</span>
+                        Community Glaze Recipes
+                    </h3>
+                    <span id="community-total" class="badge badge-primary">Loading...</span>
+                </div>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">
+                    Browse 10,000+ glaze recipes from the Glazy open database. Data licensed under CC BY-NC-SA 4.0.
+                </p>
+                <div class="grid grid-4" style="gap: 0.75rem;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <input type="text" id="community-query" placeholder="Search by name...">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <select id="community-cone">
+                            <option value="">All Cones</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <select id="community-surface">
+                            <option value="">All Surfaces</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <select id="community-atmosphere">
+                            <option value="">All Atmospheres</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.75rem; margin-top: 0.75rem; flex-wrap: wrap;">
+                    <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 200px;">
+                        <select id="community-subtype">
+                            <option value="">All Types / Colors</option>
+                        </select>
+                    </div>
+                    <button id="community-search-btn">Search</button>
+                    <button class="secondary" id="community-clear-btn">Clear</button>
+                </div>
+            </div>
+
+            <!-- Stats Overview -->
+            <div id="community-stats" class="grid grid-4 mb-1" style="display: none;"></div>
+
+            <!-- Results -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Results</h3>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <span id="community-result-info" class="badge badge-primary">0 results</span>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="small secondary" id="community-prev-btn" disabled>&lt; Prev</button>
+                            <button class="small secondary" id="community-next-btn" disabled>Next &gt;</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="community-results">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🌐</div>
+                        <p>Search or browse the community recipe database</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recipe Detail Modal -->
+            <div class="modal-overlay" id="community-detail-modal">
+                <div class="modal" style="max-width: 700px;">
+                    <div class="modal-header">
+                        <h2 class="modal-title" id="community-detail-title">Recipe Details</h2>
+                        <button class="modal-close" onclick="closeCommunityDetail()">&times;</button>
+                    </div>
+                    <div class="modal-body" id="community-detail-body"></div>
                 </div>
             </div>
         </section>
@@ -1395,9 +1494,9 @@
                 cone: '6',
                 ingredients: [
                     { name: 'Custer Feldspar', percentage: 25 },
-                    { name: 'Silica', percentage: 30 },
-                    { name: 'Whiting', percentage: 20 },
-                    { name: 'EPK', percentage: 15 },
+                    { name: 'Silica (Flint)', percentage: 30 },
+                    { name: 'Whiting (Calcium Carbonate)', percentage: 20 },
+                    { name: 'EPK Kaolin', percentage: 15 },
                     { name: 'Gerstley Borate', percentage: 10 },
                 ]
             },
@@ -1406,9 +1505,9 @@
                 cone: '6',
                 ingredients: [
                     { name: 'Nepheline Syenite', percentage: 35 },
-                    { name: 'Silica', percentage: 25 },
-                    { name: 'Whiting', percentage: 15 },
-                    { name: 'EPK', percentage: 15 },
+                    { name: 'Silica (Flint)', percentage: 25 },
+                    { name: 'Whiting (Calcium Carbonate)', percentage: 15 },
+                    { name: 'EPK Kaolin', percentage: 15 },
                     { name: 'Zinc Oxide', percentage: 5 },
                     { name: 'Talc', percentage: 5 },
                 ]
@@ -1418,9 +1517,9 @@
                 cone: '10',
                 ingredients: [
                     { name: 'Custer Feldspar', percentage: 40 },
-                    { name: 'Silica', percentage: 30 },
-                    { name: 'Whiting', percentage: 15 },
-                    { name: 'EPK', percentage: 15 },
+                    { name: 'Silica (Flint)', percentage: 30 },
+                    { name: 'Whiting (Calcium Carbonate)', percentage: 15 },
+                    { name: 'EPK Kaolin', percentage: 15 },
                 ]
             },
             'tenmoku': {
@@ -1428,9 +1527,9 @@
                 cone: '10',
                 ingredients: [
                     { name: 'Custer Feldspar', percentage: 40 },
-                    { name: 'Silica', percentage: 20 },
-                    { name: 'Whiting', percentage: 20 },
-                    { name: 'EPK', percentage: 20 },
+                    { name: 'Silica (Flint)', percentage: 20 },
+                    { name: 'Whiting (Calcium Carbonate)', percentage: 20 },
+                    { name: 'EPK Kaolin', percentage: 20 },
                 ]
             },
             'shino': {
@@ -1438,7 +1537,7 @@
                 cone: '10',
                 ingredients: [
                     { name: 'Nepheline Syenite', percentage: 70 },
-                    { name: 'EPK', percentage: 20 },
+                    { name: 'EPK Kaolin', percentage: 20 },
                     { name: 'Spodumene', percentage: 10 },
                 ]
             },
@@ -1528,7 +1627,11 @@
             try {
                 const response = await fetch(`${API_BASE}/api/materials`);
                 const data = await response.json();
-                materials = data.materials || [];
+                materials = Array.isArray(data) ? data : (data.materials || []);
+                // Normalize field names: API returns 'type', frontend uses 'material_type'
+                materials.forEach(m => {
+                    if (m.type && !m.material_type) m.material_type = m.type;
+                });
                 renderMaterialList();
                 populateMaterialSelect();
                 document.getElementById('material-count').textContent = `${materials.length}`;
@@ -1543,8 +1646,9 @@
             try {
                 const response = await fetch(`${API_BASE}/api/reference/material-types`);
                 const data = await response.json();
+                const types = Array.isArray(data) ? data : (data.types || []);
                 const select = document.getElementById('material-type-filter');
-                data.types.forEach(type => {
+                types.forEach(type => {
                     const option = document.createElement('option');
                     option.value = type.type;
                     option.textContent = type.type.replace(/_/g, ' ');
@@ -1719,12 +1823,10 @@
 
             container.innerHTML = recipeIngredients.map(ing => `
                 <div class="ingredient-row" data-id="${ing.id}">
-                    <select class="ingredient-select" data-id="${ing.id}">
-                        <option value="">Select material...</option>
-                        ${materials.map(m => `
-                            <option value="${m.name}" ${m.name === ing.name ? 'selected' : ''}>${m.name}</option>
-                        `).join('')}
-                    </select>
+                    <input type="text" class="ingredient-select" data-id="${ing.id}"
+                           list="materials-datalist" value="${escapeHtml(ing.name)}"
+                           placeholder="Type to search materials..." autocomplete="off"
+                           style="flex: 1;">
                     <div class="ingredient-slider">
                         <input type="range" class="ingredient-range" data-id="${ing.id}"
                                value="${ing.percentage}" min="0" max="100" step="1">
@@ -1736,13 +1838,26 @@
                 </div>
             `).join('');
 
+            // Ensure datalist exists
+            if (!document.getElementById('materials-datalist')) {
+                const dl = document.createElement('datalist');
+                dl.id = 'materials-datalist';
+                document.body.appendChild(dl);
+            }
+            document.getElementById('materials-datalist').innerHTML =
+                materials.map(m => `<option value="${escapeHtml(m.name)}">`).join('');
+
             // Event listeners
-            container.querySelectorAll('.ingredient-select').forEach(select => {
-                select.addEventListener('change', (e) => {
+            container.querySelectorAll('.ingredient-select').forEach(input => {
+                input.addEventListener('change', (e) => {
                     const ing = recipeIngredients.find(i => i.id === parseInt(e.target.dataset.id));
                     if (ing) ing.name = e.target.value;
                     updateRecipeTotal();
                     debouncedCalculateUMF();
+                });
+                input.addEventListener('input', (e) => {
+                    const ing = recipeIngredients.find(i => i.id === parseInt(e.target.dataset.id));
+                    if (ing) ing.name = e.target.value;
                 });
             });
 
@@ -1951,11 +2066,39 @@
             `;
         }
 
+        let stullTarget = null; // {x: SiO2, y: Al2O3} click target
+        let stullLimitOverlays = []; // loaded from API
+        let showLimitOverlays = false;
+
+        async function loadStullLimits() {
+            try {
+                const response = await fetch(`${API_BASE}/api/reference/umf-limits-for-cone/${targetCone}`);
+                const data = await response.json();
+                stullLimitOverlays = [];
+                for (const [key, limit] of Object.entries(data.limits || {})) {
+                    if (limit.SiO2 && limit.Al2O3) {
+                        stullLimitOverlays.push({
+                            name: key,
+                            label: limit.label || key,
+                            color: limit.color || '#888',
+                            surface: limit.surface || 'general',
+                            sio2_min: limit.SiO2.min,
+                            sio2_max: limit.SiO2.max,
+                            al2o3_min: limit.Al2O3.min,
+                            al2o3_max: limit.Al2O3.max,
+                        });
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to load Stull limits:', e);
+            }
+        }
+
         function renderStullChart(data) {
             const al2o3 = data.Al2O3 || 0;
             const sio2 = data.SiO2 || 0;
 
-            const trace = {
+            const traces = [{
                 x: [sio2],
                 y: [al2o3],
                 mode: 'markers',
@@ -1968,7 +2111,28 @@
                 },
                 name: 'Your Recipe',
                 hovertemplate: `SiO₂: ${sio2.toFixed(2)}<br>Al₂O₃: ${al2o3.toFixed(3)}<extra></extra>`
-            };
+            }];
+
+            // Add target marker if set
+            if (stullTarget) {
+                traces.push({
+                    x: [stullTarget.x],
+                    y: [stullTarget.y],
+                    mode: 'markers+text',
+                    type: 'scatter',
+                    marker: {
+                        size: 18,
+                        color: '#ef4444',
+                        symbol: 'cross',
+                        line: { width: 2, color: '#fff' }
+                    },
+                    name: 'Target',
+                    text: ['TARGET'],
+                    textposition: 'top center',
+                    textfont: { color: '#ef4444', size: 10 },
+                    hovertemplate: `Target<br>SiO₂: ${stullTarget.x.toFixed(2)}<br>Al₂O₃: ${stullTarget.y.toFixed(3)}<extra></extra>`
+                });
+            }
 
             const layout = {
                 paper_bgcolor: '#1a1a2e',
@@ -1988,20 +2152,236 @@
                     tickfont: { color: '#94a3b8' }
                 },
                 margin: { t: 20, r: 20, b: 50, l: 60 },
-                showlegend: false,
+                showlegend: true,
+                legend: { font: { color: '#94a3b8' }, bgcolor: 'rgba(0,0,0,0)' },
                 shapes: [
                     { type: 'rect', x0: 2.5, x1: 5, y0: 0.15, y1: 0.4,
                       fillcolor: 'rgba(16, 185, 129, 0.15)', line: { color: '#10b981', width: 1 } },
                     { type: 'rect', x0: 1.5, x1: 3.5, y0: 0.4, y1: 0.7,
                       fillcolor: 'rgba(245, 158, 11, 0.15)', line: { color: '#f59e0b', width: 1 } },
+                    // Add limit overlays as dashed rectangles
+                    ...(showLimitOverlays ? stullLimitOverlays.map(lim => ({
+                        type: 'rect',
+                        x0: lim.sio2_min, x1: lim.sio2_max,
+                        y0: lim.al2o3_min, y1: lim.al2o3_max,
+                        fillcolor: 'rgba(0,0,0,0)',
+                        line: { color: lim.color, width: 2, dash: 'dash' },
+                    })) : []),
                 ],
                 annotations: [
                     { x: 3.75, y: 0.27, text: 'GLOSSY', showarrow: false, font: { color: '#10b981', size: 11 } },
                     { x: 2.5, y: 0.55, text: 'MATTE', showarrow: false, font: { color: '#f59e0b', size: 11 } },
-                ]
+                    // Add limit labels
+                    ...(showLimitOverlays ? stullLimitOverlays.map(lim => ({
+                        x: lim.sio2_max, y: lim.al2o3_max,
+                        text: lim.label, showarrow: false,
+                        font: { color: lim.color, size: 9 },
+                        xanchor: 'right',
+                    })) : []),
+                ],
+                dragmode: 'pan',
             };
 
-            Plotly.newPlot('stull-chart', [trace], layout, { responsive: true, displayModeBar: false });
+            Plotly.newPlot('stull-chart', traces, layout, {
+                responsive: true,
+                displayModeBar: true,
+                modeBarButtonsToRemove: ['lasso2d', 'select2d', 'autoScale2d', 'hoverClosestCartesian', 'hoverCompareCartesian', 'toggleSpikelines'],
+                displaylogo: false,
+            });
+
+            // Click to set target
+            const chartEl = document.getElementById('stull-chart');
+            chartEl.on('plotly_click', function(eventData) {
+                if (eventData.points && eventData.points.length > 0) {
+                    // Clicked on an existing point - ignore
+                    return;
+                }
+            });
+            chartEl.on('plotly_doubleclick', function() {
+                // Reset zoom on double-click is default, keep it
+            });
+
+            // Use plotly_click on the plot area (not on points) to set target
+            chartEl.removeAllListeners('plotly_click');
+            chartEl.on('plotly_click', function(eventData) {
+                const xaxis = chartEl._fullLayout.xaxis;
+                const yaxis = chartEl._fullLayout.yaxis;
+
+                if (eventData.points && eventData.points.length > 0) {
+                    // Clicked on a marker - do nothing
+                    return;
+                }
+
+                // Get click coordinates from event
+                const point = eventData.points?.[0];
+                if (!point) {
+                    // No point clicked - use event coordinates
+                    const evt = eventData.event;
+                    const bb = chartEl.querySelector('.plotly .nsewdrag')?.getBoundingClientRect();
+                    if (!bb || !evt) return;
+                    const xFrac = (evt.clientX - bb.left) / bb.width;
+                    const yFrac = (evt.clientY - bb.top) / bb.height;
+                    const xVal = xaxis.range[0] + xFrac * (xaxis.range[1] - xaxis.range[0]);
+                    const yVal = yaxis.range[1] - yFrac * (yaxis.range[1] - yaxis.range[0]);
+                    setStullTarget(xVal, yVal);
+                }
+            });
+
+            // Also handle click on the drag layer for empty-area clicks
+            setTimeout(() => {
+                const dragLayer = chartEl.querySelector('.nsewdrag');
+                if (dragLayer) {
+                    dragLayer.style.cursor = 'crosshair';
+                    dragLayer.addEventListener('click', function(evt) {
+                        const bb = dragLayer.getBoundingClientRect();
+                        const xaxis = chartEl._fullLayout.xaxis;
+                        const yaxis = chartEl._fullLayout.yaxis;
+                        const xFrac = (evt.clientX - bb.left) / bb.width;
+                        const yFrac = (evt.clientY - bb.top) / bb.height;
+                        const xVal = xaxis.range[0] + xFrac * (xaxis.range[1] - xaxis.range[0]);
+                        const yVal = yaxis.range[1] - yFrac * (yaxis.range[1] - yaxis.range[0]);
+                        if (xVal >= 0 && xVal <= 8 && yVal >= 0 && yVal <= 1.5) {
+                            setStullTarget(xVal, yVal);
+                        }
+                    });
+                }
+            }, 100);
+        }
+
+        async function setStullTarget(sio2, al2o3) {
+            stullTarget = { x: parseFloat(sio2.toFixed(2)), y: parseFloat(al2o3.toFixed(3)) };
+            // Re-render chart with target
+            if (currentUMF) renderStullChart(currentUMF);
+
+            // Show target info panel
+            let panel = document.getElementById('stull-target-panel');
+            if (!panel) {
+                const chartContainer = document.getElementById('stull-chart').parentElement;
+                panel = document.createElement('div');
+                panel.id = 'stull-target-panel';
+                panel.className = 'card';
+                panel.style.marginTop = '1rem';
+                chartContainer.appendChild(panel);
+            }
+
+            const ratio = stullTarget.y > 0 ? (stullTarget.x / stullTarget.y).toFixed(1) : 'N/A';
+            let surface = 'Unknown';
+            if (stullTarget.y < 0.35 && stullTarget.x > 3) surface = 'Glossy';
+            else if (stullTarget.y > 0.4 || stullTarget.x < 3) surface = 'Matte';
+            else surface = 'Satin';
+
+            panel.innerHTML = `
+                <div class="card-header">
+                    <span class="card-title"><span class="card-title-icon">🎯</span> Stull Chart Target</span>
+                    <div>
+                        <button class="small" onclick="formulateFromTarget()" style="margin-right: 0.5rem;">Suggest Formula</button>
+                        <button class="small secondary" onclick="clearStullTarget()">Clear</button>
+                    </div>
+                </div>
+                <div class="grid grid-4">
+                    <div class="prediction-card">
+                        <div class="prediction-title">Target SiO₂</div>
+                        <div class="prediction-value">${stullTarget.x.toFixed(2)}</div>
+                    </div>
+                    <div class="prediction-card">
+                        <div class="prediction-title">Target Al₂O₃</div>
+                        <div class="prediction-value">${stullTarget.y.toFixed(3)}</div>
+                    </div>
+                    <div class="prediction-card">
+                        <div class="prediction-title">Si:Al Ratio</div>
+                        <div class="prediction-value">${ratio}</div>
+                    </div>
+                    <div class="prediction-card">
+                        <div class="prediction-title">Expected Surface</div>
+                        <div class="prediction-value">${surface}</div>
+                    </div>
+                </div>
+                <div id="stull-formulation-result"></div>
+            `;
+            showToast(`Target set: SiO₂ ${stullTarget.x.toFixed(2)}, Al₂O₃ ${stullTarget.y.toFixed(3)} (${surface})`, 'info');
+        }
+
+        function clearStullTarget() {
+            stullTarget = null;
+            const panel = document.getElementById('stull-target-panel');
+            if (panel) panel.remove();
+            if (currentUMF) renderStullChart(currentUMF);
+            showToast('Target cleared', 'info');
+        }
+
+        async function formulateFromTarget() {
+            if (!stullTarget) return;
+
+            const resultEl = document.getElementById('stull-formulation-result');
+            resultEl.innerHTML = '<div class="loading active"><div class="spinner"></div>Generating formula...</div>';
+
+            let surface = 'glossy';
+            if (stullTarget.y > 0.4 || stullTarget.x < 3) surface = 'matte';
+            else if (stullTarget.y >= 0.3 && stullTarget.x <= 4) surface = 'satin';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/recipes/formulate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        cone: targetCone,
+                        surface: surface,
+                        sio2_target: stullTarget.x,
+                        al2o3_target: stullTarget.y,
+                    })
+                });
+
+                if (!response.ok) throw new Error('Formulation failed');
+                const data = await response.json();
+
+                const recipe = data.recipe;
+                const achieved = data.achieved_umf || {};
+
+                resultEl.innerHTML = `
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                        <h4 style="margin-bottom: 0.75rem;">Suggested Formula: ${escapeHtml(recipe.name)}</h4>
+                        <div class="grid grid-2" style="margin-bottom: 0.75rem;">
+                            ${recipe.ingredients.map(ing => `
+                                <div style="display: flex; justify-content: space-between; padding: 0.35rem 0.5rem; background: var(--bg-hover); border-radius: 6px;">
+                                    <span>${escapeHtml(ing.material)}</span>
+                                    <span class="font-mono">${ing.percentage}%</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        ${achieved.SiO2 ? `<p style="color: var(--text-muted); font-size: 0.85rem;">
+                            Achieved UMF: SiO₂ ${achieved.SiO2.toFixed(2)}, Al₂O₃ ${achieved.Al2O3.toFixed(3)}
+                            ${data.deviation_score !== undefined ? ` | Deviation: ${(data.deviation_score * 100).toFixed(1)}%` : ''}
+                        </p>` : ''}
+                        ${data.suggestions?.length ? `<ul style="margin-top: 0.5rem; padding-left: 1.25rem; color: var(--text-secondary); font-size: 0.85rem;">
+                            ${data.suggestions.map(s => `<li>${escapeHtml(s)}</li>`).join('')}
+                        </ul>` : ''}
+                        <button class="small" onclick="loadFormulatedRecipe()" style="margin-top: 0.75rem;">Load into Recipe Builder</button>
+                    </div>
+                `;
+
+                // Store for loading
+                window._lastFormulatedRecipe = data.recipe;
+                showToast('Formula generated!', 'success');
+            } catch (error) {
+                console.error('Formulation failed:', error);
+                resultEl.innerHTML = '<div class="text-danger" style="margin-top: 0.5rem;">Failed to generate formula. Try adjusting the target.</div>';
+                showToast('Formulation failed', 'error');
+            }
+        }
+
+        function loadFormulatedRecipe() {
+            const recipe = window._lastFormulatedRecipe;
+            if (!recipe) return;
+
+            recipeIngredients = recipe.ingredients.map((ing, i) => ({
+                id: Date.now() + i,
+                name: ing.material || ing.material_name,
+                percentage: ing.percentage
+            }));
+            document.getElementById('recipe-name').value = recipe.name || 'Formulated Glaze';
+            renderRecipeIngredients();
+            setTimeout(calculateUMF, 500);
+            showToast(`Loaded "${recipe.name}" into Recipe Builder`, 'success');
         }
 
         // Analysis
@@ -2309,6 +2689,12 @@
 
         // Glazy Search
         document.getElementById('glazy-search-btn').addEventListener('click', searchGlazy);
+        document.getElementById('glazy-search-query').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchGlazy();
+            }
+        });
 
         async function searchGlazy() {
             const query = document.getElementById('glazy-search-query').value;
@@ -2350,6 +2736,7 @@
                 <table>
                     <thead>
                         <tr>
+                            <th></th>
                             <th>Name</th>
                             <th>Cone</th>
                             <th>Atmosphere</th>
@@ -2360,8 +2747,11 @@
                     <tbody>
                         ${recipes.map(r => `
                             <tr>
-                                <td><strong>${escapeHtml(r.name)}</strong></td>
-                                <td><span class="badge badge-primary">${escapeHtml(r.cone || 'N/A')}</span></td>
+                                <td style="width: 50px; padding: 0.25rem;">
+                                    ${r.image_url ? `<img src="${escapeHtml(r.image_url)}" alt="" style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px;" onerror="this.style.display='none'">` : '<span style="color: var(--text-muted);">-</span>'}
+                                </td>
+                                <td><strong>${escapeHtml(r.name)}</strong>${r.description ? `<br><span style="color: var(--text-muted); font-size: 0.8rem;">${escapeHtml(r.description).substring(0, 80)}</span>` : ''}</td>
+                                <td><span class="badge badge-primary">${escapeHtml(r.cone_range || r.cone || 'N/A')}</span></td>
                                 <td>${escapeHtml(r.atmosphere || 'N/A')}</td>
                                 <td>${escapeHtml(r.surface || 'N/A')}</td>
                                 <td>
@@ -2384,13 +2774,15 @@
                 if (recipe.ingredients) {
                     recipeIngredients = recipe.ingredients.map((ing, i) => ({
                         id: Date.now() + i,
-                        name: ing.material_name,
+                        name: ing.material_name || ing.material || ing.name,
                         percentage: ing.percentage
                     }));
                     document.getElementById('recipe-name').value = recipe.name || '';
                     renderRecipeIngredients();
                     document.querySelector('.tab[data-tab="recipe"]').click();
                     showToast(`Imported "${recipe.name}"`, 'success');
+                    // Auto-calculate UMF after import
+                    setTimeout(calculateUMF, 500);
                 }
             } catch (error) {
                 showToast('Failed to import recipe', 'error');
@@ -2422,6 +2814,497 @@
                 document.getElementById('clear-recipe-btn').click();
             }
         });
+
+        // ============== Community Recipes ==============
+        let communityPage = 1;
+        let communityPageSize = 25;
+        let communityTotalPages = 1;
+        let communityFiltersLoaded = false;
+
+        async function loadCommunityFilters() {
+            if (communityFiltersLoaded) return;
+            try {
+                const [filtersRes, statsRes] = await Promise.all([
+                    fetch(`${API_BASE}/api/community/filters`),
+                    fetch(`${API_BASE}/api/community/stats`),
+                ]);
+                const filters = await filtersRes.json();
+                const stats = await statsRes.json();
+
+                // Populate dropdowns
+                const coneSelect = document.getElementById('community-cone');
+                (filters.cones || []).forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c;
+                    opt.textContent = `Cone ${c}`;
+                    coneSelect.appendChild(opt);
+                });
+
+                const surfaceSelect = document.getElementById('community-surface');
+                (filters.surfaces || []).forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s;
+                    opt.textContent = s.charAt(0).toUpperCase() + s.slice(1);
+                    surfaceSelect.appendChild(opt);
+                });
+
+                const atmSelect = document.getElementById('community-atmosphere');
+                (filters.atmospheres || []).forEach(a => {
+                    const opt = document.createElement('option');
+                    opt.value = a;
+                    opt.textContent = a.charAt(0).toUpperCase() + a.slice(1);
+                    atmSelect.appendChild(opt);
+                });
+
+                const subtypeSelect = document.getElementById('community-subtype');
+                (filters.subtypes || []).forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s;
+                    opt.textContent = s.replace('Glaze - ', '');
+                    subtypeSelect.appendChild(opt);
+                });
+
+                document.getElementById('community-total').textContent =
+                    `${stats.total_recipes.toLocaleString()} recipes`;
+
+                // Show stats cards
+                const statsEl = document.getElementById('community-stats');
+                const topCones = Object.entries(stats.cones || {}).slice(0, 4);
+                const topSurfaces = Object.entries(stats.surfaces || {}).slice(0, 4);
+                statsEl.innerHTML = `
+                    <div class="prediction-card">
+                        <div class="prediction-title">Total Recipes</div>
+                        <div class="prediction-value">${stats.total_recipes.toLocaleString()}</div>
+                    </div>
+                    <div class="prediction-card">
+                        <div class="prediction-title">Top Cones</div>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                            ${topCones.map(([c, n]) => `${c}: ${n}`).join(', ')}
+                        </div>
+                    </div>
+                    <div class="prediction-card">
+                        <div class="prediction-title">Atmospheres</div>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                            ${Object.entries(stats.atmospheres || {}).slice(0, 4).map(([a, n]) => `${a}: ${n}`).join(', ')}
+                        </div>
+                    </div>
+                    <div class="prediction-card">
+                        <div class="prediction-title">Surfaces</div>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                            ${topSurfaces.map(([s, n]) => `${s}: ${n}`).join(', ')}
+                        </div>
+                    </div>
+                `;
+                statsEl.style.display = 'grid';
+
+                communityFiltersLoaded = true;
+            } catch (error) {
+                console.error('Failed to load community filters:', error);
+            }
+        }
+
+        async function searchCommunity(page = 1) {
+            communityPage = page;
+            const query = document.getElementById('community-query').value;
+            const cone = document.getElementById('community-cone').value;
+            const surface = document.getElementById('community-surface').value;
+            const atmosphere = document.getElementById('community-atmosphere').value;
+            const subtype = document.getElementById('community-subtype').value;
+
+            const params = new URLSearchParams();
+            if (query) params.append('query', query);
+            if (cone) params.append('cone', cone);
+            if (surface) params.append('surface', surface);
+            if (atmosphere) params.append('atmosphere', atmosphere);
+            if (subtype) params.append('subtype', subtype);
+            params.append('page', page);
+            params.append('page_size', communityPageSize);
+
+            document.getElementById('community-results').innerHTML =
+                '<div class="loading active"><div class="spinner"></div>Searching...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/community/recipes?${params}`);
+                const data = await response.json();
+                communityTotalPages = data.total_pages;
+                communityPage = data.page;
+                renderCommunityResults(data);
+            } catch (error) {
+                console.error('Community search failed:', error);
+                document.getElementById('community-results').innerHTML =
+                    '<div class="empty-state text-danger">Failed to search community recipes</div>';
+            }
+        }
+
+        function renderCommunityResults(data) {
+            const { recipes, total, page, total_pages } = data;
+
+            document.getElementById('community-result-info').textContent =
+                `${total.toLocaleString()} results (page ${page}/${total_pages})`;
+
+            document.getElementById('community-prev-btn').disabled = page <= 1;
+            document.getElementById('community-next-btn').disabled = page >= total_pages;
+
+            if (recipes.length === 0) {
+                document.getElementById('community-results').innerHTML =
+                    '<div class="empty-state">No recipes found matching your criteria</div>';
+                return;
+            }
+
+            document.getElementById('community-results').innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+                    ${recipes.map(r => `
+                        <div class="card" style="padding: 1rem; cursor: pointer; transition: var(--transition);"
+                             onclick="showCommunityDetail(${r.id})"
+                             onmouseover="this.style.borderColor='var(--accent)'"
+                             onmouseout="this.style.borderColor='var(--border)'">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                                <strong style="font-size: 0.95rem;">${escapeHtml(r.name)}</strong>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
+                                ${r.cone ? `<span class="badge badge-primary">Cone ${escapeHtml(r.cone)}</span>` : ''}
+                                ${r.surface ? `<span class="badge badge-success">${escapeHtml(r.surface)}</span>` : ''}
+                                ${(r.atmospheres || []).map(a => `<span class="badge" style="background: var(--bg-hover);">${escapeHtml(a)}</span>`).join('')}
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="color: var(--text-muted); font-size: 0.8rem;">${escapeHtml(r.subtype.replace('Glaze - ', ''))}</span>
+                                <span style="color: var(--text-muted); font-size: 0.8rem;">${r.ingredient_count} ingredients</span>
+                            </div>
+                            ${r.description ? `<p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.35rem;">${escapeHtml(r.description)}</p>` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        async function showCommunityDetail(id) {
+            try {
+                const response = await fetch(`${API_BASE}/api/community/recipes/${id}`);
+                const r = await response.json();
+
+                document.getElementById('community-detail-title').textContent = r.name;
+
+                const analysis = r.analysis || {};
+                const oxides = Object.entries(analysis)
+                    .filter(([k, v]) => v > 0 && k !== 'LOI')
+                    .sort((a, b) => b[1] - a[1]);
+                const maxOxide = oxides.length > 0 ? oxides[0][1] : 1;
+
+                document.getElementById('community-detail-body').innerHTML = `
+                    <div id="community-detail-image" style="margin-bottom: 1rem; text-align: center; display: none;">
+                        <img id="community-detail-img" style="max-width: 100%; max-height: 300px; border-radius: var(--radius); object-fit: cover;" alt="Glaze photo">
+                    </div>
+
+                    <div class="grid grid-3" style="margin-bottom: 1rem;">
+                        ${r.cone ? `<div class="prediction-card"><div class="prediction-title">Cone</div><div class="prediction-value">${escapeHtml(r.cone)}</div></div>` : ''}
+                        ${r.surface ? `<div class="prediction-card"><div class="prediction-title">Surface</div><div class="prediction-value">${escapeHtml(r.surface)}</div></div>` : ''}
+                        ${r.si_al_ratio ? `<div class="prediction-card"><div class="prediction-title">Si:Al</div><div class="prediction-value">${r.si_al_ratio.toFixed(1)}</div></div>` : ''}
+                    </div>
+
+                    ${r.atmospheres?.length ? `<p style="margin-bottom: 0.75rem;">${r.atmospheres.map(a => `<span class="badge" style="background: var(--bg-hover); margin-right: 0.35rem;">${escapeHtml(a)}</span>`).join('')}</p>` : ''}
+                    ${r.description ? `<p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">${escapeHtml(r.description)}</p>` : ''}
+
+                    <h4 style="margin-bottom: 0.75rem;">Ingredients</h4>
+                    <div style="margin-bottom: 1.25rem;">
+                        ${(r.ingredients || []).map(ing => `
+                            <div style="display: flex; justify-content: space-between; padding: 0.4rem 0.75rem; background: var(--bg-hover); border-radius: 6px; margin-bottom: 0.35rem;">
+                                <span>${escapeHtml(ing.name)}${ing.add ? ' <span style="color: var(--text-muted); font-size: 0.8rem;">(additive)</span>' : ''}</span>
+                                <span class="font-mono" style="color: var(--accent-light);">${ing.pct}%</span>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    ${oxides.length ? `
+                        <h4 style="margin-bottom: 0.75rem;">Oxide Analysis (%)</h4>
+                        ${oxides.map(([name, val]) => `
+                            <div class="oxide-bar">
+                                <span class="oxide-label">${name}</span>
+                                <div class="oxide-track">
+                                    <div class="oxide-fill" style="width: ${(val / maxOxide) * 100}%"></div>
+                                </div>
+                                <span class="oxide-value">${val.toFixed(2)}%</span>
+                            </div>
+                        `).join('')}
+                    ` : ''}
+
+                    <div style="margin-top: 1.25rem; display: flex; gap: 0.75rem;">
+                        <button onclick="importCommunityRecipe(${id})">Import to Recipe Builder</button>
+                        <a href="https://glazy.org/recipes/${id}" target="_blank" rel="noopener" class="btn secondary" style="text-decoration: none;">View on Glazy</a>
+                        <button class="secondary" onclick="closeCommunityDetail()">Close</button>
+                    </div>
+                `;
+
+                document.getElementById('community-detail-modal').classList.add('active');
+
+                // Lazy-load image from Glazy
+                loadCommunityImage(id);
+            } catch (error) {
+                showToast('Failed to load recipe details', 'error');
+            }
+        }
+
+        const _imageCache = {};
+        async function loadCommunityImage(recipeId) {
+            const imgContainer = document.getElementById('community-detail-image');
+            const imgEl = document.getElementById('community-detail-img');
+            if (!imgContainer || !imgEl) return;
+
+            // Check cache
+            if (_imageCache[recipeId] !== undefined) {
+                if (_imageCache[recipeId]) {
+                    imgEl.src = _imageCache[recipeId];
+                    imgContainer.style.display = 'block';
+                }
+                return;
+            }
+
+            try {
+                const resp = await fetch(`${API_BASE}/api/community/image/${recipeId}`);
+                const data = await resp.json();
+                if (data.image_url) {
+                    _imageCache[recipeId] = data.image_url;
+                    imgEl.src = data.image_url;
+                    imgEl.onerror = () => {
+                        imgContainer.style.display = 'none';
+                        _imageCache[recipeId] = null;
+                    };
+                    imgContainer.style.display = 'block';
+                } else if (data.dominant_color) {
+                    // Show color swatch as fallback
+                    imgContainer.innerHTML = `<div style="width: 100%; height: 60px; border-radius: var(--radius); background: linear-gradient(135deg, #${data.dominant_color}, #${data.secondary_color || data.dominant_color})"></div>`;
+                    imgContainer.style.display = 'block';
+                    _imageCache[recipeId] = null;
+                } else {
+                    _imageCache[recipeId] = null;
+                }
+            } catch (e) {
+                _imageCache[recipeId] = null;
+            }
+        }
+
+        function closeCommunityDetail() {
+            document.getElementById('community-detail-modal').classList.remove('active');
+        }
+
+        async function importCommunityRecipe(id) {
+            try {
+                const response = await fetch(`${API_BASE}/api/community/recipes/${id}`);
+                const r = await response.json();
+                if (r.ingredients) {
+                    recipeIngredients = r.ingredients
+                        .filter(ing => !ing.add)
+                        .map((ing, i) => ({
+                            id: Date.now() + i,
+                            name: ing.name,
+                            percentage: ing.pct,
+                        }));
+                    document.getElementById('recipe-name').value = r.name || '';
+                    renderRecipeIngredients();
+                    closeCommunityDetail();
+                    document.querySelector('.tab[data-tab="recipe"]').click();
+                    showToast(`Imported "${r.name}"`, 'success');
+                    setTimeout(calculateUMF, 500);
+                }
+            } catch (error) {
+                showToast('Failed to import recipe', 'error');
+            }
+        }
+
+        // Community event listeners
+        document.getElementById('community-search-btn').addEventListener('click', () => searchCommunity(1));
+        document.getElementById('community-query').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); searchCommunity(1); }
+        });
+        document.getElementById('community-clear-btn').addEventListener('click', () => {
+            document.getElementById('community-query').value = '';
+            document.getElementById('community-cone').value = '';
+            document.getElementById('community-surface').value = '';
+            document.getElementById('community-atmosphere').value = '';
+            document.getElementById('community-subtype').value = '';
+            document.getElementById('community-results').innerHTML =
+                '<div class="empty-state"><div class="empty-state-icon">🌐</div><p>Search or browse the community recipe database</p></div>';
+            document.getElementById('community-result-info').textContent = '0 results';
+        });
+        document.getElementById('community-prev-btn').addEventListener('click', () => {
+            if (communityPage > 1) searchCommunity(communityPage - 1);
+        });
+        document.getElementById('community-next-btn').addEventListener('click', () => {
+            if (communityPage < communityTotalPages) searchCommunity(communityPage + 1);
+        });
+
+        // Load community filters when tab is first opened
+        document.querySelector('.tab[data-tab="community"]').addEventListener('click', () => {
+            loadCommunityFilters();
+        });
+
+        // ============== Stull Chart Community Overlay ==============
+        let stullOverlayLoaded = false;
+        let stullOverlayData = [];
+        let lastUMFData = null;
+
+        async function loadStullOverlay() {
+            if (stullOverlayLoaded) return;
+            try {
+                const response = await fetch(`${API_BASE}/api/community/stull-scatter?limit=800`);
+                stullOverlayData = await response.json();
+                stullOverlayLoaded = true;
+            } catch (error) {
+                console.error('Failed to load Stull overlay data:', error);
+            }
+        }
+
+        // Override renderStullChart to include community data overlay
+        const _originalRenderStullChart = renderStullChart;
+        renderStullChart = async function(data) {
+            lastUMFData = data;
+            await loadStullOverlay();
+            _renderStullChartWithOverlay(data);
+        };
+
+        function _renderStullChartWithOverlay(data) {
+            const al2o3 = data.Al2O3 || 0;
+            const sio2 = data.SiO2 || 0;
+
+            const traces = [];
+
+            // Community recipes as background dots
+            if (stullOverlayData.length > 0) {
+                const surfaceColors = {
+                    'Glossy': 'rgba(16, 185, 129, 0.25)',
+                    'Matte': 'rgba(245, 158, 11, 0.25)',
+                    'Satin': 'rgba(167, 139, 250, 0.25)',
+                    'Semi-glossy': 'rgba(16, 185, 129, 0.15)',
+                    'Satin-matte': 'rgba(245, 158, 11, 0.15)',
+                    'Semi-matte': 'rgba(245, 158, 11, 0.15)',
+                };
+                const colors = stullOverlayData.map(p =>
+                    surfaceColors[p.surface] || 'rgba(148, 163, 184, 0.15)'
+                );
+
+                traces.push({
+                    x: stullOverlayData.map(p => p.sio2),
+                    y: stullOverlayData.map(p => p.al2o3),
+                    mode: 'markers',
+                    type: 'scatter',
+                    marker: { size: 5, color: colors },
+                    name: 'Community Recipes',
+                    hovertemplate: stullOverlayData.map(p =>
+                        `${p.name}<br>SiO₂: ${p.sio2}<br>Al₂O₃: ${p.al2o3}<br>${p.surface} | Cone ${p.cone}<extra></extra>`
+                    ),
+                });
+            }
+
+            // Your recipe
+            traces.push({
+                x: [sio2],
+                y: [al2o3],
+                mode: 'markers',
+                type: 'scatter',
+                marker: {
+                    size: 20,
+                    color: '#7c3aed',
+                    symbol: 'diamond',
+                    line: { width: 2, color: '#fff' }
+                },
+                name: 'Your Recipe',
+                hovertemplate: `SiO₂: ${sio2.toFixed(2)}<br>Al₂O₃: ${al2o3.toFixed(3)}<extra></extra>`
+            });
+
+            // Target marker
+            if (stullTarget) {
+                traces.push({
+                    x: [stullTarget.x],
+                    y: [stullTarget.y],
+                    mode: 'markers+text',
+                    type: 'scatter',
+                    marker: {
+                        size: 18,
+                        color: '#ef4444',
+                        symbol: 'cross',
+                        line: { width: 2, color: '#fff' }
+                    },
+                    name: 'Target',
+                    text: ['TARGET'],
+                    textposition: 'top center',
+                    textfont: { color: '#ef4444', size: 10 },
+                    hovertemplate: `Target<br>SiO₂: ${stullTarget.x.toFixed(2)}<br>Al₂O₃: ${stullTarget.y.toFixed(3)}<extra></extra>`
+                });
+            }
+
+            const layout = {
+                paper_bgcolor: '#1a1a2e',
+                plot_bgcolor: '#0f0f1a',
+                xaxis: {
+                    title: { text: 'SiO₂', font: { color: '#94a3b8' } },
+                    range: [0, 6],
+                    gridcolor: '#334155',
+                    color: '#94a3b8',
+                    tickfont: { color: '#94a3b8' }
+                },
+                yaxis: {
+                    title: { text: 'Al₂O₃', font: { color: '#94a3b8' } },
+                    range: [0, 1],
+                    gridcolor: '#334155',
+                    color: '#94a3b8',
+                    tickfont: { color: '#94a3b8' }
+                },
+                margin: { t: 20, r: 20, b: 50, l: 60 },
+                showlegend: true,
+                legend: { font: { color: '#94a3b8' }, bgcolor: 'rgba(0,0,0,0)' },
+                shapes: [
+                    { type: 'rect', x0: 2.5, x1: 5, y0: 0.15, y1: 0.4,
+                      fillcolor: 'rgba(16, 185, 129, 0.15)', line: { color: '#10b981', width: 1 } },
+                    { type: 'rect', x0: 1.5, x1: 3.5, y0: 0.4, y1: 0.7,
+                      fillcolor: 'rgba(245, 158, 11, 0.15)', line: { color: '#f59e0b', width: 1 } },
+                    ...(showLimitOverlays ? stullLimitOverlays.map(lim => ({
+                        type: 'rect',
+                        x0: lim.sio2_min, x1: lim.sio2_max,
+                        y0: lim.al2o3_min, y1: lim.al2o3_max,
+                        fillcolor: 'rgba(0,0,0,0)',
+                        line: { color: lim.color, width: 2, dash: 'dash' },
+                    })) : []),
+                ],
+                annotations: [
+                    { x: 3.75, y: 0.27, text: 'GLOSSY', showarrow: false, font: { color: '#10b981', size: 11 } },
+                    { x: 2.5, y: 0.55, text: 'MATTE', showarrow: false, font: { color: '#f59e0b', size: 11 } },
+                    ...(showLimitOverlays ? stullLimitOverlays.map(lim => ({
+                        x: lim.sio2_max, y: lim.al2o3_max,
+                        text: lim.label, showarrow: false,
+                        font: { color: lim.color, size: 9 },
+                        xanchor: 'right',
+                    })) : []),
+                ],
+                dragmode: 'pan',
+            };
+
+            Plotly.newPlot('stull-chart', traces, layout, {
+                responsive: true,
+                displayModeBar: true,
+                modeBarButtonsToRemove: ['lasso2d', 'select2d', 'autoScale2d', 'hoverClosestCartesian', 'hoverCompareCartesian', 'toggleSpikelines'],
+                displaylogo: false,
+            });
+
+            // Click-to-target on drag layer
+            const chartEl = document.getElementById('stull-chart');
+            setTimeout(() => {
+                const dragLayer = chartEl.querySelector('.nsewdrag');
+                if (dragLayer) {
+                    dragLayer.style.cursor = 'crosshair';
+                    dragLayer.addEventListener('click', function(evt) {
+                        const bb = dragLayer.getBoundingClientRect();
+                        const xaxis = chartEl._fullLayout.xaxis;
+                        const yaxis = chartEl._fullLayout.yaxis;
+                        const xFrac = (evt.clientX - bb.left) / bb.width;
+                        const yFrac = (evt.clientY - bb.top) / bb.height;
+                        const xVal = xaxis.range[0] + xFrac * (xaxis.range[1] - xaxis.range[0]);
+                        const yVal = yaxis.range[1] - yFrac * (yaxis.range[1] - yaxis.range[0]);
+                        if (xVal >= 0 && xVal <= 8 && yVal >= 0 && yVal <= 1.5) {
+                            setStullTarget(xVal, yVal);
+                        }
+                    });
+                }
+            }, 100);
+        }
 
         // Event listeners
         document.getElementById('material-search').addEventListener('input', renderMaterialList);

@@ -67,13 +67,25 @@ class MaterialsDatabase:
         """Get material by name.
 
         Args:
-            name: Material name (case-insensitive).
+            name: Material name (case-insensitive). Also matches partial names
+                  (e.g. 'Silica' matches 'Silica (Flint)').
 
         Returns:
             Material if found, None otherwise.
         """
         self._ensure_loaded()
-        return self._materials.get(name.lower())
+        # Exact match first
+        result = self._materials.get(name.lower())
+        if result:
+            return result
+
+        # Partial match: check if query matches the start of any material name
+        name_lower = name.lower()
+        for key, material in self._materials.items():
+            if key.startswith(name_lower):
+                return material
+
+        return None
 
     def get_by_type(self, material_type: MaterialType) -> list[Material]:
         """Get all materials of a specific type.
