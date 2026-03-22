@@ -533,6 +533,17 @@ async def formulate_glaze(target: FormulationTargetInput):
     }
 
 
+@app.get("/api/colorants")
+async def list_colorants():
+    """List available colorants and opacifiers."""
+    colorants_file = DATA_DIR / "materials" / "colorants.json"
+    if not colorants_file.exists():
+        return []
+    with open(colorants_file, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data.get("colorants", [])
+
+
 @app.post("/api/recipes/add-colorant")
 async def add_colorant_to_recipe(
     recipe: RecipeInput,
@@ -1002,10 +1013,58 @@ async def upload_result_photo(
     }
 
 
+RESULTS_DIR = DATA_DIR / "results"
+RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def _save_result_to_disk(result_id: str, result: ResultInput, photo_ids: list[str], fired_at: str):
+    """Persist a firing result to disk as JSON."""
+    record = {
+        "result_id": result_id,
+        "recipe_name": result.recipe_name,
+        "firing_cone": result.firing_cone,
+        "firing_atmosphere": result.firing_atmosphere,
+        "firing_type": result.firing_type,
+        "clay_body": result.clay_body,
+        "surface_quality": result.surface_quality,
+        "color_description": result.color_description,
+        "defects": result.defects,
+        "notes": result.notes,
+        "photo_ids": photo_ids,
+        "fired_at": fired_at,
+    }
+    result_file = RESULTS_DIR / f"{result_id}.json"
+    with open(result_file, "w", encoding="utf-8") as f:
+        json.dump(record, f, indent=2)
+
+
+def _get_cone(r: dict) -> str | None:
+    """Extract cone value from either user-submitted or seed format."""
+    return r.get("firing_cone") or (r.get("firing_schedule", {}) or {}).get("cone")
+
+
+def _load_results_from_disk() -> list[dict]:
+    """Load all firing results from disk. Handles both single-result and array files."""
+    results = []
+    for f in RESULTS_DIR.glob("*.json"):
+        try:
+            with open(f, "r", encoding="utf-8") as fh:
+                data = json.load(fh)
+            if isinstance(data, list):
+                results.extend(d for d in data if isinstance(d, dict))
+            elif isinstance(data, dict):
+                results.append(data)
+        except (json.JSONDecodeError, IOError):
+            continue
+    results.sort(key=lambda r: r.get("fired_at", ""), reverse=True)
+    return results
+
+
 @app.post("/api/results")
 async def submit_result(result: ResultInput = Body(...), photo_ids: list[str] = Query(default=[])):
     """Submit a firing result."""
     result_id = str(uuid.uuid4())
+    fired_at = datetime.now(timezone.utc).isoformat()
 
     # Build photos list
     photos = []
@@ -1043,6 +1102,9 @@ async def submit_result(result: ResultInput = Body(...), photo_ids: list[str] = 
     # Add to predictor database
     predictor.add_result(firing_result)
 
+    # Persist to disk
+    _save_result_to_disk(result_id, result, photo_ids, fired_at)
+
     return {
         "result_id": result_id,
         "message": "Result submitted successfully",
@@ -1057,28 +1119,46 @@ async def list_results(
     limit: int = 50,
 ):
     """List submitted firing results."""
-    results = predictor.results
+    # Load from disk for persistence across restarts
+    disk_results = _load_results_from_disk()
 
     if recipe_name:
-        results = [r for r in results if recipe_name.lower() in r.recipe_name.lower()]
+        disk_results = [r for r in disk_results if recipe_name.lower() in r.get("recipe_name", "").lower()]
 
     if cone:
-        results = [r for r in results if r.firing_schedule and r.firing_schedule.cone.value == cone]
+        disk_results = [r for r in disk_results if _get_cone(r) == cone]
 
-    return [
-        {
-            "result_id": r.result_id,
-            "recipe_name": r.recipe_name,
-            "cone": r.firing_schedule.cone.value if r.firing_schedule else None,
-            "atmosphere": r.firing_schedule.atmosphere.value if r.firing_schedule else None,
-            "clay_body": r.clay_body.value if r.clay_body else None,
-            "surface_quality": r.surface_quality.value if r.surface_quality else None,
-            "color": r.color.primary_color if r.color else None,
-            "photos": [{"url": p.url, "caption": p.caption} for p in r.photos],
-            "fired_at": r.fired_at.isoformat() if r.fired_at else None,
-        }
-        for r in results[:limit]
-    ]
+    results_out = []
+    for r in disk_results[:limit]:
+        # Resolve photo URLs from photo_ids
+        photos = []
+        for pid in r.get("photo_ids", []):
+            for f in UPLOADS_DIR.glob(f"{pid}.*"):
+                photos.append({"url": f"/uploads/{f.name}", "caption": None})
+                break
+        # Also include photos from seed data format
+        for p in r.get("photos", []):
+            if isinstance(p, dict) and p.get("url"):
+                photos.append({"url": p["url"], "caption": p.get("caption")})
+
+        # Normalize: support both user-submitted format (firing_cone) and seed format (firing_schedule.cone)
+        fs = r.get("firing_schedule", {}) or {}
+        results_out.append({
+            "result_id": r.get("result_id"),
+            "recipe_name": r.get("recipe_name"),
+            "cone": r.get("firing_cone") or fs.get("cone"),
+            "atmosphere": r.get("firing_atmosphere") or fs.get("atmosphere"),
+            "firing_type": r.get("firing_type") or fs.get("firing_type"),
+            "clay_body": r.get("clay_body"),
+            "surface_quality": r.get("surface_quality"),
+            "color": r.get("color_description") or (r.get("color", {}) or {}).get("primary_color") if isinstance(r.get("color"), dict) else r.get("color_description") or r.get("color"),
+            "defects": r.get("defects", []),
+            "notes": r.get("notes"),
+            "photos": photos,
+            "fired_at": r.get("fired_at"),
+        })
+
+    return results_out
 
 
 # ============== Reference Data Endpoints ==============
@@ -1274,14 +1354,13 @@ async def get_community_image(request: Request, recipe_id: int):
         return _image_cache[recipe_id] or {"image_url": None}
 
     try:
-        async_client = httpx.AsyncClient(timeout=10.0)
-        resp = await async_client.get(
-            f"{GLAZY_API_V2}/search",
-            params={"id": recipe_id},
-            headers={"Accept": "application/json"},
-        )
-        await async_client.aclose()
-        resp.raise_for_status()
+        async with httpx.AsyncClient(timeout=10.0) as async_client:
+            resp = await async_client.get(
+                f"{GLAZY_API_V2}/search",
+                params={"id": recipe_id},
+                headers={"Accept": "application/json"},
+            )
+            resp.raise_for_status()
         data = resp.json()
         items = data.get("data", [])
         if items:

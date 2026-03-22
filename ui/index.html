@@ -378,6 +378,42 @@
         /* Recipe Ingredients */
         .recipe-ingredients { margin-bottom: 1rem; }
 
+        .defect-check {
+            display: flex; align-items: center; gap: 0.3rem;
+            font-size: 0.8rem; color: var(--text-secondary);
+            cursor: pointer; padding: 0.3rem 0.6rem;
+            background: var(--bg-secondary); border-radius: var(--radius-sm);
+            border: 1px solid var(--border); transition: var(--transition);
+        }
+        .defect-check:has(input:checked) {
+            background: var(--danger-bg); border-color: var(--danger); color: var(--danger);
+        }
+        .defect-check input { accent-color: var(--danger); }
+
+        .firing-log-entry {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .firing-log-entry:last-child { border-bottom: none; }
+
+        .saved-recipe-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .saved-recipe-item:hover { background: var(--bg-hover); }
+        .saved-recipe-item:last-child { border-bottom: none; }
+        .saved-recipe-meta {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
         .ingredient-row {
             display: grid;
             grid-template-columns: 1fr 120px 80px 44px;
@@ -955,6 +991,10 @@
             <span class="tab-icon">📊</span>
             <span>Analysis</span>
         </button>
+        <button class="tab" data-tab="library">
+            <span class="tab-icon">📚</span>
+            <span>Recipe Library</span>
+        </button>
         <button class="tab" data-tab="substitutions">
             <span class="tab-icon">🔄</span>
             <span>Substitutions</span>
@@ -962,6 +1002,10 @@
         <button class="tab" data-tab="search">
             <span class="tab-icon">🔍</span>
             <span>Glazy Search</span>
+        </button>
+        <button class="tab" data-tab="firing-log">
+            <span class="tab-icon">🔥</span>
+            <span>Firing Log</span>
         </button>
         <button class="tab" data-tab="community">
             <span class="tab-icon">🌐</span>
@@ -1020,6 +1064,7 @@
                         <div class="flex-gap">
                             <button class="small secondary" id="clear-recipe-btn">Clear</button>
                             <button class="small" id="save-recipe-btn">Save</button>
+                            <button class="small secondary" id="export-recipe-btn">Export</button>
                         </div>
                     </div>
 
@@ -1049,6 +1094,7 @@
                             <button class="cone-btn" data-cone="10">10</button>
                             <button class="cone-btn" data-cone="11">11</button>
                             <button class="cone-btn" data-cone="12">12</button>
+                            <button class="cone-btn" data-cone="13">13</button>
                         </div>
                     </div>
 
@@ -1068,6 +1114,14 @@
                         </button>
                     </div>
 
+                    <div class="form-group mt-1">
+                        <label>Colorants &amp; Opacifiers <span class="label-hint">(added on top of 100% base)</span></label>
+                        <div id="recipe-colorants" class="recipe-ingredients"></div>
+                        <button class="secondary mt-1" id="add-colorant-btn" style="font-size: 0.85rem;">
+                            <span>+</span> Add Colorant
+                        </button>
+                    </div>
+
                     <div class="flex-between mt-1">
                         <div>
                             <span id="recipe-total" class="font-mono">Total: 0%</span>
@@ -1077,6 +1131,31 @@
                             Calculate UMF
                         </button>
                     </div>
+
+                    <!-- Batch Calculator -->
+                    <details class="mt-1" id="batch-calc-details">
+                        <summary style="cursor:pointer;color:var(--accent-light);font-size:0.9rem;user-select:none;">
+                            Batch Calculator
+                        </summary>
+                        <div style="margin-top:0.75rem;padding:0.75rem;background:var(--bg-secondary);border-radius:var(--radius-sm);">
+                            <div style="display:flex;gap:0.75rem;align-items:flex-end;margin-bottom:0.75rem;">
+                                <div class="form-group" style="margin:0;flex:1;">
+                                    <label style="font-size:0.8rem;">Target Batch</label>
+                                    <div style="display:flex;align-items:center;gap:0.4rem;">
+                                        <input type="number" id="batch-weight" value="1000" min="1" step="50" style="width:100px;text-align:center;">
+                                        <select id="batch-unit" style="width:60px;">
+                                            <option value="g">g</option>
+                                            <option value="kg">kg</option>
+                                            <option value="lb">lb</option>
+                                            <option value="oz">oz</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button class="small" onclick="calculateBatch()" style="margin-bottom:0.1rem;">Calculate</button>
+                            </div>
+                            <div id="batch-results"></div>
+                        </div>
+                    </details>
                 </div>
 
                 <div>
@@ -1145,6 +1224,26 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Saved Recipes -->
+            <div class="card mt-1">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <span class="card-title-icon">📚</span>
+                        Saved Recipes
+                    </h3>
+                    <span id="saved-recipe-count" class="badge badge-primary">0</span>
+                </div>
+                <div id="saved-recipes-list">
+                    <div class="empty-state" style="padding: 1.5rem;">
+                        <div class="empty-state-icon">📚</div>
+                        <p>No saved recipes yet</p>
+                        <p class="text-muted" style="font-size: 0.85rem; margin-top: 0.5rem;">
+                            Build a recipe and press Save or Ctrl+S
+                        </p>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- MATERIALS TAB -->
@@ -1196,19 +1295,33 @@
 
         <!-- ANALYSIS TAB -->
         <section id="analysis" class="tab-content">
+            <div class="card mb-1">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <span class="card-title-icon">📊</span>
+                        Full Recipe Analysis
+                    </h3>
+                    <button id="analyze-recipe-btn" class="small">Analyze Recipe</button>
+                </div>
+                <div id="analysis-results">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📊</div>
+                        <p>Build a recipe and click Analyze to see full chemistry breakdown</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="grid grid-2">
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">
-                            <span class="card-title-icon">📊</span>
-                            Recipe Analysis
+                            <span class="card-title-icon">🏷️</span>
+                            Classification
                         </h3>
-                        <button id="analyze-recipe-btn" class="small">Analyze</button>
                     </div>
-                    <div id="analysis-results">
-                        <div class="empty-state">
-                            <div class="empty-state-icon">📊</div>
-                            <p>Build a recipe and click Analyze</p>
+                    <div id="classification-results">
+                        <div class="empty-state" style="padding:1rem;">
+                            <p class="text-muted" style="font-size:0.85rem;">Run analysis to see classification</p>
                         </div>
                     </div>
                 </div>
@@ -1221,12 +1334,122 @@
                         </h3>
                         <button id="predict-outcome-btn" class="small">Predict</button>
                     </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;margin-bottom:0.75rem;">
+                        <div class="form-group" style="margin:0;">
+                            <label style="font-size:0.75rem;">Atmosphere</label>
+                            <select id="predict-atmosphere" style="font-size:0.85rem;">
+                                <option value="oxidation">Oxidation</option>
+                                <option value="reduction">Reduction</option>
+                                <option value="neutral">Neutral</option>
+                                <option value="wood">Wood</option>
+                                <option value="salt">Salt</option>
+                                <option value="soda">Soda</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <label style="font-size:0.75rem;">Kiln Type</label>
+                            <select id="predict-firing-type" style="font-size:0.85rem;">
+                                <option value="electric">Electric</option>
+                                <option value="gas_natural">Gas (Natural)</option>
+                                <option value="gas_propane">Gas (Propane)</option>
+                                <option value="wood">Wood</option>
+                                <option value="raku">Raku</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <label style="font-size:0.75rem;">Clay Body</label>
+                            <select id="predict-clay-body" style="font-size:0.85rem;">
+                                <option value="stoneware">Stoneware</option>
+                                <option value="porcelain">Porcelain</option>
+                                <option value="earthenware">Earthenware</option>
+                                <option value="terracotta">Terracotta</option>
+                            </select>
+                        </div>
+                    </div>
                     <div id="prediction-results">
                         <div class="empty-state">
                             <div class="empty-state-icon">🎯</div>
-                            <p>Click Predict to see expected results</p>
+                            <p>Set firing parameters and click Predict</p>
                         </div>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RECIPE LIBRARY TAB -->
+        <section id="library" class="tab-content">
+            <div class="grid grid-3" style="grid-template-columns: 300px 1fr;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-title-icon">🔍</span>
+                            Browse
+                        </h3>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.75rem;">
+                        <input type="text" id="library-search" placeholder="Search recipes...">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.75rem;">
+                        <label style="font-size: 0.85rem;">Source</label>
+                        <select id="library-source">
+                            <option value="">All Sources</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.75rem;">
+                        <label style="font-size: 0.85rem;">Cone</label>
+                        <select id="library-cone">
+                            <option value="">Any Cone</option>
+                            <option value="06">06</option><option value="04">04</option>
+                            <option value="02">02</option><option value="1">1</option>
+                            <option value="3">3</option><option value="5">5</option>
+                            <option value="6">6</option><option value="7">7</option>
+                            <option value="8">8</option><option value="9">9</option>
+                            <option value="10">10</option><option value="11">11</option>
+                            <option value="12">12</option><option value="13">13</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.75rem;">
+                        <label style="font-size: 0.85rem;">Atmosphere</label>
+                        <select id="library-atmosphere">
+                            <option value="">Any Atmosphere</option>
+                            <option value="oxidation">Oxidation</option>
+                            <option value="reduction">Reduction</option>
+                            <option value="wood">Wood</option>
+                            <option value="salt">Salt</option>
+                            <option value="soda">Soda</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.75rem;">
+                        <label style="font-size: 0.85rem;">Surface</label>
+                        <select id="library-surface">
+                            <option value="">Any Surface</option>
+                            <option value="glossy">Glossy</option>
+                            <option value="satin">Satin</option>
+                            <option value="matte">Matte</option>
+                        </select>
+                    </div>
+                    <button class="small" onclick="searchLibrary()" style="width:100%;">Search</button>
+                    <div id="library-stats" style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-muted);"></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-title-icon">📚</span>
+                            Curated Recipes
+                        </h3>
+                        <span id="library-count" class="badge badge-primary">0</span>
+                    </div>
+                    <div id="library-results">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📚</div>
+                            <p>Browse curated glaze recipes</p>
+                            <p class="text-muted" style="font-size:0.85rem; margin-top:0.5rem;">
+                                Shinos, base glazes, woodfire, flashing slips and more
+                            </p>
+                        </div>
+                    </div>
+                    <div id="library-pagination" style="display:flex;justify-content:center;gap:0.5rem;margin-top:1rem;"></div>
                 </div>
             </div>
         </section>
@@ -1282,6 +1505,140 @@
                 <div id="recipe-availability-results">
                     <div class="empty-state">
                         <p>Build a recipe and click Check to verify availability</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FIRING LOG TAB -->
+        <section id="firing-log" class="tab-content">
+            <div class="grid grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-title-icon">📝</span>
+                            Log a Firing
+                        </h3>
+                    </div>
+                    <div class="form-group">
+                        <label>Recipe Name</label>
+                        <select id="firing-recipe-name">
+                            <option value="">Select a recipe...</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-2" style="gap:0.75rem;">
+                        <div class="form-group">
+                            <label>Cone</label>
+                            <select id="firing-cone">
+                                <option value="06">06</option><option value="04">04</option>
+                                <option value="02">02</option><option value="1">1</option>
+                                <option value="3">3</option><option value="5">5</option>
+                                <option value="6" selected>6</option><option value="7">7</option>
+                                <option value="8">8</option><option value="9">9</option>
+                                <option value="10">10</option><option value="11">11</option>
+                                <option value="12">12</option><option value="13">13</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Atmosphere</label>
+                            <select id="firing-atm">
+                                <option value="oxidation">Oxidation</option>
+                                <option value="reduction">Reduction</option>
+                                <option value="neutral">Neutral</option>
+                                <option value="heavy_reduction">Heavy Reduction</option>
+                                <option value="light_reduction">Light Reduction</option>
+                                <option value="wood">Wood</option>
+                                <option value="salt">Salt</option>
+                                <option value="soda">Soda</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Kiln Type</label>
+                            <select id="firing-kiln-type">
+                                <option value="electric">Electric</option>
+                                <option value="gas_natural">Gas (Natural)</option>
+                                <option value="gas_propane">Gas (Propane)</option>
+                                <option value="wood">Wood</option>
+                                <option value="wood_salt">Wood + Salt</option>
+                                <option value="wood_soda">Wood + Soda</option>
+                                <option value="raku">Raku</option>
+                                <option value="pit_fire">Pit Fire</option>
+                                <option value="saggar">Saggar</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Clay Body</label>
+                            <select id="firing-clay-body">
+                                <option value="stoneware">Stoneware</option>
+                                <option value="porcelain">Porcelain</option>
+                                <option value="earthenware">Earthenware</option>
+                                <option value="terracotta">Terracotta</option>
+                                <option value="bone_china">Bone China</option>
+                                <option value="paperclay">Paperclay</option>
+                                <option value="raku_body">Raku Body</option>
+                                <option value="sculpture_body">Sculpture Body</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-2" style="gap:0.75rem;">
+                        <div class="form-group">
+                            <label>Surface Quality</label>
+                            <select id="firing-surface-quality">
+                                <option value="excellent">Excellent</option>
+                                <option value="good" selected>Good</option>
+                                <option value="acceptable">Acceptable</option>
+                                <option value="flawed">Flawed</option>
+                                <option value="failed">Failed</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Color</label>
+                            <input type="text" id="firing-color" placeholder="e.g. celadon green, tenmoku brown">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Defects <span class="label-hint">(select all that apply)</span></label>
+                        <div id="firing-defects" style="display:flex;flex-wrap:wrap;gap:0.4rem;">
+                            <label class="defect-check"><input type="checkbox" value="crawling"> Crawling</label>
+                            <label class="defect-check"><input type="checkbox" value="crazing"> Crazing</label>
+                            <label class="defect-check"><input type="checkbox" value="pinholing"> Pinholing</label>
+                            <label class="defect-check"><input type="checkbox" value="blistering"> Blistering</label>
+                            <label class="defect-check"><input type="checkbox" value="running"> Running</label>
+                            <label class="defect-check"><input type="checkbox" value="shivering"> Shivering</label>
+                            <label class="defect-check"><input type="checkbox" value="underfired"> Underfired</label>
+                            <label class="defect-check"><input type="checkbox" value="overfired"> Overfired</label>
+                            <label class="defect-check"><input type="checkbox" value="dull_surface"> Dull Surface</label>
+                            <label class="defect-check"><input type="checkbox" value="color_variation"> Color Variation</label>
+                            <label class="defect-check"><input type="checkbox" value="carbon_coring"> Carbon Coring</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Photo</label>
+                        <input type="file" id="firing-photo" accept="image/jpeg,image/png,image/webp" style="font-size:0.85rem;">
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea id="firing-notes" rows="3" placeholder="Kiln position, hold times, observations..."></textarea>
+                    </div>
+                    <button class="success" id="submit-firing-btn" style="width:100%;">Submit Firing Result</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-title-icon">🔥</span>
+                            Firing History
+                        </h3>
+                        <button class="small secondary" id="refresh-firing-log-btn">Refresh</button>
+                    </div>
+                    <div id="firing-log-list">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🔥</div>
+                            <p>No firing results logged yet</p>
+                            <p class="text-muted" style="font-size:0.85rem;margin-top:0.5rem;">
+                                Submit your first firing result to start building your log
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1483,6 +1840,8 @@
         let materials = [];
         let selectedMaterial = null;
         let recipeIngredients = [];
+        let recipeColorants = [];
+        let colorantsList = [];
         let targetCone = '6';
         let currentUMF = null;
         let debounceTimer = null;
@@ -1642,6 +2001,68 @@
             }
         }
 
+        async function loadColorants() {
+            try {
+                const response = await fetch(`${API_BASE}/api/colorants`);
+                colorantsList = await response.json();
+                // Build datalist for colorant inputs
+                let dl = document.getElementById('colorants-datalist');
+                if (!dl) {
+                    dl = document.createElement('datalist');
+                    dl.id = 'colorants-datalist';
+                    document.body.appendChild(dl);
+                }
+                dl.innerHTML = colorantsList.map(c => {
+                    const range = c.typical_range ? ` (${c.typical_range[0]}-${c.typical_range[1]}%)` : '';
+                    return `<option value="${escapeHtml(c.name)}" label="${escapeHtml(c.name)}${range}">`;
+                }).join('');
+            } catch (error) {
+                console.error('Failed to load colorants:', error);
+            }
+        }
+
+        function addColorant(name = '', percentage = 1) {
+            recipeColorants.push({ name, percentage });
+            renderRecipeColorants();
+        }
+
+        function removeColorant(index) {
+            recipeColorants.splice(index, 1);
+            renderRecipeColorants();
+        }
+
+        function renderRecipeColorants() {
+            const container = document.getElementById('recipe-colorants');
+            if (recipeColorants.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+            container.innerHTML = recipeColorants.map((c, i) => {
+                const info = colorantsList.find(cl => cl.name === c.name);
+                const colorHint = info?.colors?.oxidation ? `<span style="font-size:0.75rem;color:var(--text-muted);">${escapeHtml(info.colors.oxidation)}</span>` : '';
+                const rangeHint = info?.typical_range ? `${info.typical_range[0]}-${info.typical_range[1]}%` : '';
+                return `
+                    <div class="ingredient-row" style="grid-template-columns: 1fr 100px 44px;">
+                        <div>
+                            <input type="text" list="colorants-datalist" value="${escapeHtml(c.name)}"
+                                placeholder="Select colorant..."
+                                onchange="recipeColorants[${i}].name = this.value; renderRecipeColorants();"
+                                style="width: 100%;">
+                            <div style="margin-top:0.25rem;">${colorHint}${rangeHint ? (colorHint ? ' &middot; ' : '') + '<span style="font-size:0.75rem;color:var(--text-muted);">Typical: ' + rangeHint + '</span>' : ''}</div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:0.3rem;">
+                            <input type="number" value="${c.percentage}" min="0.1" max="20" step="0.25"
+                                onchange="recipeColorants[${i}].percentage = parseFloat(this.value) || 0; debouncedCalculateUMF();"
+                                style="width:70px;text-align:center;">
+                            <span style="font-size:0.85rem;color:var(--text-muted);">%</span>
+                        </div>
+                        <button class="secondary" onclick="removeColorant(${i})" title="Remove" style="padding:0.4rem;min-width:0;">X</button>
+                    </div>`;
+            }).join('');
+        }
+
+        document.getElementById('add-colorant-btn').addEventListener('click', () => addColorant());
+
         async function loadMaterialTypes() {
             try {
                 const response = await fetch(`${API_BASE}/api/reference/material-types`);
@@ -1716,7 +2137,7 @@
             const m = selectedMaterial;
             if (!m) return;
 
-            const analysis = m.analysis || {};
+            const analysis = m.oxide_analysis || m.analysis || {};
             const oxides = [
                 { name: 'SiO2', value: analysis.SiO2 },
                 { name: 'Al2O3', value: analysis.Al2O3 },
@@ -1736,7 +2157,7 @@
                     <div>
                         <h4 style="color: var(--accent-light); margin-bottom: 1rem; font-size: 1.25rem;">${m.name}</h4>
                         <p style="margin-bottom: 1rem;">
-                            <span class="badge badge-primary">${(m.material_type || 'unknown').replace(/_/g, ' ')}</span>
+                            <span class="badge badge-primary">${(m.type || m.material_type || 'unknown').replace(/_/g, ' ')}</span>
                         </p>
                         ${m.description ? `<p style="color: var(--text-secondary); margin-bottom: 1rem;">${m.description}</p>` : ''}
                         ${m.typical_percentage_min !== undefined ? `
@@ -1940,7 +2361,9 @@
 
         document.getElementById('clear-recipe-btn').addEventListener('click', () => {
             recipeIngredients = [];
+            recipeColorants = [];
             renderRecipeIngredients();
+            renderRecipeColorants();
             document.getElementById('recipe-name').value = '';
             document.getElementById('umf-display').innerHTML =
                 '<div class="empty-state"><div class="empty-state-icon">⚗️</div><p>Add ingredients and click Calculate UMF</p></div>';
@@ -1951,6 +2374,303 @@
             currentUMF = null;
             showToast('Recipe cleared', 'info');
         });
+
+        // ============== Recipe Save/Load (localStorage) ==============
+        const SAVED_RECIPES_KEY = 'glaze-saved-recipes';
+
+        function getSavedRecipes() {
+            try {
+                return JSON.parse(localStorage.getItem(SAVED_RECIPES_KEY) || '[]');
+            } catch { return []; }
+        }
+
+        function setSavedRecipes(recipes) {
+            localStorage.setItem(SAVED_RECIPES_KEY, JSON.stringify(recipes));
+        }
+
+        function saveCurrentRecipe() {
+            const name = document.getElementById('recipe-name').value.trim();
+            if (!name) {
+                showToast('Please name your recipe before saving', 'warning');
+                document.getElementById('recipe-name').focus();
+                return;
+            }
+            const validIngredients = recipeIngredients.filter(i => i.name && i.percentage > 0);
+            if (validIngredients.length === 0) {
+                showToast('Add at least one ingredient before saving', 'warning');
+                return;
+            }
+
+            const validColorants = recipeColorants.filter(c => c.name && c.percentage > 0);
+            const recipe = {
+                id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+                name,
+                cone: targetCone,
+                ingredients: validIngredients.map(i => ({ name: i.name, percentage: i.percentage })),
+                colorants: validColorants.map(c => ({ name: c.name, percentage: c.percentage })),
+                umf: currentUMF ? {
+                    SiO2: currentUMF.SiO2,
+                    Al2O3: currentUMF.Al2O3,
+                    surface: currentUMF.stull_prediction
+                } : null,
+                savedAt: new Date().toISOString(),
+            };
+
+            const saved = getSavedRecipes();
+            // Check if same name exists — update it
+            const existingIdx = saved.findIndex(r => r.name === name);
+            if (existingIdx >= 0) {
+                recipe.id = saved[existingIdx].id;
+                saved[existingIdx] = recipe;
+                showToast(`Updated "${name}"`, 'success');
+            } else {
+                saved.unshift(recipe);
+                showToast(`Saved "${name}"`, 'success');
+            }
+            setSavedRecipes(saved);
+            renderSavedRecipes();
+        }
+
+        function loadSavedRecipe(id) {
+            const saved = getSavedRecipes();
+            const recipe = saved.find(r => r.id === id);
+            if (!recipe) return;
+
+            document.getElementById('recipe-name').value = recipe.name;
+            targetCone = recipe.cone || '6';
+            document.querySelectorAll('.cone-btn').forEach(b => b.classList.remove('selected'));
+            document.querySelector(`.cone-btn[data-cone="${targetCone}"]`)?.classList.add('selected');
+
+            recipeIngredients = recipe.ingredients.map(i => ({ name: i.name, percentage: i.percentage }));
+            recipeColorants = (recipe.colorants || []).map(c => ({ name: c.name, percentage: c.percentage }));
+            renderRecipeIngredients();
+            renderRecipeColorants();
+            showToast(`Loaded "${recipe.name}"`, 'success');
+            setTimeout(() => calculateUMF(true), 300);
+        }
+
+        function deleteSavedRecipe(id, e) {
+            e.stopPropagation();
+            const saved = getSavedRecipes();
+            const recipe = saved.find(r => r.id === id);
+            const filtered = saved.filter(r => r.id !== id);
+            setSavedRecipes(filtered);
+            renderSavedRecipes();
+            showToast(`Deleted "${recipe?.name || 'recipe'}"`, 'info');
+        }
+
+        function renderSavedRecipes() {
+            const saved = getSavedRecipes();
+            const countEl = document.getElementById('saved-recipe-count');
+            const listEl = document.getElementById('saved-recipes-list');
+            countEl.textContent = saved.length;
+
+            if (saved.length === 0) {
+                listEl.innerHTML = `
+                    <div class="empty-state" style="padding: 1.5rem;">
+                        <div class="empty-state-icon">📚</div>
+                        <p>No saved recipes yet</p>
+                        <p class="text-muted" style="font-size: 0.85rem; margin-top: 0.5rem;">
+                            Build a recipe and press Save or Ctrl+S
+                        </p>
+                    </div>`;
+                return;
+            }
+
+            listEl.innerHTML = saved.map(r => {
+                const date = new Date(r.savedAt);
+                const dateStr = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+                const surface = r.umf?.surface || '';
+                const ingCount = r.ingredients?.length || 0;
+                const colCount = r.colorants?.length || 0;
+                return `
+                    <div class="saved-recipe-item" onclick="loadSavedRecipe('${r.id}')">
+                        <div>
+                            <div style="font-weight: 600;">${escapeHtml(r.name)}</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">
+                                Cone ${escapeHtml(r.cone || '?')} &middot; ${ingCount} ingredients${colCount ? ' + ' + colCount + ' colorant' + (colCount > 1 ? 's' : '') : ''}${surface ? ' &middot; ' + escapeHtml(surface) : ''}
+                            </div>
+                        </div>
+                        <div class="saved-recipe-meta">
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">${dateStr}</span>
+                            <button class="small secondary" onclick="deleteSavedRecipe('${r.id}', event)" title="Delete" style="padding: 0.25rem 0.5rem; min-width: 0;">X</button>
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
+        document.getElementById('save-recipe-btn').addEventListener('click', saveCurrentRecipe);
+
+        // ============== Recipe Export ==============
+        function getRecipeData() {
+            const name = document.getElementById('recipe-name').value.trim() || 'Untitled';
+            const validIngredients = recipeIngredients.filter(i => i.name && i.percentage > 0);
+            const validColorants = recipeColorants.filter(c => c.name && c.percentage > 0);
+            return { name, cone: targetCone, ingredients: validIngredients, colorants: validColorants, umf: currentUMF };
+        }
+
+        function exportRecipeJSON() {
+            const r = getRecipeData();
+            if (r.ingredients.length === 0) { showToast('Add ingredients before exporting', 'warning'); return; }
+            const obj = {
+                name: r.name,
+                cone: r.cone,
+                ingredients: r.ingredients.map(i => ({ material: i.name, percentage: i.percentage })),
+            };
+            if (r.colorants.length > 0) obj.colorants = r.colorants.map(c => ({ material: c.name, percentage: c.percentage }));
+            if (r.umf) {
+                obj.umf = { SiO2: r.umf.SiO2, Al2O3: r.umf.Al2O3, CaO: r.umf.CaO, Na2O: r.umf.Na2O, K2O: r.umf.K2O, MgO: r.umf.MgO };
+                obj.predicted_surface = r.umf.stull_prediction;
+                obj.silica_alumina_ratio = r.umf.silica_alumina_ratio;
+            }
+            obj.exported = new Date().toISOString();
+            downloadFile(`${r.name.replace(/[^a-zA-Z0-9]/g, '_')}.json`, JSON.stringify(obj, null, 2), 'application/json');
+            showToast('Exported as JSON', 'success');
+        }
+
+        function exportRecipeText() {
+            const r = getRecipeData();
+            if (r.ingredients.length === 0) { showToast('Add ingredients before exporting', 'warning'); return; }
+            const total = r.ingredients.reduce((s, i) => s + i.percentage, 0);
+            let lines = [];
+            lines.push(`${r.name}`);
+            lines.push(`${'='.repeat(r.name.length)}`);
+            lines.push(`Cone: ${r.cone}`);
+            lines.push('');
+            lines.push('Ingredients:');
+            const maxName = Math.max(...r.ingredients.map(i => i.name.length));
+            r.ingredients.forEach(i => {
+                lines.push(`  ${i.name.padEnd(maxName + 2)} ${i.percentage.toFixed(1).padStart(5)}%`);
+            });
+            lines.push(`  ${''.padEnd(maxName + 2)} ${'-'.padStart(6, '-')}`);
+            lines.push(`  ${'Total'.padEnd(maxName + 2)} ${total.toFixed(1).padStart(5)}%`);
+            if (r.colorants.length > 0) {
+                lines.push('');
+                lines.push('Colorants (addition):');
+                r.colorants.forEach(c => {
+                    lines.push(`  ${c.name.padEnd(maxName + 2)} ${c.percentage.toFixed(1).padStart(5)}%`);
+                });
+            }
+            if (r.umf) {
+                lines.push('');
+                lines.push('Unity Molecular Formula:');
+                lines.push(`  SiO2: ${r.umf.SiO2?.toFixed(2) || '-'}  Al2O3: ${r.umf.Al2O3?.toFixed(2) || '-'}  Si:Al: ${r.umf.silica_alumina_ratio?.toFixed(1) || '-'}`);
+                const fluxes = ['CaO','MgO','Na2O','K2O','ZnO','BaO','SrO','Li2O'].filter(k => r.umf[k] > 0.001);
+                if (fluxes.length) lines.push(`  Fluxes: ${fluxes.map(k => k + ' ' + r.umf[k].toFixed(2)).join('  ')}`);
+                if (r.umf.stull_prediction) lines.push(`  Predicted surface: ${r.umf.stull_prediction}`);
+            }
+            lines.push('');
+            lines.push(`Exported: ${new Date().toLocaleString()}`);
+            downloadFile(`${r.name.replace(/[^a-zA-Z0-9]/g, '_')}.txt`, lines.join('\n'), 'text/plain');
+            showToast('Exported as text', 'success');
+        }
+
+        function downloadFile(filename, content, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function showExportMenu() {
+            const r = getRecipeData();
+            if (r.ingredients.length === 0) { showToast('Add ingredients before exporting', 'warning'); return; }
+            // Simple dropdown via a temporary overlay
+            const existing = document.getElementById('export-menu');
+            if (existing) { existing.remove(); return; }
+            const btn = document.getElementById('export-recipe-btn');
+            const rect = btn.getBoundingClientRect();
+            const menu = document.createElement('div');
+            menu.id = 'export-menu';
+            menu.style.cssText = `position:fixed;top:${rect.bottom+4}px;left:${rect.left}px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);box-shadow:var(--shadow-lg);z-index:200;min-width:160px;`;
+            menu.innerHTML = `
+                <div style="padding:0.6rem 1rem;cursor:pointer;font-size:0.9rem;border-bottom:1px solid var(--border);" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background=''" onclick="exportRecipeJSON();document.getElementById('export-menu')?.remove();">
+                    Export as JSON
+                </div>
+                <div style="padding:0.6rem 1rem;cursor:pointer;font-size:0.9rem;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background=''" onclick="exportRecipeText();document.getElementById('export-menu')?.remove();">
+                    Export as Text
+                </div>`;
+            document.body.appendChild(menu);
+            setTimeout(() => {
+                document.addEventListener('click', function closeMenu(e) {
+                    if (!menu.contains(e.target) && e.target !== btn) {
+                        menu.remove();
+                        document.removeEventListener('click', closeMenu);
+                    }
+                });
+            }, 0);
+        }
+
+        document.getElementById('export-recipe-btn').addEventListener('click', showExportMenu);
+
+        // ============== Batch Calculator ==============
+        function calculateBatch() {
+            const validIngredients = recipeIngredients.filter(i => i.name && i.percentage > 0);
+            if (validIngredients.length === 0) {
+                showToast('Add ingredients first', 'warning');
+                return;
+            }
+            const batchWeight = parseFloat(document.getElementById('batch-weight').value) || 1000;
+            const unit = document.getElementById('batch-unit').value;
+            const total = validIngredients.reduce((s, i) => s + i.percentage, 0);
+            const validColorants = recipeColorants.filter(c => c.name && c.percentage > 0);
+
+            // Base ingredients scale to 100% of batch weight
+            const scale = batchWeight / (total || 100);
+            const maxName = Math.max(
+                ...validIngredients.map(i => i.name.length),
+                ...validColorants.map(c => c.name.length),
+                5
+            );
+
+            let html = '<table style="width:100%;font-size:0.85rem;border-collapse:collapse;">';
+            html += `<tr style="border-bottom:1px solid var(--border);color:var(--text-secondary);font-size:0.75rem;">
+                <th style="text-align:left;padding:0.3rem 0;">Material</th>
+                <th style="text-align:right;padding:0.3rem 0;">%</th>
+                <th style="text-align:right;padding:0.3rem 0;">Weight (${escapeHtml(unit)})</th>
+            </tr>`;
+
+            let batchTotal = 0;
+            validIngredients.forEach(i => {
+                const weight = i.percentage * scale;
+                batchTotal += weight;
+                html += `<tr style="border-bottom:1px solid var(--border);">
+                    <td style="padding:0.35rem 0;">${escapeHtml(i.name)}</td>
+                    <td style="text-align:right;padding:0.35rem 0;color:var(--text-muted);">${i.percentage.toFixed(1)}</td>
+                    <td style="text-align:right;padding:0.35rem 0;font-weight:600;font-family:monospace;">${weight.toFixed(1)}</td>
+                </tr>`;
+            });
+
+            if (validColorants.length > 0) {
+                html += `<tr><td colspan="3" style="padding:0.5rem 0 0.2rem;color:var(--accent-light);font-size:0.8rem;font-weight:600;">Colorants (addition)</td></tr>`;
+                validColorants.forEach(c => {
+                    const weight = (c.percentage / 100) * batchWeight;
+                    batchTotal += weight;
+                    html += `<tr style="border-bottom:1px solid var(--border);">
+                        <td style="padding:0.35rem 0;">${escapeHtml(c.name)}</td>
+                        <td style="text-align:right;padding:0.35rem 0;color:var(--text-muted);">${c.percentage.toFixed(1)}</td>
+                        <td style="text-align:right;padding:0.35rem 0;font-weight:600;font-family:monospace;">${weight.toFixed(1)}</td>
+                    </tr>`;
+                });
+            }
+
+            html += `<tr style="font-weight:700;">
+                <td style="padding:0.5rem 0;">Total</td>
+                <td></td>
+                <td style="text-align:right;padding:0.5rem 0;font-family:monospace;">${batchTotal.toFixed(1)} ${escapeHtml(unit)}</td>
+            </tr>`;
+            html += '</table>';
+
+            document.getElementById('batch-results').innerHTML = html;
+        }
+
+        // Load saved recipes on startup
+        renderSavedRecipes();
 
         // UMF Calculation
         document.getElementById('calculate-umf-btn').addEventListener('click', () => calculateUMF(false));
@@ -1963,6 +2683,7 @@
             }
 
             try {
+                const validColorants = recipeColorants.filter(c => c.name && c.percentage > 0);
                 const response = await fetch(`${API_BASE}/api/recipes/calculate-umf`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1971,6 +2692,10 @@
                         ingredients: validIngredients.map(i => ({
                             material_name: i.name,
                             percentage: i.percentage
+                        })),
+                        colorants: validColorants.map(c => ({
+                            material_name: c.name,
+                            percentage: c.percentage
                         }))
                     })
                 });
@@ -2395,6 +3120,7 @@
             }
 
             try {
+                const validColorants = recipeColorants.filter(c => c.name && c.percentage > 0);
                 const response = await fetch(`${API_BASE}/api/recipes/analyze`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -2404,6 +3130,10 @@
                         ingredients: validIngredients.map(i => ({
                             material_name: i.name,
                             percentage: i.percentage
+                        })),
+                        colorants: validColorants.map(c => ({
+                            material_name: c.name,
+                            percentage: c.percentage
                         }))
                     })
                 });
@@ -2418,57 +3148,130 @@
         }
 
         function renderAnalysis(data) {
-            const analysis = data.analysis || {};
+            // API returns ChemistryResponse at top level, not nested under .analysis
+            const umf = data.umf || {};
+            const predicted_surface = data.predicted_surface || 'Unknown';
+            const cone_range = data.predicted_cone_range || [];
+            const issues = data.issues || [];
+            const warnings = data.warnings || [];
+            const recommendations = data.recommendations || [];
+
+            // Oxide bar chart data
+            const fluxes = [
+                { name: 'CaO', value: umf.CaO, role: 'Flux' },
+                { name: 'Na2O', value: umf.Na2O, role: 'Flux' },
+                { name: 'K2O', value: umf.K2O, role: 'Flux' },
+                { name: 'MgO', value: umf.MgO, role: 'Flux' },
+                { name: 'ZnO', value: umf.ZnO, role: 'Flux' },
+                { name: 'BaO', value: umf.BaO, role: 'Flux' },
+                { name: 'SrO', value: umf.SrO, role: 'Flux' },
+                { name: 'Li2O', value: umf.Li2O, role: 'Flux' },
+            ].filter(o => o.value > 0.001);
+
+            const coneStr = cone_range.length === 2 ? `Cone ${cone_range[0]} - ${cone_range[1]}` : 'N/A';
 
             document.getElementById('analysis-results').innerHTML = `
                 <div class="analysis-section">
-                    <div class="grid grid-3">
-                        <div class="prediction-card">
-                            <div class="prediction-title">Si:Al Ratio</div>
-                            <div class="prediction-value">${(analysis.silica_alumina_ratio || 0).toFixed(2)}</div>
-                        </div>
+                    <div class="grid grid-3" style="gap:0.75rem;margin-bottom:1rem;">
                         <div class="prediction-card">
                             <div class="prediction-title">Predicted Surface</div>
-                            <div class="prediction-value">${analysis.predicted_surface || 'Unknown'}</div>
+                            <div class="prediction-value">${escapeHtml(predicted_surface)}</div>
+                        </div>
+                        <div class="prediction-card">
+                            <div class="prediction-title">Si:Al Ratio</div>
+                            <div class="prediction-value">${(umf.silica_alumina_ratio || 0).toFixed(2)}</div>
                         </div>
                         <div class="prediction-card">
                             <div class="prediction-title">Cone Range</div>
-                            <div class="prediction-value">${analysis.cone_range || 'N/A'}</div>
+                            <div class="prediction-value">${escapeHtml(coneStr)}</div>
                         </div>
                     </div>
                 </div>
 
-                ${analysis.issues?.length ? `
-                    <div class="analysis-section">
-                        <h4>⚠️ Issues Found</h4>
-                        ${analysis.issues.map(issue => `
+                <div class="grid grid-2" style="gap:1rem;margin-bottom:1rem;">
+                    <div>
+                        <h4 style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:0.75rem;">GLASS FORMERS</h4>
+                        <div class="oxide-bar">
+                            <span class="oxide-label" style="width:50px;">SiO2</span>
+                            <div class="oxide-track">
+                                <div class="oxide-fill" style="width:${Math.min((umf.SiO2 || 0) / 6 * 100, 100)}%;background:var(--accent);"></div>
+                            </div>
+                            <span class="oxide-value">${(umf.SiO2 || 0).toFixed(2)}</span>
+                        </div>
+                        <div class="oxide-bar">
+                            <span class="oxide-label" style="width:50px;">Al2O3</span>
+                            <div class="oxide-track">
+                                <div class="oxide-fill" style="width:${Math.min((umf.Al2O3 || 0) / 0.8 * 100, 100)}%;background:var(--accent-light);"></div>
+                            </div>
+                            <span class="oxide-value">${(umf.Al2O3 || 0).toFixed(3)}</span>
+                        </div>
+                        ${umf.B2O3 > 0.001 ? `
+                        <div class="oxide-bar">
+                            <span class="oxide-label" style="width:50px;">B2O3</span>
+                            <div class="oxide-track">
+                                <div class="oxide-fill" style="width:${Math.min((umf.B2O3) / 1 * 100, 100)}%;background:#60a5fa;"></div>
+                            </div>
+                            <span class="oxide-value">${umf.B2O3.toFixed(3)}</span>
+                        </div>` : ''}
+
+                        <h4 style="color:var(--text-secondary);font-size:0.85rem;margin:1rem 0 0.75rem;">SUMMARY</h4>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;font-size:0.85rem;">
+                            <div style="padding:0.5rem;background:var(--bg-secondary);border-radius:var(--radius-sm);">
+                                <div style="color:var(--text-muted);font-size:0.75rem;">Flux Total</div>
+                                <div style="font-weight:600;">${(umf.flux_total || 0).toFixed(3)}</div>
+                            </div>
+                            <div style="padding:0.5rem;background:var(--bg-secondary);border-radius:var(--radius-sm);">
+                                <div style="color:var(--text-muted);font-size:0.75rem;">Alkali Ratio</div>
+                                <div style="font-weight:600;">${(umf.alkali_ratio || 0).toFixed(3)}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:0.75rem;">FLUXES (Unity = 1.0)</h4>
+                        ${fluxes.map(o => `
+                            <div class="oxide-bar">
+                                <span class="oxide-label" style="width:50px;">${o.name}</span>
+                                <div class="oxide-track">
+                                    <div class="oxide-fill" style="width:${Math.min(o.value / 0.8 * 100, 100)}%;background:var(--success);"></div>
+                                </div>
+                                <span class="oxide-value">${o.value.toFixed(3)}</span>
+                            </div>
+                        `).join('')}
+                        ${fluxes.length === 0 ? '<p class="text-muted" style="font-size:0.85rem;">No fluxes detected</p>' : ''}
+                    </div>
+                </div>
+
+                ${issues.length ? `
+                    <div class="analysis-section" style="margin-bottom:0.75rem;">
+                        <h4 style="margin-bottom:0.5rem;">Issues Found</h4>
+                        ${issues.map(issue => `
                             <div class="issue-item">
                                 <span class="issue-icon">❌</span>
-                                <span>${issue}</span>
+                                <span>${escapeHtml(issue)}</span>
                             </div>
                         `).join('')}
                     </div>
                 ` : ''}
 
-                ${analysis.warnings?.length ? `
-                    <div class="analysis-section">
-                        <h4>⚡ Warnings</h4>
-                        ${analysis.warnings.map(w => `
+                ${warnings.length ? `
+                    <div class="analysis-section" style="margin-bottom:0.75rem;">
+                        <h4 style="margin-bottom:0.5rem;">Warnings</h4>
+                        ${warnings.map(w => `
                             <div class="warning-item">
                                 <span class="issue-icon">⚠️</span>
-                                <span>${w}</span>
+                                <span>${escapeHtml(w)}</span>
                             </div>
                         `).join('')}
                     </div>
                 ` : ''}
 
-                ${analysis.recommendations?.length ? `
+                ${recommendations.length ? `
                     <div class="analysis-section">
-                        <h4>✨ Recommendations</h4>
-                        ${analysis.recommendations.map(r => `
+                        <h4 style="margin-bottom:0.5rem;">Recommendations</h4>
+                        ${recommendations.map(r => `
                             <div class="recommendation-item">
                                 <span class="issue-icon">💡</span>
-                                <span>${r}</span>
+                                <span>${escapeHtml(r)}</span>
                             </div>
                         `).join('')}
                     </div>
@@ -2478,6 +3281,105 @@
                         <span>Recipe looks good! No issues detected.</span>
                     </div>
                 `}
+            `;
+
+            // Also fetch classification
+            fetchClassification();
+        }
+
+        async function fetchClassification() {
+            const validIngredients = recipeIngredients.filter(i => i.name && i.percentage > 0);
+            if (validIngredients.length === 0) return;
+
+            try {
+                const validColorants = recipeColorants.filter(c => c.name && c.percentage > 0);
+                const res = await fetch(`${API_BASE}/api/classify`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: document.getElementById('recipe-name').value || 'Untitled',
+                        target_cone: targetCone,
+                        ingredients: validIngredients.map(i => ({ material_name: i.name, percentage: i.percentage })),
+                        colorants: validColorants.map(c => ({ material_name: c.name, percentage: c.percentage })),
+                    })
+                });
+                if (!res.ok) throw new Error('Classification failed');
+                const c = await res.json();
+                renderClassification(c);
+            } catch (e) {
+                console.error('Classification failed:', e);
+                document.getElementById('classification-results').innerHTML =
+                    '<div class="empty-state" style="padding:1rem;"><p class="text-muted" style="font-size:0.85rem;">Classification unavailable</p></div>';
+            }
+        }
+
+        function renderClassification(c) {
+            const foodSafeColor = c.food_safe ? 'var(--success)' : 'var(--danger)';
+            const foodSafeText = c.food_safe ? 'Likely Food Safe' : 'Not Food Safe';
+
+            const traits = [];
+            if (c.alkali_dominant) traits.push('Alkali-dominant');
+            if (c.alkaline_earth_dominant) traits.push('Alkaline earth-dominant');
+            if (c.zinc_present) traits.push('Zinc present');
+            if (c.boron_present) traits.push('Boron present');
+            if (c.is_iron_glaze) traits.push('Iron glaze');
+            if (c.is_copper_glaze) traits.push('Copper glaze');
+            if (c.is_cobalt_glaze) traits.push('Cobalt glaze');
+
+            document.getElementById('classification-results').innerHTML = `
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;">
+                    <div style="padding:0.6rem;background:var(--bg-secondary);border-radius:var(--radius-sm);">
+                        <div style="color:var(--text-muted);font-size:0.75rem;">Category</div>
+                        <div style="font-weight:600;font-size:1rem;">${escapeHtml((c.category || '').replace(/_/g, ' '))}</div>
+                    </div>
+                    <div style="padding:0.6rem;background:var(--bg-secondary);border-radius:var(--radius-sm);">
+                        <div style="color:var(--text-muted);font-size:0.75rem;">Stull Region</div>
+                        <div style="font-weight:600;font-size:1rem;">${escapeHtml((c.stull_region || '').replace(/_/g, ' '))}</div>
+                    </div>
+                    <div style="padding:0.6rem;background:var(--bg-secondary);border-radius:var(--radius-sm);">
+                        <div style="color:var(--text-muted);font-size:0.75rem;">Si:Al Ratio</div>
+                        <div style="font-weight:600;">${(c.si_al_ratio || 0).toFixed(2)}</div>
+                    </div>
+                    <div style="padding:0.6rem;background:var(--bg-secondary);border-radius:var(--radius-sm);">
+                        <div style="color:var(--text-muted);font-size:0.75rem;">Food Safety</div>
+                        <div style="font-weight:600;color:${foodSafeColor};">${foodSafeText}</div>
+                    </div>
+                </div>
+
+                ${c.sub_categories?.length ? `
+                    <div style="margin-bottom:0.75rem;">
+                        <div style="color:var(--text-muted);font-size:0.75rem;margin-bottom:0.3rem;">Sub-categories</div>
+                        <div style="display:flex;flex-wrap:wrap;gap:0.3rem;">
+                            ${c.sub_categories.map(s => `<span class="badge badge-primary" style="font-size:0.75rem;">${escapeHtml(s.replace(/_/g, ' '))}</span>`).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${traits.length ? `
+                    <div style="margin-bottom:0.75rem;">
+                        <div style="color:var(--text-muted);font-size:0.75rem;margin-bottom:0.3rem;">Characteristics</div>
+                        <div style="display:flex;flex-wrap:wrap;gap:0.3rem;">
+                            ${traits.map(t => `<span class="badge badge-primary" style="font-size:0.75rem;background:var(--bg-hover);">${escapeHtml(t)}</span>`).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${c.colorant_notes ? `
+                    <div style="font-size:0.85rem;color:var(--text-secondary);padding:0.5rem;background:var(--bg-secondary);border-radius:var(--radius-sm);">
+                        <strong>Colorant notes:</strong> ${escapeHtml(c.colorant_notes)}
+                    </div>
+                ` : ''}
+
+                ${c.warnings?.length ? `
+                    <div style="margin-top:0.75rem;">
+                        ${c.warnings.map(w => `
+                            <div class="warning-item" style="margin-bottom:0.3rem;">
+                                <span>⚠️</span>
+                                <span style="font-size:0.85rem;">${escapeHtml(w)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
             `;
         }
 
@@ -2492,16 +3394,31 @@
             }
 
             try {
+                const firingAtm = document.getElementById('predict-atmosphere')?.value || 'oxidation';
+                const firingType = document.getElementById('predict-firing-type')?.value || 'electric';
+                const clayBody = document.getElementById('predict-clay-body')?.value || 'stoneware';
                 const response = await fetch(`${API_BASE}/api/recipes/predict`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        name: document.getElementById('recipe-name').value || 'Untitled',
-                        target_cone: targetCone,
-                        ingredients: validIngredients.map(i => ({
-                            material_name: i.name,
-                            percentage: i.percentage
-                        }))
+                        recipe: {
+                            name: document.getElementById('recipe-name').value || 'Untitled',
+                            target_cone: targetCone,
+                            ingredients: validIngredients.map(i => ({
+                                material_name: i.name,
+                                percentage: i.percentage
+                            })),
+                            colorants: recipeColorants.filter(c => c.name && c.percentage > 0).map(c => ({
+                                material_name: c.name,
+                                percentage: c.percentage
+                            }))
+                        },
+                        firing: {
+                            cone: targetCone,
+                            atmosphere: firingAtm,
+                            firing_type: firingType
+                        },
+                        clay_body: clayBody
                     })
                 });
 
@@ -2515,7 +3432,7 @@
         }
 
         function renderPrediction(data) {
-            const prediction = data.prediction || {};
+            const prediction = data.prediction || data;
             const defects = prediction.defect_risks || {};
 
             document.getElementById('prediction-results').innerHTML = `
@@ -2806,13 +3723,390 @@
 
             if ((e.ctrlKey || e.metaKey) && e.key === 's') {
                 e.preventDefault();
-                showToast('Recipe saved (feature coming soon)', 'info');
+                saveCurrentRecipe();
             }
 
             if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
                 e.preventDefault();
                 document.getElementById('clear-recipe-btn').click();
             }
+        });
+
+        // ============== Firing Log ==============
+        let firingLogLoaded = false;
+
+        function initFiringLog() {
+            if (firingLogLoaded) return;
+            firingLogLoaded = true;
+            populateFiringRecipeSelect();
+            loadFiringLog();
+        }
+
+        function populateFiringRecipeSelect() {
+            const sel = document.getElementById('firing-recipe-name');
+            // Add saved recipes
+            const saved = getSavedRecipes();
+            saved.forEach(r => {
+                const opt = document.createElement('option');
+                opt.value = r.name;
+                opt.textContent = `${r.name} (Cone ${r.cone})`;
+                sel.appendChild(opt);
+            });
+            // Add option to type custom name
+            const customOpt = document.createElement('option');
+            customOpt.value = '__custom__';
+            customOpt.textContent = '-- Type custom name --';
+            sel.appendChild(customOpt);
+
+            sel.addEventListener('change', () => {
+                if (sel.value === '__custom__') {
+                    const name = prompt('Enter recipe name:');
+                    if (name) {
+                        const opt = document.createElement('option');
+                        opt.value = name;
+                        opt.textContent = name;
+                        sel.insertBefore(opt, sel.lastChild);
+                        sel.value = name;
+                    } else {
+                        sel.value = '';
+                    }
+                }
+            });
+
+            // Pre-fill from current recipe builder if it has a name
+            const currentName = document.getElementById('recipe-name').value.trim();
+            if (currentName) {
+                // Check if already in options
+                const exists = [...sel.options].some(o => o.value === currentName);
+                if (!exists) {
+                    const opt = document.createElement('option');
+                    opt.value = currentName;
+                    opt.textContent = currentName + ' (current)';
+                    sel.insertBefore(opt, sel.children[1]);
+                }
+                sel.value = currentName;
+                document.getElementById('firing-cone').value = targetCone;
+            }
+        }
+
+        async function submitFiringResult() {
+            const recipeName = document.getElementById('firing-recipe-name').value;
+            if (!recipeName) { showToast('Select a recipe', 'warning'); return; }
+
+            const color = document.getElementById('firing-color').value.trim() || 'unknown';
+            const defects = [...document.querySelectorAll('#firing-defects input:checked')].map(cb => cb.value);
+            if (defects.length === 0) defects.push('none');
+
+            // Upload photo first if present
+            const photoInput = document.getElementById('firing-photo');
+            let photoIds = [];
+            if (photoInput.files.length > 0) {
+                try {
+                    const formData = new FormData();
+                    formData.append('file', photoInput.files[0]);
+                    const uploadRes = await fetch(`${API_BASE}/api/results/upload-photo`, { method: 'POST', body: formData });
+                    if (uploadRes.ok) {
+                        const uploadData = await uploadRes.json();
+                        photoIds.push(uploadData.photo_id);
+                    }
+                } catch (e) { console.error('Photo upload failed:', e); }
+            }
+
+            const resultData = {
+                recipe_name: recipeName,
+                firing_cone: document.getElementById('firing-cone').value,
+                firing_atmosphere: document.getElementById('firing-atm').value,
+                firing_type: document.getElementById('firing-kiln-type').value,
+                clay_body: document.getElementById('firing-clay-body').value,
+                surface_quality: document.getElementById('firing-surface-quality').value,
+                color_description: color,
+                defects: defects,
+                notes: document.getElementById('firing-notes').value.trim() || null,
+            };
+
+            try {
+                const params = photoIds.length > 0 ? '?' + photoIds.map(id => `photo_ids=${id}`).join('&') : '';
+                const res = await fetch(`${API_BASE}/api/results${params}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(resultData),
+                });
+                if (!res.ok) throw new Error(await res.text());
+                const data = await res.json();
+                showToast(`Firing result logged! ${data.photos_attached > 0 ? '(Photo attached)' : ''}`, 'success');
+
+                // Also save to localStorage for persistence across restarts
+                saveFiringResultLocally(resultData, photoIds);
+
+                // Reset form
+                document.getElementById('firing-color').value = '';
+                document.getElementById('firing-notes').value = '';
+                photoInput.value = '';
+                document.querySelectorAll('#firing-defects input:checked').forEach(cb => cb.checked = false);
+
+                loadFiringLog();
+            } catch (e) {
+                console.error('Failed to submit result:', e);
+                showToast('Failed to submit firing result', 'error');
+            }
+        }
+
+        const FIRING_LOG_KEY = 'glaze-firing-log';
+
+        function saveFiringResultLocally(result, photoIds) {
+            try {
+                const log = JSON.parse(localStorage.getItem(FIRING_LOG_KEY) || '[]');
+                log.unshift({
+                    ...result,
+                    photo_ids: photoIds,
+                    fired_at: new Date().toISOString(),
+                });
+                localStorage.setItem(FIRING_LOG_KEY, JSON.stringify(log));
+            } catch (e) {}
+        }
+
+        async function loadFiringLog() {
+            const listEl = document.getElementById('firing-log-list');
+            let results = [];
+
+            // Try API first
+            try {
+                const res = await fetch(`${API_BASE}/api/results?limit=50`);
+                if (res.ok) results = await res.json();
+            } catch (e) {}
+
+            // Merge with localStorage (in case server restarted and lost in-memory results)
+            const localLog = JSON.parse(localStorage.getItem(FIRING_LOG_KEY) || '[]');
+            const apiNames = new Set(results.map(r => r.recipe_name + r.fired_at));
+            localLog.forEach(lr => {
+                if (!apiNames.has(lr.recipe_name + lr.fired_at)) {
+                    results.push({
+                        recipe_name: lr.recipe_name,
+                        cone: lr.firing_cone,
+                        atmosphere: lr.firing_atmosphere,
+                        clay_body: lr.clay_body,
+                        surface_quality: lr.surface_quality,
+                        color: lr.color_description,
+                        defects: lr.defects,
+                        notes: lr.notes,
+                        photos: [],
+                        fired_at: lr.fired_at,
+                        source: 'local',
+                    });
+                }
+            });
+
+            // Sort by date descending
+            results.sort((a, b) => (b.fired_at || '').localeCompare(a.fired_at || ''));
+
+            if (results.length === 0) {
+                listEl.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔥</div>
+                        <p>No firing results logged yet</p>
+                        <p class="text-muted" style="font-size:0.85rem;margin-top:0.5rem;">
+                            Submit your first firing result to start building your log
+                        </p>
+                    </div>`;
+                return;
+            }
+
+            listEl.innerHTML = results.map(r => {
+                const date = r.fired_at ? new Date(r.fired_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+                const defects = (r.defects || []).filter(d => d !== 'none');
+                const qualityColors = { excellent: 'var(--success)', good: 'var(--success)', acceptable: 'var(--warning)', flawed: 'var(--danger)', failed: 'var(--danger)' };
+                const qColor = qualityColors[r.surface_quality] || 'var(--text-muted)';
+                const photos = r.photos || [];
+
+                return `
+                    <div class="firing-log-entry">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                            <div>
+                                <div style="font-weight:600;">${escapeHtml(r.recipe_name)}</div>
+                                <div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.2rem;">
+                                    Cone ${escapeHtml(r.cone || '')} &middot; ${escapeHtml((r.atmosphere || '').replace(/_/g, ' '))} &middot; ${escapeHtml((r.clay_body || '').replace(/_/g, ' '))}
+                                </div>
+                            </div>
+                            <div style="text-align:right;">
+                                <span style="font-size:0.8rem;color:var(--text-muted);">${date}</span>
+                                <div style="font-size:0.85rem;font-weight:600;color:${qColor};margin-top:0.2rem;">
+                                    ${escapeHtml((r.surface_quality || '').replace(/_/g, ' '))}
+                                </div>
+                            </div>
+                        </div>
+                        ${r.color ? `<div style="font-size:0.85rem;margin-top:0.4rem;">Color: <strong>${escapeHtml(r.color)}</strong></div>` : ''}
+                        ${defects.length > 0 ? `<div style="margin-top:0.4rem;display:flex;flex-wrap:wrap;gap:0.3rem;">
+                            ${defects.map(d => `<span class="badge badge-danger" style="font-size:0.7rem;">${escapeHtml(d.replace(/_/g, ' '))}</span>`).join('')}
+                        </div>` : ''}
+                        ${r.notes ? `<div style="font-size:0.8rem;color:var(--text-secondary);margin-top:0.4rem;font-style:italic;">${escapeHtml(r.notes)}</div>` : ''}
+                        ${photos.length > 0 ? `<div style="margin-top:0.5rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+                            ${photos.map(p => `<img src="${escapeHtml(p.url)}" alt="${escapeHtml(p.caption || '')}" style="width:80px;height:80px;object-fit:cover;border-radius:var(--radius-sm);border:1px solid var(--border);">`).join('')}
+                        </div>` : ''}
+                    </div>`;
+            }).join('');
+        }
+
+        document.getElementById('submit-firing-btn').addEventListener('click', submitFiringResult);
+        document.getElementById('refresh-firing-log-btn').addEventListener('click', loadFiringLog);
+
+        document.querySelector('.tab[data-tab="firing-log"]').addEventListener('click', () => {
+            initFiringLog();
+        });
+
+        // ============== Recipe Library ==============
+        let libraryLoaded = false;
+        let libraryOffset = 0;
+        const libraryLimit = 30;
+
+        async function initLibrary() {
+            if (libraryLoaded) return;
+            libraryLoaded = true;
+            // Load sources
+            try {
+                const res = await fetch(`${API_BASE}/api/recipes/sources`);
+                const sources = await res.json();
+                const sel = document.getElementById('library-source');
+                sources.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.name;
+                    opt.textContent = `${s.name} (${s.count})`;
+                    sel.appendChild(opt);
+                });
+            } catch (e) { console.error('Failed to load sources:', e); }
+
+            // Load stats
+            try {
+                const res = await fetch(`${API_BASE}/api/recipes/statistics`);
+                const stats = await res.json();
+                document.getElementById('library-stats').innerHTML = `
+                    <strong>${stats.total_recipes}</strong> recipes across
+                    <strong>${Object.keys(stats.by_source || {}).length}</strong> sources`;
+            } catch (e) {}
+
+            searchLibrary();
+        }
+
+        async function searchLibrary(resetOffset = true) {
+            if (resetOffset) libraryOffset = 0;
+            const query = document.getElementById('library-search').value.trim();
+            const cone = document.getElementById('library-cone').value;
+            const atmosphere = document.getElementById('library-atmosphere').value;
+            const surface = document.getElementById('library-surface').value;
+            const source = document.getElementById('library-source').value;
+
+            const params = new URLSearchParams({ limit: libraryLimit, offset: libraryOffset });
+            if (query) params.set('query', query);
+            if (cone) params.set('cone', cone);
+            if (atmosphere) params.set('atmosphere', atmosphere);
+            if (surface) params.set('surface', surface);
+            if (source) params.set('source', source);
+
+            try {
+                const res = await fetch(`${API_BASE}/api/recipes/search?${params}`);
+                const data = await res.json();
+                renderLibraryResults(data);
+            } catch (e) {
+                console.error('Library search failed:', e);
+                document.getElementById('library-results').innerHTML =
+                    '<div class="empty-state text-danger">Failed to load recipes</div>';
+            }
+        }
+
+        let _libraryResults = [];
+
+        function renderLibraryResults(data) {
+            const { recipes, total, offset } = data;
+            _libraryResults = recipes || [];
+            document.getElementById('library-count').textContent = total;
+
+            if (_libraryResults.length === 0) {
+                document.getElementById('library-results').innerHTML =
+                    '<div class="empty-state"><p>No recipes found matching your filters</p></div>';
+                document.getElementById('library-pagination').innerHTML = '';
+                return;
+            }
+
+            document.getElementById('library-results').innerHTML = _libraryResults.map((r, idx) => {
+                const name = escapeHtml(r.name || 'Untitled');
+                const cone = escapeHtml(String(r.cone || ''));
+                const atm = escapeHtml(r.atmosphere || '');
+                const surface = escapeHtml(r.surface || '');
+                const source = escapeHtml(r.source_file || r.source || '');
+                const desc = escapeHtml((r.description || r.notes || '').slice(0, 120));
+                const ings = r.ingredients || [];
+                const cols = r.colorants || [];
+                const ingText = ings.map(i => `${escapeHtml(i.material || i.name || '')} ${i.percentage}%`).join(', ');
+
+                return `
+                    <div class="saved-recipe-item" style="flex-direction:column;align-items:stretch;cursor:default;">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                            <div>
+                                <div style="font-weight:600;">${name}</div>
+                                <div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.25rem;">
+                                    ${cone ? 'Cone ' + cone : ''}${atm ? ' &middot; ' + atm : ''}${surface ? ' &middot; ' + surface : ''}
+                                    <span style="color:var(--accent-light);"> &middot; ${source}</span>
+                                </div>
+                            </div>
+                            <button class="small" onclick="loadLibraryRecipe(_libraryResults[${idx}])" title="Load into Recipe Builder">Use</button>
+                        </div>
+                        ${desc ? `<div style="font-size:0.8rem;color:var(--text-secondary);margin-top:0.5rem;">${desc}</div>` : ''}
+                        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem;">
+                            ${ingText}${cols.length ? '<br>Colorants: ' + cols.map(c => escapeHtml(c.material || c.name || '') + ' ' + c.percentage + '%').join(', ') : ''}
+                        </div>
+                    </div>`;
+            }).join('');
+
+            // Pagination
+            const totalPages = Math.ceil(total / libraryLimit);
+            const currentPage = Math.floor(libraryOffset / libraryLimit) + 1;
+            let pagHtml = '';
+            if (totalPages > 1) {
+                if (currentPage > 1)
+                    pagHtml += `<button class="small secondary" onclick="libraryOffset=${(currentPage-2)*libraryLimit};searchLibrary(false);">Prev</button>`;
+                pagHtml += `<span style="color:var(--text-muted);font-size:0.85rem;line-height:2;">Page ${currentPage} of ${totalPages}</span>`;
+                if (currentPage < totalPages)
+                    pagHtml += `<button class="small secondary" onclick="libraryOffset=${currentPage*libraryLimit};searchLibrary(false);">Next</button>`;
+            }
+            document.getElementById('library-pagination').innerHTML = pagHtml;
+        }
+
+        function loadLibraryRecipe(r) {
+            const name = r.name || 'Untitled';
+            document.getElementById('recipe-name').value = name;
+
+            // Set cone
+            const cone = String(r.cone || '6');
+            targetCone = cone;
+            document.querySelectorAll('.cone-btn').forEach(b => b.classList.remove('selected'));
+            document.querySelector(`.cone-btn[data-cone="${cone}"]`)?.classList.add('selected');
+
+            // Load ingredients
+            recipeIngredients = (r.ingredients || []).map(i => ({
+                name: i.material || i.name || '',
+                percentage: i.percentage || 0
+            }));
+            renderRecipeIngredients();
+
+            // Load colorants
+            recipeColorants = (r.colorants || []).map(c => ({
+                name: c.material || c.name || '',
+                percentage: c.percentage || 0
+            }));
+            renderRecipeColorants();
+
+            document.querySelector('.tab[data-tab="recipe"]').click();
+            showToast(`Loaded "${name}" into Recipe Builder`, 'success');
+            setTimeout(() => calculateUMF(true), 300);
+        }
+
+        // Enter key search
+        document.getElementById('library-search').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') searchLibrary();
+        });
+
+        // Init library when tab clicked
+        document.querySelector('.tab[data-tab="library"]').addEventListener('click', () => {
+            initLibrary();
         });
 
         // ============== Community Recipes ==============
@@ -3091,6 +4385,7 @@
                 const response = await fetch(`${API_BASE}/api/community/recipes/${id}`);
                 const r = await response.json();
                 if (r.ingredients) {
+                    // Base ingredients (non-additives)
                     recipeIngredients = r.ingredients
                         .filter(ing => !ing.add)
                         .map((ing, i) => ({
@@ -3098,11 +4393,28 @@
                             name: ing.name,
                             percentage: ing.pct,
                         }));
+
+                    // Additives go into colorants
+                    const additives = r.ingredients.filter(ing => ing.add);
+                    if (additives.length > 0) {
+                        recipeColorants = additives.map(ing => ({
+                            name: ing.name,
+                            percentage: ing.pct,
+                        }));
+                        renderRecipeColorants();
+                    }
+
                     document.getElementById('recipe-name').value = r.name || '';
+                    if (r.cone) {
+                        targetCone = String(r.cone);
+                        document.querySelectorAll('.cone-btn').forEach(b => b.classList.remove('selected'));
+                        document.querySelector(`.cone-btn[data-cone="${targetCone}"]`)?.classList.add('selected');
+                    }
                     renderRecipeIngredients();
                     closeCommunityDetail();
                     document.querySelector('.tab[data-tab="recipe"]').click();
-                    showToast(`Imported "${r.name}"`, 'success');
+                    const addMsg = additives.length > 0 ? ` (${additives.length} additive${additives.length > 1 ? 's' : ''} as colorants)` : '';
+                    showToast(`Imported "${r.name}"${addMsg}`, 'success');
                     setTimeout(calculateUMF, 500);
                 }
             } catch (error) {
@@ -3313,6 +4625,7 @@
         // Initialize
         loadMaterials();
         loadMaterialTypes();
+        loadColorants();
         loadUnavailableMaterials();
 
         // Show quick start on first visit

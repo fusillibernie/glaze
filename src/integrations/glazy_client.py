@@ -88,16 +88,22 @@ class GlazyClient:
         Returns:
             List of search results.
         """
-        # Build query parameters
+        # Build query parameters - Glazy API v2 uses 'keywords' for search
+        # and ignores separate cone/atmosphere/surface params
         params = {"limit": limit, "base_type_id": 460}  # 460 = glazes
+
+        # Combine all search terms into keywords
+        keywords_parts = []
         if query:
-            params["search"] = query
+            keywords_parts.append(query)
         if cone:
-            params["cone"] = cone
+            keywords_parts.append(f"cone {cone}")
         if atmosphere:
-            params["atmosphere"] = atmosphere
+            keywords_parts.append(atmosphere.replace("_", " "))
         if surface:
-            params["surface"] = surface
+            keywords_parts.append(surface)
+        if keywords_parts:
+            params["keywords"] = " ".join(keywords_parts)
 
         # Try API
         try:

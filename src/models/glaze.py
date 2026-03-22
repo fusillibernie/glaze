@@ -23,6 +23,7 @@ class ConeTemperature(Enum):
     CONE_10 = "10"  # ~1305°C / 2381°F (high fire)
     CONE_11 = "11"  # ~1315°C / 2399°F
     CONE_12 = "12"  # ~1326°C / 2419°F
+    CONE_13 = "13"  # ~1346°C / 2455°F
 
 
 class AtmosphereType(Enum):

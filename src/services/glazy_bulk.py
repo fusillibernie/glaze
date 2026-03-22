@@ -97,14 +97,31 @@ class CommunityRecipeService:
         else:
             results = self.recipes
 
-        # Text search on name
+        # Text search on name, subtype, and description
         if query:
             query_lower = query.lower()
             terms = query_lower.split()
             results = [
                 r for r in results
-                if all(t in r.get("name", "").lower() or t in r.get("description", "").lower() for t in terms)
+                if all(
+                    t in r.get("name", "").lower()
+                    or t in r.get("subtype", "").lower()
+                    or t in r.get("description", "").lower()
+                    for t in terms
+                )
             ]
+            # Sort by relevance: name matches first, then subtype, then description
+            def _relevance(r):
+                name_l = r.get("name", "").lower()
+                sub_l = r.get("subtype", "").lower()
+                score = 0
+                for t in terms:
+                    if t in name_l:
+                        score += 10
+                    if t in sub_l:
+                        score += 5
+                return -score
+            results.sort(key=_relevance)
 
         total = len(results)
         total_pages = max(1, math.ceil(total / page_size))
