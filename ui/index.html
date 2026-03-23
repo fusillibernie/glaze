@@ -2155,11 +2155,11 @@
             document.getElementById('material-details').innerHTML = `
                 <div class="grid grid-2">
                     <div>
-                        <h4 style="color: var(--accent-light); margin-bottom: 1rem; font-size: 1.25rem;">${m.name}</h4>
+                        <h4 style="color: var(--accent-light); margin-bottom: 1rem; font-size: 1.25rem;">${escapeHtml(m.name)}</h4>
                         <p style="margin-bottom: 1rem;">
-                            <span class="badge badge-primary">${(m.type || m.material_type || 'unknown').replace(/_/g, ' ')}</span>
+                            <span class="badge badge-primary">${escapeHtml((m.type || m.material_type || 'unknown').replace(/_/g, ' '))}</span>
                         </p>
-                        ${m.description ? `<p style="color: var(--text-secondary); margin-bottom: 1rem;">${m.description}</p>` : ''}
+                        ${m.description ? `<p style="color: var(--text-secondary); margin-bottom: 1rem;">${escapeHtml(m.description)}</p>` : ''}
                         ${m.typical_percentage_min !== undefined ? `
                             <p style="color: var(--text-muted); font-size: 0.9rem;">
                                 Typical usage: <strong>${m.typical_percentage_min}% - ${m.typical_percentage_max}%</strong>
@@ -2168,7 +2168,7 @@
                         ${m.warnings ? `
                             <div class="warning-item mt-1">
                                 <span>⚠️</span>
-                                <span>${m.warnings}</span>
+                                <span>${escapeHtml(m.warnings)}</span>
                             </div>
                         ` : ''}
                     </div>
@@ -4365,7 +4365,9 @@
                     imgContainer.style.display = 'block';
                 } else if (data.dominant_color) {
                     // Show color swatch as fallback
-                    imgContainer.innerHTML = `<div style="width: 100%; height: 60px; border-radius: var(--radius); background: linear-gradient(135deg, #${data.dominant_color}, #${data.secondary_color || data.dominant_color})"></div>`;
+                    const dc = (data.dominant_color || '').replace(/[^a-fA-F0-9]/g, '').slice(0, 6);
+                    const sc = (data.secondary_color || data.dominant_color || '').replace(/[^a-fA-F0-9]/g, '').slice(0, 6);
+                    imgContainer.innerHTML = `<div style="width: 100%; height: 60px; border-radius: var(--radius); background: linear-gradient(135deg, #${dc}, #${sc})"></div>`;
                     imgContainer.style.display = 'block';
                     _imageCache[recipeId] = null;
                 } else {
