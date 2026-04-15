@@ -250,7 +250,8 @@
     {
       "name": "Soda Ash",
       "type": "flux",
-      "description": "Sodium carbonate, soluble flux",
+      "soluble": true,
+      "description": "Sodium carbonate, soluble flux — migrates to surface during drying",
       "analysis": {
         "Na2O": 58.5,
         "LOI": 41.5
@@ -398,7 +399,8 @@
     {
       "name": "Pearl Ash (Potassium Carbonate)",
       "type": "flux",
-      "description": "Soluble potassium source, used in ash glaze substitutions and some specialized glazes",
+      "soluble": true,
+      "description": "Soluble potassium source, migrates to surface during drying — used in ash glaze substitutions and some specialized glazes",
       "analysis": {
         "K2O": 68.2,
         "LOI": 31.8

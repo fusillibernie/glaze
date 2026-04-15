@@ -983,6 +983,10 @@
             <span class="tab-icon">🧪</span>
             <span>Recipe Builder</span>
         </button>
+        <button class="tab" data-tab="generate">
+            <span class="tab-icon">&#9879;</span>
+            <span>Generate</span>
+        </button>
         <button class="tab" data-tab="materials">
             <span class="tab-icon">📦</span>
             <span>Materials</span>
@@ -1241,6 +1245,105 @@
                         <p class="text-muted" style="font-size: 0.85rem; margin-top: 0.5rem;">
                             Build a recipe and press Save or Ctrl+S
                         </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GENERATE RECIPE TAB -->
+        <section id="generate" class="tab-content">
+            <div class="grid grid-2">
+                <!-- Left: Inputs -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Generate a Glaze Recipe</h3>
+                    </div>
+                    <div class="card-body">
+                        <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">
+                            Describe what you want and the solver will formulate a recipe that hits the right chemistry.
+                        </p>
+
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Category</label>
+                            <select id="gen-category" style="width: 100%; padding: 0.5rem; background: var(--bg-hover); color: var(--text-primary); border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                                <option value="">-- Select a glaze type --</option>
+                                <option value="celadon">Celadon (jade green, reduction)</option>
+                                <option value="shino">Shino (carbon trap, high soda)</option>
+                                <option value="tenmoku">Tenmoku (iron saturated, dark)</option>
+                                <option value="ash">Ash Glaze (wood ash base)</option>
+                                <option value="crystalline">Crystalline (macro crystals, zinc)</option>
+                                <option value="oilspot">Oil Spot (iron bubble metallic)</option>
+                                <option value="chun">Chun / Jun (opalescent blue)</option>
+                                <option value="clear">Clear (transparent glossy)</option>
+                                <option value="white">White (opaque, zircopax)</option>
+                                <option value="carbon_trap">Carbon Trap (flashing on light)</option>
+                                <option value="satin_matte">Satin Matte (buttery MgO)</option>
+                                <option value="true_matte">True Matte (high alumina)</option>
+                                <option value="rutile_blue">Rutile Blue (variegated blue-tan)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Cone</label>
+                            <div class="cone-select" id="gen-cone-select" style="flex-wrap: wrap;">
+                                <button class="cone-btn" data-cone="06">06</button>
+                                <button class="cone-btn" data-cone="04">04</button>
+                                <button class="cone-btn" data-cone="02">02</button>
+                                <button class="cone-btn" data-cone="1">1</button>
+                                <button class="cone-btn" data-cone="3">3</button>
+                                <button class="cone-btn" data-cone="5">5</button>
+                                <button class="cone-btn selected" data-cone="6">6</button>
+                                <button class="cone-btn" data-cone="7">7</button>
+                                <button class="cone-btn" data-cone="8">8</button>
+                                <button class="cone-btn" data-cone="9">9</button>
+                                <button class="cone-btn" data-cone="10">10</button>
+                                <button class="cone-btn" data-cone="11">11</button>
+                                <button class="cone-btn" data-cone="12">12</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Atmosphere</label>
+                            <select id="gen-atmosphere" style="width: 100%; padding: 0.5rem; background: var(--bg-hover); color: var(--text-primary); border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                                <option value="oxidation">Oxidation</option>
+                                <option value="reduction">Reduction</option>
+                                <option value="neutral">Neutral</option>
+                                <option value="wood">Wood</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Surface</label>
+                            <select id="gen-surface" style="width: 100%; padding: 0.5rem; background: var(--bg-hover); color: var(--text-primary); border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                                <option value="glossy">Glossy</option>
+                                <option value="satin">Satin</option>
+                                <option value="matte">Matte</option>
+                            </select>
+                            <small style="color: var(--text-muted); display: block; margin-top: 0.25rem;">Auto-set when you pick a category</small>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Extra Colorants (optional)</label>
+                            <div id="gen-colorants-list"></div>
+                            <button class="small secondary" onclick="addGenColorant()" style="margin-top: 0.5rem;">+ Add Colorant</button>
+                        </div>
+
+                        <button class="success" onclick="generateFromDescriptors()" style="width: 100%; padding: 0.75rem; font-size: 1rem; font-weight: 600; margin-top: 0.5rem;">
+                            Generate Recipe
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right: Results -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Generated Recipe</h3>
+                    </div>
+                    <div class="card-body" id="gen-results">
+                        <div class="empty-state">
+                            <div class="empty-state-icon" style="font-size: 3rem;">&#9879;</div>
+                            <p>Select a glaze type, cone, and atmosphere, then click Generate.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -3107,6 +3210,231 @@
             renderRecipeIngredients();
             setTimeout(calculateUMF, 500);
             showToast(`Loaded "${recipe.name}" into Recipe Builder`, 'success');
+        }
+
+        // ============== Generate Tab ==============
+
+        let genCone = '6';
+        let genColorants = [];
+
+        // Category → default surface/atmosphere mapping
+        const CATEGORY_DEFAULTS = {
+            celadon:     { surface: 'glossy', atmosphere: 'reduction' },
+            shino:       { surface: 'satin',  atmosphere: 'reduction' },
+            tenmoku:     { surface: 'glossy', atmosphere: 'reduction' },
+            ash:         { surface: 'satin',  atmosphere: 'reduction' },
+            crystalline: { surface: 'glossy', atmosphere: 'oxidation' },
+            oilspot:     { surface: 'glossy', atmosphere: 'oxidation' },
+            chun:        { surface: 'glossy', atmosphere: 'reduction' },
+            clear:       { surface: 'glossy', atmosphere: 'oxidation' },
+            white:       { surface: 'glossy', atmosphere: 'oxidation' },
+            carbon_trap: { surface: 'satin',  atmosphere: 'reduction' },
+            satin_matte: { surface: 'satin',  atmosphere: 'oxidation' },
+            true_matte:  { surface: 'matte',  atmosphere: 'oxidation' },
+            rutile_blue: { surface: 'satin',  atmosphere: 'reduction' },
+        };
+
+        // Cone buttons in generate tab
+        document.getElementById('gen-cone-select')?.addEventListener('click', (e) => {
+            if (e.target.classList.contains('cone-btn')) {
+                document.querySelectorAll('#gen-cone-select .cone-btn').forEach(b => b.classList.remove('selected'));
+                e.target.classList.add('selected');
+                genCone = e.target.dataset.cone;
+            }
+        });
+
+        // Auto-set surface and atmosphere when category changes
+        document.getElementById('gen-category')?.addEventListener('change', (e) => {
+            const defaults = CATEGORY_DEFAULTS[e.target.value];
+            if (defaults) {
+                document.getElementById('gen-surface').value = defaults.surface;
+                document.getElementById('gen-atmosphere').value = defaults.atmosphere;
+            }
+        });
+
+        function addGenColorant() {
+            genColorants.push({ name: '', percentage: 1 });
+            renderGenColorants();
+        }
+
+        function removeGenColorant(index) {
+            genColorants.splice(index, 1);
+            renderGenColorants();
+        }
+
+        function renderGenColorants() {
+            const container = document.getElementById('gen-colorants-list');
+            if (!container) return;
+            container.innerHTML = genColorants.map((c, i) => `
+                <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
+                    <input type="text" value="${escapeHtml(c.name)}" placeholder="e.g. Red Iron Oxide"
+                        list="colorants-datalist"
+                        onchange="genColorants[${i}].name = this.value"
+                        style="flex: 1; padding: 0.4rem; background: var(--bg-hover); color: var(--text-primary); border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                    <input type="number" value="${c.percentage}" min="0.1" max="20" step="0.5"
+                        onchange="genColorants[${i}].percentage = parseFloat(this.value) || 1"
+                        style="width: 70px; padding: 0.4rem; background: var(--bg-hover); color: var(--text-primary); border: 1px solid var(--border); border-radius: var(--radius-sm); text-align: center;">
+                    <span style="color: var(--text-muted);">%</span>
+                    <button class="small" onclick="removeGenColorant(${i})" style="padding: 0.25rem 0.5rem; color: var(--danger);">&times;</button>
+                </div>
+            `).join('');
+        }
+
+        async function generateFromDescriptors() {
+            const category = document.getElementById('gen-category').value;
+            const atmosphere = document.getElementById('gen-atmosphere').value;
+            const surface = document.getElementById('gen-surface').value;
+            const resultEl = document.getElementById('gen-results');
+
+            if (!category) {
+                showToast('Please select a glaze category', 'warning');
+                return;
+            }
+
+            resultEl.innerHTML = '<div class="loading active"><div class="spinner"></div>Solving formulation...</div>';
+
+            const colorants = genColorants
+                .filter(c => c.name && c.percentage > 0)
+                .map(c => ({ material_name: c.name, percentage: c.percentage }));
+
+            try {
+                const response = await fetch(`${API_BASE}/api/recipes/formulate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        cone: genCone,
+                        surface,
+                        atmosphere,
+                        category,
+                        colorants: colorants.length > 0 ? colorants : null,
+                    })
+                });
+
+                if (!response.ok) throw new Error('Formulation failed');
+                const data = await response.json();
+                const recipe = data.recipe;
+
+                // Build target fit table
+                let fitHtml = '';
+                if (data.target_fit) {
+                    fitHtml = '<div style="margin-top: 1rem;"><h4 style="margin-bottom: 0.5rem; font-size: 0.9rem;">Target Fit</h4><div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.4rem;">';
+                    for (const [oxide, fit] of Object.entries(data.target_fit)) {
+                        const badge = fit.in_range
+                            ? '<span class="badge badge-success" style="font-size: 0.7rem;">IN RANGE</span>'
+                            : '<span class="badge" style="font-size: 0.7rem; background: var(--danger); color: white;">MISS</span>';
+                        fitHtml += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 0.35rem 0.5rem; background: var(--bg-hover); border-radius: 6px; font-size: 0.85rem;">
+                            <span>${escapeHtml(oxide)}: <span class="font-mono">${fit.achieved.toFixed(3)}</span></span>
+                            ${badge}
+                        </div>`;
+                    }
+                    fitHtml += '</div></div>';
+                }
+
+                // Build colorants display
+                let colorantsHtml = '';
+                if (recipe.colorants && recipe.colorants.length > 0) {
+                    colorantsHtml = '<div style="margin-top: 0.75rem;"><h4 style="margin-bottom: 0.5rem; font-size: 0.9rem;">Colorant Additions (on top of 100%)</h4><div class="grid grid-2">';
+                    recipe.colorants.forEach(c => {
+                        colorantsHtml += `<div style="display: flex; justify-content: space-between; padding: 0.35rem 0.5rem; background: var(--bg-hover); border-radius: 6px;">
+                            <span style="color: var(--accent-light);">${escapeHtml(c.material)}</span>
+                            <span class="font-mono">${c.percentage}%</span>
+                        </div>`;
+                    });
+                    colorantsHtml += '</div></div>';
+                }
+
+                resultEl.innerHTML = `
+                    <div>
+                        <h4 style="margin-bottom: 0.75rem;">${escapeHtml(recipe.name)}</h4>
+                        <h4 style="margin-bottom: 0.5rem; font-size: 0.9rem;">Base Recipe</h4>
+                        <div class="grid grid-2" style="margin-bottom: 0;">
+                            ${recipe.ingredients.map(ing => `
+                                <div style="display: flex; justify-content: space-between; padding: 0.35rem 0.5rem; background: var(--bg-hover); border-radius: 6px;">
+                                    <span>${escapeHtml(ing.material)}</span>
+                                    <span class="font-mono">${ing.percentage}%</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        ${colorantsHtml}
+                        ${fitHtml}
+                        ${data.suggestions?.length ? `<div style="margin-top: 0.75rem;"><h4 style="margin-bottom: 0.5rem; font-size: 0.9rem;">Notes</h4><ul style="padding-left: 1.25rem; color: var(--text-secondary); font-size: 0.85rem;">
+                            ${data.suggestions.map(s => `<li>${escapeHtml(s)}</li>`).join('')}
+                        </ul></div>` : ''}
+                        <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                            <button class="success" onclick="loadGeneratedRecipe()" style="flex: 1;">Load into Recipe Builder</button>
+                            <button class="small secondary" onclick="copyGeneratedRecipe()">Copy</button>
+                        </div>
+                    </div>
+                `;
+
+                // Store for loading
+                window._lastGeneratedRecipe = data;
+                showToast('Recipe generated!', 'success');
+            } catch (error) {
+                console.error('Generation failed:', error);
+                resultEl.innerHTML = '<div style="padding: 1rem; color: var(--danger);">Failed to generate recipe. Try adjusting your selections.</div>';
+                showToast('Generation failed', 'error');
+            }
+        }
+
+        function loadGeneratedRecipe() {
+            const data = window._lastGeneratedRecipe;
+            if (!data || !data.recipe) return;
+            const recipe = data.recipe;
+
+            recipeIngredients = recipe.ingredients.map((ing, i) => ({
+                id: Date.now() + i,
+                name: ing.material || ing.material_name,
+                percentage: ing.percentage
+            }));
+
+            recipeColorants = (recipe.colorants || []).map((c, i) => ({
+                name: c.material || c.material_name,
+                percentage: c.percentage
+            }));
+
+            document.getElementById('recipe-name').value = recipe.name || 'Generated Glaze';
+
+            // Set cone in recipe tab
+            targetCone = genCone;
+            document.querySelectorAll('#cone-select .cone-btn').forEach(b => b.classList.remove('selected'));
+            document.querySelector(`#cone-select .cone-btn[data-cone="${genCone}"]`)?.classList.add('selected');
+
+            renderRecipeIngredients();
+            renderRecipeColorants();
+            document.querySelector('.tab[data-tab="recipe"]').click();
+            showToast(`Loaded "${recipe.name}" into Recipe Builder`, 'success');
+            setTimeout(() => calculateUMF(true), 300);
+        }
+
+        function copyGeneratedRecipe() {
+            const data = window._lastGeneratedRecipe;
+            if (!data || !data.recipe) return;
+            const recipe = data.recipe;
+
+            let text = recipe.name + '\n';
+            text += '='.repeat(recipe.name.length) + '\n\n';
+            recipe.ingredients.forEach(ing => {
+                text += `${ing.material}: ${ing.percentage}%\n`;
+            });
+            if (recipe.colorants && recipe.colorants.length > 0) {
+                text += '\nColorant additions:\n';
+                recipe.colorants.forEach(c => {
+                    text += `+ ${c.material}: ${c.percentage}%\n`;
+                });
+            }
+            if (data.achieved_umf) {
+                text += '\nUMF:\n';
+                for (const [oxide, val] of Object.entries(data.achieved_umf)) {
+                    text += `  ${oxide}: ${val}\n`;
+                }
+            }
+
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Recipe copied to clipboard', 'success');
+            }).catch(() => {
+                showToast('Failed to copy', 'error');
+            });
         }
 
         // Analysis

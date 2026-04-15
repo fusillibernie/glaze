@@ -116,6 +116,14 @@ class GlazeAnalyzer:
         elif si_al_ratio > 15:
             issues.append("High Si:Al ratio - glaze may be runny")
 
+        # Soluble material warning
+        if hasattr(recipe, '_has_soluble') and recipe._has_soluble:
+            warnings.append(
+                "Contains soluble flux — actual chemistry varies between "
+                "body (depleted) and surface (enriched). Use dual UMF analysis "
+                "for accurate prediction."
+            )
+
         # Lead warning
         if umf.PbO > 0:
             warnings.append("Contains lead oxide - not food safe")
@@ -183,7 +191,7 @@ class GlazeAnalyzer:
         else:
             shivering_risk = "low"
 
-        recommendations = []
+        recommendations = ["COE is approximate (+/- 1.0) — test with dilatometer for production use"]
         if crazing_risk in ("medium", "high"):
             recommendations.append("Reduce alkali flux (Na2O, K2O) to lower expansion")
             recommendations.append("Add more silica or boron")
@@ -255,6 +263,11 @@ class GlazeAnalyzer:
         """Calculate approximate coefficient of expansion.
 
         Uses simplified Appen factors. Values are x 10^-6.
+
+        DISCLAIMER: This is a rough approximation using weighted averages of
+        simplified Appen factors. Real COE depends on oxide interactions,
+        cooling rate, and crystallization. Accuracy is estimated at +/- 1.0.
+        For food-safe or production work, test with a dilatometer.
         """
         # Appen factors (simplified)
         factors = {

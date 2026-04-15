@@ -337,6 +337,9 @@ class Material:
     supplier: Optional[str] = None
     product_code: Optional[str] = None
 
+    # Solubility
+    soluble: bool = False  # Soluble materials (e.g. Soda Ash) migrate to surface during drying
+
     # Physical properties
     mesh_size: Optional[int] = None  # Typical mesh
     specific_gravity: Optional[float] = None
@@ -362,6 +365,7 @@ class Material:
             },
             "glazy_id": self.glazy_id,
             "alternate_names": self.alternate_names,
+            "soluble": self.soluble,
             "supplier": self.supplier,
             "product_code": self.product_code,
             "mesh_size": self.mesh_size,
@@ -407,6 +411,7 @@ class Material:
             ),
             glazy_id=data.get("glazy_id"),
             alternate_names=data.get("alternate_names", []),
+            soluble=data.get("soluble", False),
             supplier=data.get("supplier"),
             product_code=data.get("product_code"),
             mesh_size=data.get("mesh_size"),

@@ -27,7 +27,9 @@
       "ingredients": [
         {"material": "OM4 Ball Clay", "percentage": 40.0},
         {"material": "Nepheline Syenite", "percentage": 30.0},
-        {"material": "Silica (Flint)", "percentage": 20.0},
+        {"material": "Silica (Flint)", "percentage": 20.0}
+      ],
+      "additives": [
         {"material": "Red Iron Oxide", "percentage": 5.0},
         {"material": "Zircopax", "percentage": 5.0}
       ],
@@ -61,7 +63,9 @@
       "ingredients": [
         {"material": "EPK Kaolin", "percentage": 40.0},
         {"material": "Nepheline Syenite", "percentage": 30.0},
-        {"material": "Silica (Flint)", "percentage": 20.0},
+        {"material": "Silica (Flint)", "percentage": 20.0}
+      ],
+      "additives": [
         {"material": "Zircopax", "percentage": 10.0}
       ],
       "expected_flash": "white with pink/orange blush",
@@ -79,7 +83,9 @@
         {"material": "OM4 Ball Clay", "percentage": 35.0},
         {"material": "Redart Clay", "percentage": 25.0},
         {"material": "Nepheline Syenite", "percentage": 20.0},
-        {"material": "Silica (Flint)", "percentage": 15.0},
+        {"material": "Silica (Flint)", "percentage": 15.0}
+      ],
+      "additives": [
         {"material": "Red Iron Oxide", "percentage": 5.0}
       ],
       "expected_flash": "deep orange to red",
@@ -164,7 +170,9 @@
       "ingredients": [
         {"material": "OM4 Ball Clay", "percentage": 35.0},
         {"material": "Nepheline Syenite", "percentage": 25.0},
-        {"material": "Silica (Flint)", "percentage": 20.0},
+        {"material": "Silica (Flint)", "percentage": 20.0}
+      ],
+      "additives": [
         {"material": "Red Iron Oxide", "percentage": 10.0},
         {"material": "Manganese Dioxide", "percentage": 5.0},
         {"material": "Cobalt Oxide", "percentage": 2.0},
@@ -201,7 +209,9 @@
       "ingredients": [
         {"material": "Tennessee Ball Clay", "percentage": 55.0},
         {"material": "Custer Feldspar", "percentage": 25.0},
-        {"material": "Silica (Flint)", "percentage": 15.0},
+        {"material": "Silica (Flint)", "percentage": 15.0}
+      ],
+      "additives": [
         {"material": "Red Iron Oxide", "percentage": 5.0}
       ],
       "expected_flash": "rich orange to rust",
@@ -302,7 +312,9 @@
         {"material": "OM4 Ball Clay", "percentage": 40.0},
         {"material": "Spodumene", "percentage": 25.0},
         {"material": "Nepheline Syenite", "percentage": 20.0},
-        {"material": "Silica (Flint)", "percentage": 10.0},
+        {"material": "Silica (Flint)", "percentage": 10.0}
+      ],
+      "additives": [
         {"material": "Red Iron Oxide", "percentage": 5.0}
       ],
       "expected_flash": "bright orange to salmon",
@@ -319,7 +331,9 @@
       "ingredients": [
         {"material": "Grolleg Kaolin", "percentage": 45.0},
         {"material": "Nepheline Syenite", "percentage": 30.0},
-        {"material": "Silica (Flint)", "percentage": 20.0},
+        {"material": "Silica (Flint)", "percentage": 20.0}
+      ],
+      "additives": [
         {"material": "Zircopax", "percentage": 5.0}
       ],
       "expected_flash": "bright white to pink blush",
@@ -386,7 +400,9 @@
       "ingredients": [
         {"material": "OM4 Ball Clay", "percentage": 40.0},
         {"material": "Nepheline Syenite", "percentage": 25.0},
-        {"material": "Silica (Flint)", "percentage": 20.0},
+        {"material": "Silica (Flint)", "percentage": 20.0}
+      ],
+      "additives": [
         {"material": "Rutile", "percentage": 10.0},
         {"material": "Red Iron Oxide", "percentage": 5.0}
       ],
@@ -405,7 +421,9 @@
         {"material": "OM4 Ball Clay", "percentage": 35.0},
         {"material": "Wood Ash (Mixed)", "percentage": 25.0},
         {"material": "Nepheline Syenite", "percentage": 20.0},
-        {"material": "Silica (Flint)", "percentage": 15.0},
+        {"material": "Silica (Flint)", "percentage": 15.0}
+      ],
+      "additives": [
         {"material": "Red Iron Oxide", "percentage": 5.0}
       ],
       "expected_flash": "orange with ash spots",
@@ -422,7 +440,9 @@
       "ingredients": [
         {"material": "OM4 Ball Clay", "percentage": 45.0},
         {"material": "Nepheline Syenite", "percentage": 30.0},
-        {"material": "Silica (Flint)", "percentage": 20.0},
+        {"material": "Silica (Flint)", "percentage": 20.0}
+      ],
+      "additives": [
         {"material": "Cobalt Carbonate", "percentage": 1.0},
         {"material": "Rutile", "percentage": 4.0}
       ],
@@ -440,7 +460,9 @@
       "ingredients": [
         {"material": "OM4 Ball Clay", "percentage": 45.0},
         {"material": "Nepheline Syenite", "percentage": 30.0},
-        {"material": "Silica (Flint)", "percentage": 20.0},
+        {"material": "Silica (Flint)", "percentage": 20.0}
+      ],
+      "additives": [
         {"material": "Copper Carbonate", "percentage": 3.0},
         {"material": "Tin Oxide", "percentage": 2.0}
       ],

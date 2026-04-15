@@ -239,17 +239,24 @@ class OutcomePredictor:
         firing: FiringSchedule,
         clay_body: ClayBody,
     ) -> dict[str, float]:
-        """Calculate risk of various defects."""
+        """Calculate risk of various defects.
+
+        NOTE: These thresholds are heuristic estimates based on general ceramic
+        principles, not calibrated against firing data. Treat as rough guidance.
+        Ref: Hamer & Hamer "The Potter's Dictionary", Rhodes "Clay and Glazes".
+        """
         risks = {}
         umf = recipe.umf
 
-        # Crawling risk - high alumina or dry application
+        # Crawling risk — high alumina increases raw glaze stiffness
+        # Al2O3 > 0.5 UMF is high for most glazes (typical range 0.2-0.5)
         if umf.Al2O3 > 0.5:
             risks["crawling"] = 0.3
         else:
             risks["crawling"] = 0.1
 
-        # Crazing risk - high alkali
+        # Crazing risk — high alkali (Na2O+K2O) raises thermal expansion
+        # Alkali ratio > 0.4 of total flux is considered high expansion risk
         if umf.alkali_ratio > 0.4:
             risks["crazing"] = 0.5
         elif umf.alkali_ratio > 0.3:
@@ -257,7 +264,8 @@ class OutcomePredictor:
         else:
             risks["crazing"] = 0.1
 
-        # Running risk - low alumina, high flux
+        # Running risk — low alumina reduces melt viscosity
+        # Al2O3 < 0.2 is very low (crystalline glaze territory)
         if umf.Al2O3 < 0.2:
             risks["running"] = 0.5
         elif umf.Al2O3 < 0.3:
@@ -265,7 +273,7 @@ class OutcomePredictor:
         else:
             risks["running"] = 0.1
 
-        # Pinholing risk
+        # Pinholing risk — fast cooling traps gas bubbles; high boron off-gases
         if firing.cooling_rate == "crash":
             risks["pinholing"] = 0.4
         elif umf.B2O3 > 0.3:

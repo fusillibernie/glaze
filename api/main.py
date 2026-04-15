@@ -67,11 +67,11 @@ UPLOADS_DIR = DATA_DIR / "uploads"
 UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 
 materials_db = MaterialsDatabase(DATA_DIR / "materials")
-formulator = GlazeFormulator(materials_db)
+substitution_service = SubstitutionService(DATA_DIR / "materials" / "substitutions.json")
+formulator = GlazeFormulator(materials_db, substitution_service=substitution_service)
 analyzer = GlazeAnalyzer()
 predictor = OutcomePredictor()
 classifier = GlazeClassifier()
-substitution_service = SubstitutionService(DATA_DIR / "materials" / "substitutions.json")
 glazy_client = GlazyClient(cache_dir=DATA_DIR / "glazy_cache")
 community_recipes = CommunityRecipeService(DATA_DIR / "glazy_bulk" / "glazy_recipes.json")
 recipe_db = RecipeDatabase(DATA_DIR)
@@ -122,6 +122,10 @@ class RecipeInput(BaseModel):
 class FormulationTargetInput(BaseModel):
     cone: str = "6"
     surface: str = "glossy"
+    atmosphere: str = "oxidation"
+    category: Optional[str] = None  # celadon, shino, tenmoku, ash, crystalline, etc.
+    colorants: Optional[list[ColorantInput]] = None
+    # Legacy fields (used when category is not specified)
     sio2_target: float = 3.5
     al2o3_target: float = 0.4
     alkali_ratio: float = 0.3
@@ -174,6 +178,22 @@ class ChemistryResponse(BaseModel):
     issues: list[str]
     warnings: list[str]
     recommendations: list[str]
+
+
+class DualUMFResponse(BaseModel):
+    nominal_umf: UMFResponse
+    body_umf: UMFResponse
+    surface_umf: UMFResponse
+    soluble_fraction: float
+    soluble_materials: list[str]
+
+
+class AshAccumulationResponse(BaseModel):
+    base_umf: UMFResponse
+    ash_modified_umf: UMFResponse
+    kiln_position: str
+    ash_addition_pct: float
+    ash_composition: dict[str, float]
 
 
 class PredictionResponse(BaseModel):
@@ -429,6 +449,92 @@ async def calculate_umf(recipe: RecipeInput) -> UMFResponse:
     )
 
 
+@app.post("/api/recipes/calculate-dual-umf")
+async def calculate_dual_umf(
+    recipe: RecipeInput,
+    surface_concentration: float = 0.8,
+) -> Optional[DualUMFResponse]:
+    """Calculate dual UMF for recipes with soluble materials (e.g. Shino glazes).
+
+    Soluble fluxes like Soda Ash migrate to the glaze surface during drying,
+    creating distinct body and surface chemistry zones. Returns None if the
+    recipe contains no soluble materials.
+    """
+    glaze_recipe = _convert_recipe_input(recipe)
+    result = formulator.calculate_dual_umf(glaze_recipe, surface_concentration)
+
+    if result is None:
+        return None
+
+    def _umf_to_response(umf) -> UMFResponse:
+        return UMFResponse(
+            SiO2=round(umf.SiO2, 4),
+            Al2O3=round(umf.Al2O3, 4),
+            B2O3=round(umf.B2O3, 4),
+            Na2O=round(umf.Na2O, 4),
+            K2O=round(umf.K2O, 4),
+            Li2O=round(umf.Li2O, 4),
+            CaO=round(umf.CaO, 4),
+            MgO=round(umf.MgO, 4),
+            BaO=round(umf.BaO, 4),
+            SrO=round(umf.SrO, 4),
+            ZnO=round(umf.ZnO, 4),
+            flux_total=round(umf.flux_total, 4),
+            silica_alumina_ratio=round(umf.silica_alumina_ratio, 2),
+            alkali_ratio=round(umf.alkali_ratio, 4),
+            stull_prediction=umf.stull_point.surface_prediction,
+        )
+
+    return DualUMFResponse(
+        nominal_umf=_umf_to_response(result.nominal_umf),
+        body_umf=_umf_to_response(result.body_umf),
+        surface_umf=_umf_to_response(result.surface_umf),
+        soluble_fraction=round(result.soluble_fraction, 4),
+        soluble_materials=result.soluble_materials,
+    )
+
+
+@app.post("/api/recipes/calculate-ash-accumulation")
+async def calculate_ash_accumulation(
+    recipe: RecipeInput,
+    kiln_position: str = "middle",
+) -> AshAccumulationResponse:
+    """Calculate UMF with virtual ash accumulation for wood-fired glazes.
+
+    Models how ash deposits from the firebox affect glaze chemistry
+    based on kiln position. Front positions receive heavier ash deposits.
+    """
+    glaze_recipe = _convert_recipe_input(recipe)
+    result = formulator.calculate_ash_accumulation(glaze_recipe, kiln_position)
+
+    def _umf_to_response(umf) -> UMFResponse:
+        return UMFResponse(
+            SiO2=round(umf.SiO2, 4),
+            Al2O3=round(umf.Al2O3, 4),
+            B2O3=round(umf.B2O3, 4),
+            Na2O=round(umf.Na2O, 4),
+            K2O=round(umf.K2O, 4),
+            Li2O=round(umf.Li2O, 4),
+            CaO=round(umf.CaO, 4),
+            MgO=round(umf.MgO, 4),
+            BaO=round(umf.BaO, 4),
+            SrO=round(umf.SrO, 4),
+            ZnO=round(umf.ZnO, 4),
+            flux_total=round(umf.flux_total, 4),
+            silica_alumina_ratio=round(umf.silica_alumina_ratio, 2),
+            alkali_ratio=round(umf.alkali_ratio, 4),
+            stull_prediction=umf.stull_point.surface_prediction,
+        )
+
+    return AshAccumulationResponse(
+        base_umf=_umf_to_response(result.base_umf),
+        ash_modified_umf=_umf_to_response(result.ash_modified_umf),
+        kiln_position=result.kiln_position,
+        ash_addition_pct=result.ash_addition_pct,
+        ash_composition=result.ash_composition,
+    )
+
+
 @app.post("/api/recipes/analyze")
 async def analyze_recipe(recipe: RecipeInput) -> ChemistryResponse:
     """Analyze glaze chemistry."""
@@ -500,10 +606,23 @@ async def predict_outcome(
 
 @app.post("/api/recipes/formulate")
 async def formulate_glaze(target: FormulationTargetInput):
-    """Generate a base glaze recipe from target UMF."""
+    """Generate a base glaze recipe from descriptors or target UMF.
+
+    Descriptor-based (recommended): provide cone, surface, atmosphere, and category
+    (e.g., "celadon", "shino", "tenmoku") to auto-resolve UMF targets.
+
+    Legacy: provide raw sio2_target, al2o3_target, etc. when category is omitted.
+    """
+    colorant_dicts = None
+    if target.colorants:
+        colorant_dicts = [c.model_dump() for c in target.colorants]
+
     formulation_target = FormulationTarget(
         cone=ConeTemperature(target.cone),
         surface=GlazeSurface(target.surface),
+        atmosphere=target.atmosphere,
+        category=target.category,
+        colorants=colorant_dicts,
         sio2_target=target.sio2_target,
         al2o3_target=target.al2o3_target,
         alkali_ratio=target.alkali_ratio,
@@ -522,15 +641,68 @@ async def formulate_glaze(target: FormulationTargetInput):
                 {"material": i.material_name, "percentage": round(i.percentage, 2)}
                 for i in result.recipe.ingredients
             ],
+            "colorants": [
+                {"material": c.material_name, "percentage": round(c.percentage, 2)}
+                for c in result.recipe.colorants
+            ],
         },
-        "achieved_umf": {
-            "SiO2": round(result.achieved_umf.SiO2, 4),
-            "Al2O3": round(result.achieved_umf.Al2O3, 4),
-            "flux_total": round(result.achieved_umf.flux_total, 4),
-        },
+        "achieved_umf": result.achieved_umf.to_dict(),
+        "target_fit": result.target_fit,
         "deviation_score": round(result.deviation_score, 4),
         "suggestions": result.suggestions,
     }
+
+
+@app.post("/api/recipes/resolve-inheritance")
+async def resolve_recipe_inheritance(recipe_data: dict):
+    """Resolve a recipe that inherits from a parent glaze.
+
+    Accepts a recipe with 'parent_glaze' (name of base recipe) and
+    'additions' (extra ingredients on top of the parent's base 100%).
+    Returns the fully resolved recipe with calculated UMF.
+
+    First register base recipes via POST /api/recipes/register-base,
+    then resolve inherited recipes against them.
+    """
+    try:
+        result = formulator.resolve_inheritance(recipe_data)
+    except ValueError as e:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=400, detail=str(e))
+
+    recipe = result.recipe
+    recipe.umf = formulator.calculate_umf(recipe)
+
+    return {
+        "name": recipe.name,
+        "parent_glaze": result.parent_name,
+        "inherited_ingredients": [
+            {"material": i.material_name, "percentage": round(i.percentage, 2)}
+            for i in result.inherited_ingredients
+        ],
+        "additions": [
+            {"material": i.material_name, "percentage": round(i.percentage, 2)}
+            for i in result.additions
+        ],
+        "all_ingredients": [
+            {"material": i.material_name, "percentage": round(i.percentage, 2)}
+            for i in recipe.ingredients
+        ],
+        "colorants": [
+            {"material": c.material_name, "percentage": c.percentage}
+            for c in recipe.colorants
+        ],
+        "umf": recipe.umf.to_dict() if recipe.umf else None,
+        "total_percentage": round(recipe.total_percentage, 2),
+    }
+
+
+@app.post("/api/recipes/register-base")
+async def register_base_recipe(recipe: RecipeInput):
+    """Register a recipe as a base that other recipes can inherit from."""
+    glaze_recipe = _convert_recipe_input(recipe)
+    formulator.register_recipe(glaze_recipe)
+    return {"registered": recipe.name}
 
 
 @app.get("/api/colorants")

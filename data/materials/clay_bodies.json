@@ -28,6 +28,7 @@
         "TiO2": 0.9,
         "LOI": 8.5
       },
+      "coe": 6.5,
       "suitable_for": ["throwing", "handbuilding", "slab"],
       "notes": "Reliable workhorse body. Good plasticity and wide firing range."
     },
@@ -57,6 +58,7 @@
         "TiO2": 0.02,
         "LOI": 5.0
       },
+      "coe": 5.5,
       "suitable_for": ["throwing", "trimming"],
       "notes": "Premium porcelain. Short working window on the wheel but excellent translucency. Low iron and titanium give very white fired color."
     },
@@ -86,6 +88,7 @@
         "TiO2": 0.2,
         "LOI": 6.0
       },
+      "coe": 5.8,
       "suitable_for": ["throwing", "trimming", "casting"],
       "notes": "Workable domestic porcelain. Slightly warmer fired color than Grolleg due to higher TiO2."
     },
@@ -117,6 +120,7 @@
         "TiO2": 0.6,
         "LOI": 7.5
       },
+      "coe": 6.2,
       "suitable_for": ["throwing", "trimming", "handbuilding"],
       "notes": "Popular commercial body for cone 6. Light color shows glaze colors well. Very forgiving on the wheel."
     },
@@ -148,6 +152,7 @@
         "TiO2": 0.3,
         "LOI": 7.5
       },
+      "coe": 1.5,
       "suitable_for": ["throwing", "handbuilding", "functional cookware"],
       "notes": "Low thermal expansion due to lithium and magnesium content. Must use compatible low-expansion glazes. Not all glazes will fit."
     },
@@ -179,6 +184,7 @@
         "TiO2": 1.0,
         "LOI": 6.5
       },
+      "coe": 7.0,
       "suitable_for": ["handbuilding", "throwing", "sculpture", "raku"],
       "notes": "Not food safe due to high porosity. The open body withstands rapid temperature changes of raku firing without cracking."
     },
@@ -210,6 +216,7 @@
         "TiO2": 1.2,
         "LOI": 7.0
       },
+      "coe": 7.5,
       "suitable_for": ["throwing", "handbuilding", "slab", "tile"],
       "notes": "Must be glazed for food use due to porosity. Lovely warm color under clear or transparent glazes. Do not overfire past cone 2."
     },
@@ -241,6 +248,7 @@
         "TiO2": 0.5,
         "LOI": 8.5
       },
+      "coe": 7.2,
       "suitable_for": ["throwing", "handbuilding", "slab", "casting"],
       "notes": "White background ideal for majolica decoration. Talc acts as flux at low temperatures. Must be glazed for food use."
     },
@@ -271,6 +279,7 @@
         "TiO2": 0.02,
         "LOI": 7.5
       },
+      "coe": 5.5,
       "suitable_for": ["handbuilding", "sculpture", "slab", "joining"],
       "notes": "Paper fiber burns out during bisque, leaving tiny voids. Stronger in greenware and bone-dry state than regular porcelain. May smell during bisque."
     },
@@ -303,6 +312,7 @@
         "TiO2": 1.2,
         "LOI": 8.0
       },
+      "coe": 6.8,
       "suitable_for": ["throwing", "handbuilding", "wood firing"],
       "notes": "Iron content creates orange-red flashing where exposed to flame. Ash deposits create natural glaze. May bloat if overfired past cone 12."
     },
@@ -337,6 +347,7 @@
         "TiO2": 0.8,
         "LOI": 7.5
       },
+      "coe": 6.5,
       "suitable_for": ["throwing", "handbuilding", "slab"],
       "notes": "Manganese can off-gas during firing - ensure good ventilation. Creates stunning contrast under white or light glazes that break on edges."
     },
@@ -370,6 +381,7 @@
         "TiO2": 1.0,
         "LOI": 5.5
       },
+      "coe": 6.0,
       "suitable_for": ["sculpture", "handbuilding", "slab", "coil"],
       "notes": "Not suitable for throwing due to coarse grog. Low shrinkage minimizes cracking in thick or uneven forms. Can be left unglazed."
     },
@@ -402,6 +414,7 @@
         "TiO2": 0.01,
         "LOI": 4.5
       },
+      "coe": 5.2,
       "suitable_for": ["throwing thin", "casting", "trimming"],
       "notes": "Extremely high shrinkage demands careful drying. Pieces under 3mm thick will be translucent. Bone ash contributes to translucency and warm quality of light."
     },
@@ -434,6 +447,7 @@
         "TiO2": 1.0,
         "LOI": 7.5
       },
+      "coe": 6.0,
       "suitable_for": ["throwing", "handbuilding", "wood firing", "anagama"],
       "notes": "High alumina prevents slumping during multi-day firings. Iron content provides warm flashing. Sand adds thermal shock resistance during stoking."
     },
@@ -465,6 +479,7 @@
         "TiO2": 0.8,
         "LOI": 8.0
       },
+      "coe": 6.3,
       "suitable_for": ["throwing", "handbuilding", "salt firing", "soda firing"],
       "notes": "Alumina and silica in the body react with sodium vapor to form glaze in situ. Wadding required where pieces touch shelves. Slip decoration responds beautifully to salt/soda."
     }
