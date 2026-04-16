@@ -7,29 +7,30 @@
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
     <style>
         :root {
-            --bg-primary: #0f0f1a;
-            --bg-secondary: #1a1a2e;
-            --bg-card: #242442;
-            --bg-hover: #2d2d4a;
-            --accent: #7c3aed;
-            --accent-light: #a78bfa;
-            --accent-glow: rgba(124, 58, 237, 0.3);
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --text-muted: #64748b;
-            --success: #10b981;
-            --success-bg: rgba(16, 185, 129, 0.15);
-            --warning: #f59e0b;
-            --warning-bg: rgba(245, 158, 11, 0.15);
-            --danger: #ef4444;
-            --danger-bg: rgba(239, 68, 68, 0.15);
-            --border: #334155;
-            --border-light: #475569;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
-            --radius: 12px;
-            --radius-sm: 8px;
-            --transition: all 0.2s ease;
+            --bg-primary: #141518;
+            --bg-secondary: #1c1d22;
+            --bg-card: #232429;
+            --bg-hover: #2a2b31;
+            --accent: #c2714f;
+            --accent-light: #d4956e;
+            --accent-glow: rgba(194, 113, 79, 0.2);
+            --accent-subtle: rgba(194, 113, 79, 0.08);
+            --text-primary: #e8e4e0;
+            --text-secondary: #9e9a95;
+            --text-muted: #6b6862;
+            --success: #5ea87a;
+            --success-bg: rgba(94, 168, 122, 0.12);
+            --warning: #d4a03c;
+            --warning-bg: rgba(212, 160, 60, 0.12);
+            --danger: #c95a4b;
+            --danger-bg: rgba(201, 90, 75, 0.12);
+            --border: #2e2f35;
+            --border-light: #3d3e45;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.3);
+            --radius: 10px;
+            --radius-sm: 6px;
+            --transition: all 0.15s ease;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -44,8 +45,8 @@
 
         /* Header */
         header {
-            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card));
-            padding: 1rem 2rem;
+            background: var(--bg-secondary);
+            padding: 0.75rem 2rem;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
@@ -53,7 +54,8 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
+            background: rgba(28, 29, 34, 0.9);
         }
 
         .logo {
@@ -63,27 +65,27 @@
         }
 
         .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--accent), var(--accent-light));
-            border-radius: 10px;
+            width: 36px;
+            height: 36px;
+            background: var(--accent);
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
         }
 
         header h1 {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--accent-light), #fff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
         }
 
         .header-subtitle {
             color: var(--text-muted);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
+            letter-spacing: 0.02em;
         }
 
         .header-actions {
@@ -95,40 +97,45 @@
         /* Navigation Tabs */
         .tabs {
             display: flex;
-            background: var(--bg-secondary);
-            padding: 0.5rem 1rem;
-            gap: 0.5rem;
+            background: var(--bg-primary);
+            padding: 0 1.5rem;
+            gap: 0.25rem;
             border-bottom: 1px solid var(--border);
             overflow-x: auto;
+            scrollbar-width: none;
         }
+        .tabs::-webkit-scrollbar { display: none; }
 
         .tab {
-            padding: 0.75rem 1.25rem;
+            padding: 0.7rem 1rem;
             background: transparent;
             border: none;
-            color: var(--text-secondary);
+            border-bottom: 2px solid transparent;
+            color: var(--text-muted);
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.82rem;
             font-weight: 500;
             transition: var(--transition);
-            border-radius: var(--radius-sm);
+            border-radius: 0;
             white-space: nowrap;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
 
         .tab:hover {
             color: var(--text-primary);
-            background: var(--bg-hover);
+            background: transparent;
+            border-bottom-color: var(--border-light);
         }
 
         .tab.active {
             color: var(--accent-light);
-            background: var(--accent-glow);
+            background: transparent;
+            border-bottom-color: var(--accent);
         }
 
-        .tab-icon { font-size: 1.1rem; }
+        .tab-icon { font-size: 0.95rem; }
 
         /* Main Content */
         main {
@@ -166,135 +173,144 @@
             border-radius: var(--radius);
             padding: 1.5rem;
             border: 1px solid var(--border);
-            box-shadow: var(--shadow);
+            box-shadow: none;
             transition: var(--transition);
         }
 
         .card:hover { border-color: var(--border-light); }
+        .card + .card { margin-top: 1rem; }
 
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.25rem;
-            padding-bottom: 1rem;
+            padding-bottom: 0.75rem;
             border-bottom: 1px solid var(--border);
         }
 
         .card-title {
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 600;
             color: var(--text-primary);
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            letter-spacing: -0.01em;
         }
 
         .card-title-icon {
-            color: var(--accent-light);
+            color: var(--accent);
         }
 
         /* Forms */
-        .form-group { margin-bottom: 1.25rem; }
+        .form-group { margin-bottom: 1rem; }
 
         label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
             color: var(--text-secondary);
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
 
         .label-hint {
             color: var(--text-muted);
             font-weight: 400;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
+            text-transform: none;
+            letter-spacing: normal;
         }
 
         input, select, textarea {
             width: 100%;
-            padding: 0.75rem 1rem;
-            background: var(--bg-secondary);
+            padding: 0.6rem 0.85rem;
+            background: var(--bg-primary);
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
             color: var(--text-primary);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             transition: var(--transition);
         }
 
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px var(--accent-glow);
+            box-shadow: 0 0 0 2px var(--accent-glow);
         }
 
         input::placeholder { color: var(--text-muted); }
 
         /* Buttons */
         button {
-            padding: 0.75rem 1.5rem;
+            padding: 0.6rem 1.25rem;
             background: var(--accent);
             color: white;
             border: none;
             border-radius: var(--radius-sm);
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 500;
             transition: var(--transition);
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
+            letter-spacing: 0.01em;
         }
 
         button:hover {
-            background: var(--accent-light);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow);
+            filter: brightness(1.15);
         }
 
-        button:active { transform: translateY(0); }
+        button:active { filter: brightness(0.95); }
 
         button:disabled {
-            opacity: 0.5;
+            opacity: 0.4;
             cursor: not-allowed;
-            transform: none;
+            filter: none;
         }
 
         button.secondary {
-            background: var(--bg-secondary);
+            background: transparent;
             border: 1px solid var(--border);
-            color: var(--text-primary);
+            color: var(--text-secondary);
         }
 
         button.secondary:hover {
             background: var(--bg-hover);
             border-color: var(--border-light);
+            color: var(--text-primary);
+            filter: none;
         }
 
         button.success { background: var(--success); }
-        button.warning { background: var(--warning); color: #000; }
+        button.warning { background: var(--warning); color: #1a1a1a; }
         button.danger { background: var(--danger); }
 
         button.small {
-            padding: 0.5rem 1rem;
-            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.78rem;
         }
 
         button.icon-btn {
-            padding: 0.5rem;
-            width: 36px;
-            height: 36px;
+            padding: 0.4rem;
+            width: 32px;
+            height: 32px;
         }
 
         /* Badges */
         .badge {
             display: inline-flex;
             align-items: center;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.72rem;
             font-weight: 600;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
         }
 
         .badge-primary { background: var(--accent-glow); color: var(--accent-light); }
@@ -305,8 +321,8 @@
         /* Quick Start Templates */
         .templates-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 0.75rem;
             margin-bottom: 1.5rem;
         }
 
@@ -314,34 +330,37 @@
             background: var(--bg-secondary);
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
-            padding: 1rem;
+            padding: 0.875rem 1rem;
             cursor: pointer;
             transition: var(--transition);
+            border-left: 3px solid var(--border);
         }
 
         .template-card:hover {
-            border-color: var(--accent);
+            border-color: var(--border-light);
+            border-left-color: var(--accent);
             background: var(--bg-hover);
-            transform: translateY(-2px);
         }
 
         .template-card.selected {
             border-color: var(--accent);
-            background: var(--accent-glow);
+            border-left-color: var(--accent);
+            background: var(--accent-subtle);
         }
 
         .template-name {
             font-weight: 600;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.2rem;
+            font-size: 0.9rem;
         }
 
         .template-desc {
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             color: var(--text-muted);
         }
 
         .template-badge {
-            margin-top: 0.5rem;
+            margin-top: 0.4rem;
         }
 
         /* Cone Selector */
@@ -352,21 +371,23 @@
         }
 
         .cone-btn {
-            padding: 0.5rem 0.75rem;
+            padding: 0.4rem 0.65rem;
             background: var(--bg-secondary);
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
-            color: var(--text-secondary);
+            color: var(--text-muted);
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             font-weight: 500;
             transition: var(--transition);
-            min-width: 44px;
+            min-width: 40px;
+            font-family: 'Consolas', 'SF Mono', monospace;
         }
 
         .cone-btn:hover {
             border-color: var(--accent);
-            color: var(--accent-light);
+            color: var(--text-primary);
+            background: var(--bg-hover);
         }
 
         .cone-btn.selected {
@@ -416,11 +437,11 @@
 
         .ingredient-row {
             display: grid;
-            grid-template-columns: 1fr 120px 80px 44px;
-            gap: 0.75rem;
-            margin-bottom: 0.75rem;
+            grid-template-columns: 1fr 120px 80px 36px;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
             align-items: center;
-            padding: 0.75rem;
+            padding: 0.6rem 0.75rem;
             background: var(--bg-secondary);
             border-radius: var(--radius-sm);
             border: 1px solid var(--border);
@@ -429,6 +450,7 @@
 
         .ingredient-row:hover {
             border-color: var(--border-light);
+            background: var(--bg-hover);
         }
 
         .ingredient-row input,
@@ -454,48 +476,58 @@
 
         .ingredient-slider input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
             background: var(--accent);
             cursor: pointer;
+            border: 2px solid var(--bg-card);
         }
 
         .ingredient-pct-display {
             width: 50px;
             text-align: right;
             font-weight: 600;
-            font-family: 'Consolas', monospace;
+            font-family: 'Consolas', 'SF Mono', monospace;
+            font-size: 0.85rem;
         }
 
         .remove-btn {
-            background: var(--danger);
-            padding: 0.5rem;
-            font-size: 1rem;
-            border-radius: 6px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--danger);
+            padding: 0.4rem;
+            font-size: 0.9rem;
+            border-radius: var(--radius-sm);
+        }
+        .remove-btn:hover {
+            background: var(--danger-bg);
+            border-color: var(--danger);
+            filter: none;
         }
 
         /* UMF Display */
         .umf-display {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
+            gap: 1.25rem;
         }
 
         .umf-section h4 {
-            color: var(--accent-light);
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+            font-size: 0.75rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.06em;
         }
 
         .umf-oxide {
             display: flex;
             justify-content: space-between;
-            padding: 0.5rem 0;
+            padding: 0.4rem 0;
             border-bottom: 1px solid var(--border);
+            font-size: 0.85rem;
         }
 
         .umf-oxide:last-child { border-bottom: none; }
@@ -588,7 +620,7 @@
         }
 
         .material-item {
-            padding: 0.875rem 1rem;
+            padding: 0.7rem 0.875rem;
             border-bottom: 1px solid var(--border);
             cursor: pointer;
             transition: var(--transition);
@@ -600,8 +632,8 @@
         .material-item:hover { background: var(--bg-hover); }
 
         .material-item.selected {
-            background: var(--accent-glow);
-            border-left: 3px solid var(--accent);
+            background: var(--accent-subtle);
+            border-left: 2px solid var(--accent);
         }
 
         .material-info { flex: 1; }
@@ -650,7 +682,7 @@
 
         .oxide-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            background: var(--accent);
             transition: width 0.3s ease;
             border-radius: 4px;
         }
@@ -781,14 +813,14 @@
 
         .empty-state {
             text-align: center;
-            padding: 3rem;
+            padding: 2.5rem 1.5rem;
             color: var(--text-muted);
         }
 
         .empty-state-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+            opacity: 0.3;
         }
 
         /* Toast Notifications */
@@ -803,16 +835,17 @@
         }
 
         .toast {
-            padding: 1rem 1.5rem;
+            padding: 0.75rem 1.25rem;
             border-radius: var(--radius-sm);
             color: white;
             font-weight: 500;
+            font-size: 0.85rem;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
             animation: slideIn 0.3s ease;
             box-shadow: var(--shadow-lg);
-            min-width: 280px;
+            min-width: 240px;
         }
 
         .toast.success { background: var(--success); }
@@ -871,9 +904,9 @@
         .font-mono { font-family: 'Consolas', monospace; }
 
         /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-primary); }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--border-light); }
 
         /* Quick Start Modal */
@@ -931,24 +964,24 @@
         /* Help Panel */
         .help-trigger {
             position: fixed;
-            bottom: 1.5rem;
-            left: 1.5rem;
-            width: 48px;
-            height: 48px;
+            bottom: 1rem;
+            left: 1rem;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            background: var(--accent);
-            color: white;
-            border: none;
+            background: var(--bg-card);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
             cursor: pointer;
-            box-shadow: var(--shadow-lg);
+            box-shadow: var(--shadow);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem;
+            font-size: 0.85rem;
             z-index: 100;
         }
 
-        .help-trigger:hover { background: var(--accent-light); }
+        .help-trigger:hover { background: var(--bg-hover); color: var(--text-primary); border-color: var(--border-light); filter: none; }
 
         /* Keyboard shortcuts hint */
         kbd {
@@ -1259,13 +1292,13 @@
                         <h3 class="card-title">Generate a Glaze Recipe</h3>
                     </div>
                     <div class="card-body">
-                        <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">
-                            Describe what you want and the solver will formulate a recipe that hits the right chemistry.
+                        <p style="color: var(--text-muted); margin-bottom: 1.25rem; font-size: 0.82rem;">
+                            Choose parameters below and the solver will formulate a recipe with correct UMF chemistry.
                         </p>
 
-                        <div class="form-group" style="margin-bottom: 1rem;">
-                            <label style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Category</label>
-                            <select id="gen-category" style="width: 100%; padding: 0.5rem; background: var(--bg-hover); color: var(--text-primary); border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select id="gen-category">
                                 <option value="">-- Select a glaze type --</option>
                                 <option value="celadon">Celadon (jade green, reduction)</option>
                                 <option value="shino">Shino (carbon trap, high soda)</option>
@@ -1283,9 +1316,9 @@
                             </select>
                         </div>
 
-                        <div class="form-group" style="margin-bottom: 1rem;">
-                            <label style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Cone</label>
-                            <div class="cone-select" id="gen-cone-select" style="flex-wrap: wrap;">
+                        <div class="form-group">
+                            <label>Cone</label>
+                            <div class="cone-select" id="gen-cone-select">
                                 <button class="cone-btn" data-cone="06">06</button>
                                 <button class="cone-btn" data-cone="04">04</button>
                                 <button class="cone-btn" data-cone="02">02</button>
@@ -1302,33 +1335,35 @@
                             </div>
                         </div>
 
-                        <div class="form-group" style="margin-bottom: 1rem;">
-                            <label style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Atmosphere</label>
-                            <select id="gen-atmosphere" style="width: 100%; padding: 0.5rem; background: var(--bg-hover); color: var(--text-primary); border: 1px solid var(--border); border-radius: var(--radius-sm);">
-                                <option value="oxidation">Oxidation</option>
-                                <option value="reduction">Reduction</option>
-                                <option value="neutral">Neutral</option>
-                                <option value="wood">Wood</option>
-                            </select>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                            <div class="form-group">
+                                <label>Atmosphere</label>
+                                <select id="gen-atmosphere">
+                                    <option value="oxidation">Oxidation</option>
+                                    <option value="reduction">Reduction</option>
+                                    <option value="neutral">Neutral</option>
+                                    <option value="wood">Wood</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Surface</label>
+                                <select id="gen-surface">
+                                    <option value="glossy">Glossy</option>
+                                    <option value="satin">Satin</option>
+                                    <option value="matte">Matte</option>
+                                </select>
+                                <small style="color: var(--text-muted); display: block; margin-top: 0.2rem; font-size: 0.72rem;">Auto-set from category</small>
+                            </div>
                         </div>
 
-                        <div class="form-group" style="margin-bottom: 1rem;">
-                            <label style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Surface</label>
-                            <select id="gen-surface" style="width: 100%; padding: 0.5rem; background: var(--bg-hover); color: var(--text-primary); border: 1px solid var(--border); border-radius: var(--radius-sm);">
-                                <option value="glossy">Glossy</option>
-                                <option value="satin">Satin</option>
-                                <option value="matte">Matte</option>
-                            </select>
-                            <small style="color: var(--text-muted); display: block; margin-top: 0.25rem;">Auto-set when you pick a category</small>
-                        </div>
-
-                        <div class="form-group" style="margin-bottom: 1rem;">
-                            <label style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Extra Colorants (optional)</label>
+                        <div class="form-group">
+                            <label>Extra Colorants <span class="label-hint">(optional)</span></label>
                             <div id="gen-colorants-list"></div>
-                            <button class="small secondary" onclick="addGenColorant()" style="margin-top: 0.5rem;">+ Add Colorant</button>
+                            <button class="small secondary" onclick="addGenColorant()" style="margin-top: 0.4rem;">+ Add Colorant</button>
                         </div>
 
-                        <button class="success" onclick="generateFromDescriptors()" style="width: 100%; padding: 0.75rem; font-size: 1rem; font-weight: 600; margin-top: 0.5rem;">
+                        <button class="success" onclick="generateFromDescriptors()" style="width: 100%; padding: 0.7rem; font-size: 0.9rem; font-weight: 600; margin-top: 0.5rem;">
                             Generate Recipe
                         </button>
                     </div>
@@ -1341,8 +1376,7 @@
                     </div>
                     <div class="card-body" id="gen-results">
                         <div class="empty-state">
-                            <div class="empty-state-icon" style="font-size: 3rem;">&#9879;</div>
-                            <p>Select a glaze type, cone, and atmosphere, then click Generate.</p>
+                            <p style="color: var(--text-muted); font-size: 0.85rem;">Select a glaze type, cone, and atmosphere, then click Generate.</p>
                         </div>
                     </div>
                 </div>
