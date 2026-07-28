@@ -244,7 +244,8 @@
         input::placeholder { color: var(--text-muted); }
 
         /* Buttons */
-        button {
+        /* `.button` lets download anchors share the button styling. */
+        button, a.button {
             padding: 0.6rem 1.25rem;
             background: var(--accent);
             color: white;
@@ -259,13 +260,14 @@
             justify-content: center;
             gap: 0.4rem;
             letter-spacing: 0.01em;
+            text-decoration: none;
         }
 
-        button:hover {
+        button:hover, a.button:hover {
             filter: brightness(1.15);
         }
 
-        button:active { filter: brightness(0.95); }
+        button:active, a.button:active { filter: brightness(0.95); }
 
         button:disabled {
             opacity: 0.4;
@@ -273,13 +275,13 @@
             filter: none;
         }
 
-        button.secondary {
+        button.secondary, a.button.secondary {
             background: transparent;
             border: 1px solid var(--border);
             color: var(--text-secondary);
         }
 
-        button.secondary:hover {
+        button.secondary:hover, a.button.secondary:hover {
             background: var(--bg-hover);
             border-color: var(--border-light);
             color: var(--text-primary);
@@ -290,9 +292,15 @@
         button.warning { background: var(--warning); color: #1a1a1a; }
         button.danger { background: var(--danger); }
 
-        button.small {
+        button.small, a.button.small {
             padding: 0.4rem 0.8rem;
             font-size: 0.78rem;
+        }
+
+        .export-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         button.icon-btn {
@@ -1428,6 +1436,30 @@
                     </div>
                 </div>
             </div>
+
+            <div class="card mt-1">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <span class="card-title-icon">📥</span>
+                        Reference Export
+                    </h3>
+                    <a class="button small" href="/api/export/reference.zip"
+                       download data-tooltip="All four datasets as a zip of CSVs">
+                        Download All (.zip)
+                    </a>
+                </div>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">
+                    Spreadsheet-ready CSVs of the reference data. Oxide analyses carry their
+                    source attribution so mixed-origin figures stay auditable. Materials covers
+                    every entry including colorants; Colorants adds dosage ranges and fired colour.
+                </p>
+                <div class="export-links">
+                    <a class="button secondary small" href="/api/export/materials.csv" download>Materials</a>
+                    <a class="button secondary small" href="/api/export/colorants.csv" download>Colorants</a>
+                    <a class="button secondary small" href="/api/export/umf-limits.csv" download>UMF Limits</a>
+                    <a class="button secondary small" href="/api/export/substitutions.csv" download>Substitutions</a>
+                </div>
+            </div>
         </section>
 
         <!-- ANALYSIS TAB -->
@@ -1973,6 +2005,18 @@
 
         const API_BASE = '';
 
+        // Oxide display order: glass formers, then fluxes (R2O then RO), then
+        // colorants and minor oxides. Oxides absent from this list are appended
+        // after it, largest first.
+        const OXIDE_DISPLAY_ORDER = [
+            'SiO2', 'Al2O3', 'B2O3',
+            'Na2O', 'K2O', 'Li2O',
+            'CaO', 'MgO', 'BaO', 'SrO', 'ZnO', 'PbO',
+            'Fe2O3', 'FeO', 'TiO2', 'MnO', 'MnO2',
+            'CuO', 'CoO', 'Cr2O3', 'NiO', 'V2O5',
+            'ZrO2', 'SnO2', 'P2O5', 'F',
+        ];
+
         // State
         let materials = [];
         let selectedMaterial = null;
@@ -2239,7 +2283,7 @@
                 <div class="material-item ${selectedMaterial?.name === m.name ? 'selected' : ''}" data-name="${escapeHtml(m.name)}">
                     <div class="material-info">
                         <div class="material-name">${escapeHtml(m.name)}</div>
-                        <div class="material-type">${escapeHtml((m.material_type || 'unknown').replace(/_/g, ' '))}</div>
+                        <div class="material-type">${escapeHtml((m.material_type || 'unknown').replace(/_/g, ' '))}${m.discontinued ? ' · discontinued' : ''}</div>
                     </div>
                     <button class="small secondary material-add-btn" onclick="event.stopPropagation(); quickAddMaterial('${escapeHtml(m.name)}')">
                         + Add
@@ -2275,17 +2319,20 @@
             if (!m) return;
 
             const analysis = m.oxide_analysis || m.analysis || {};
-            const oxides = [
-                { name: 'SiO2', value: analysis.SiO2 },
-                { name: 'Al2O3', value: analysis.Al2O3 },
-                { name: 'Na2O', value: analysis.Na2O },
-                { name: 'K2O', value: analysis.K2O },
-                { name: 'CaO', value: analysis.CaO },
-                { name: 'MgO', value: analysis.MgO },
-                { name: 'Fe2O3', value: analysis.Fe2O3 },
-                { name: 'B2O3', value: analysis.B2O3 },
-                { name: 'ZnO', value: analysis.ZnO },
-            ].filter(o => o.value && o.value > 0);
+            // Render whatever oxides the API returns, in glaze-chemistry reading order
+            // (glass formers, then fluxes, then colorants/others). Anything not in the
+            // list still shows, appended at the end. LOI is displayed separately below.
+            const oxides = Object.keys(analysis)
+                .filter(k => k !== 'LOI' && typeof analysis[k] === 'number' && analysis[k] > 0)
+                .map(k => ({ name: k, value: analysis[k] }))
+                .sort((a, b) => {
+                    const ia = OXIDE_DISPLAY_ORDER.indexOf(a.name);
+                    const ib = OXIDE_DISPLAY_ORDER.indexOf(b.name);
+                    if (ia === -1 && ib === -1) return b.value - a.value;
+                    if (ia === -1) return 1;
+                    if (ib === -1) return -1;
+                    return ia - ib;
+                });
 
             const maxOxide = Math.max(...oxides.map(o => o.value), 1);
 
@@ -2295,8 +2342,15 @@
                         <h4 style="color: var(--accent-light); margin-bottom: 1rem; font-size: 1.25rem;">${escapeHtml(m.name)}</h4>
                         <p style="margin-bottom: 1rem;">
                             <span class="badge badge-primary">${escapeHtml((m.type || m.material_type || 'unknown').replace(/_/g, ' '))}</span>
+                            ${m.discontinued ? '<span class="badge badge-warning">discontinued</span>' : ''}
+                            ${m.soluble ? '<span class="badge badge-warning">soluble</span>' : ''}
                         </p>
                         ${m.description ? `<p style="color: var(--text-secondary); margin-bottom: 1rem;">${escapeHtml(m.description)}</p>` : ''}
+                        ${m.source ? `
+                            <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1rem;">
+                                Analysis source: ${escapeHtml(m.source)}
+                            </p>
+                        ` : ''}
                         ${m.typical_percentage_min !== undefined ? `
                             <p style="color: var(--text-muted); font-size: 0.9rem;">
                                 Typical usage: <strong>${m.typical_percentage_min}% - ${m.typical_percentage_max}%</strong>
@@ -2313,7 +2367,7 @@
                         <h4 style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">OXIDE ANALYSIS</h4>
                         ${oxides.map(o => `
                             <div class="oxide-bar">
-                                <span class="oxide-label">${o.name}</span>
+                                <span class="oxide-label">${escapeHtml(o.name)}</span>
                                 <div class="oxide-track">
                                     <div class="oxide-fill" style="width: ${(o.value / maxOxide) * 100}%"></div>
                                 </div>
@@ -2889,7 +2943,23 @@
                 { name: 'B₂O₃', value: data.B2O3 },
             ].filter(o => o.value && o.value > 0.001);
 
-            document.getElementById('umf-display').innerHTML = `
+            // Unresolved ingredients are excluded before the fluxes are
+            // normalized to 1.0, so the figures below describe only part of the
+            // batch. Say so before showing them.
+            const unresolved = data.unresolved_materials || [];
+            const unresolvedBanner = unresolved.length ? `
+                <div class="warning-item mb-1">
+                    <span>⚠️</span>
+                    <span>
+                        <strong>Not in the materials database:</strong>
+                        ${unresolved.map(escapeHtml).join(', ')}.
+                        These are left out of the calculation — the UMF below reflects
+                        the remaining ingredients only.
+                    </span>
+                </div>
+            ` : '';
+
+            document.getElementById('umf-display').innerHTML = unresolvedBanner + `
                 <div class="umf-display">
                     <div class="umf-section">
                         <h4>Fluxes (R₂O/RO) = 1.0</h4>

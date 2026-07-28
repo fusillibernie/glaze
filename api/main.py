@@ -11,7 +11,7 @@ import httpx
 from fastapi import FastAPI, HTTPException, Request, UploadFile, File, Form, Query, Body
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, Response
 from pydantic import BaseModel, Field
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
@@ -41,6 +41,7 @@ from src.services.substitution_service import SubstitutionService, AvailabilityS
 from src.integrations.glazy_client import GlazyClient
 from src.services.glazy_bulk import CommunityRecipeService
 from src.services.recipe_db import RecipeDatabase
+from src.services import exporter
 
 
 limiter = Limiter(key_func=get_remote_address)
@@ -169,6 +170,10 @@ class UMFResponse(BaseModel):
     silica_alumina_ratio: float
     alkali_ratio: float
     stull_prediction: str
+    # Ingredient names that matched no known material. These are excluded from
+    # the oxide totals before normalization, so a non-empty list means the UMF
+    # above is computed from only part of the batch.
+    unresolved_materials: list[str] = Field(default_factory=list)
 
 
 class ChemistryResponse(BaseModel):
@@ -232,6 +237,7 @@ async def list_materials(
             "name": m.name,
             "type": m.material_type.value,
             "description": m.description,
+            "discontinued": m.discontinued,
             "glazy_id": m.glazy_id,
         }
         for m in materials
@@ -245,22 +251,16 @@ async def get_material(name: str):
     if not material:
         raise HTTPException(status_code=404, detail="Material not found")
 
-    analysis = material.analysis.oxide_analysis
     return {
         "name": material.name,
         "type": material.material_type.value,
         "description": material.description,
-        "oxide_analysis": {
-            "SiO2": analysis.SiO2,
-            "Al2O3": analysis.Al2O3,
-            "Na2O": analysis.Na2O,
-            "K2O": analysis.K2O,
-            "CaO": analysis.CaO,
-            "MgO": analysis.MgO,
-            "Fe2O3": analysis.Fe2O3,
-            "TiO2": analysis.TiO2,
-            "LOI": analysis.LOI,
-        },
+        # Full oxide set, zeros omitted — a hardcoded subset previously hid
+        # B2O3/Li2O/BaO/SrO/P2O5, blanking out every frit and boron material.
+        "oxide_analysis": material.analysis.oxide_analysis.to_dict(),
+        "source": material.analysis.source,
+        "soluble": material.soluble,
+        "discontinued": material.discontinued,
         "glazy_id": material.glazy_id,
     }
 
@@ -431,6 +431,7 @@ async def calculate_umf(recipe: RecipeInput) -> UMFResponse:
     umf = formulator.calculate_umf(glaze_recipe)
 
     return UMFResponse(
+        unresolved_materials=formulator.unresolved_ingredients(glaze_recipe),
         SiO2=round(umf.SiO2, 4),
         Al2O3=round(umf.Al2O3, 4),
         B2O3=round(umf.B2O3, 4),
@@ -544,8 +545,21 @@ async def analyze_recipe(recipe: RecipeInput) -> ChemistryResponse:
     analysis = analyzer.analyze_chemistry(glaze_recipe)
     umf = analysis.umf
 
+    # Unresolved ingredients are dropped before normalization, so the analysis
+    # below describes only the part of the batch we could identify. Lead with
+    # that rather than reporting it as a clean result.
+    unresolved = formulator.unresolved_ingredients(glaze_recipe)
+    warnings = list(analysis.warnings)
+    if unresolved:
+        warnings.insert(0, (
+            f"Unknown material(s) excluded from this analysis: "
+            f"{', '.join(unresolved)}. The chemistry shown is calculated from "
+            f"the remaining ingredients only."
+        ))
+
     return ChemistryResponse(
         umf=UMFResponse(
+            unresolved_materials=unresolved,
             SiO2=round(umf.SiO2, 4),
             Al2O3=round(umf.Al2O3, 4),
             B2O3=round(umf.B2O3, 4),
@@ -565,7 +579,7 @@ async def analyze_recipe(recipe: RecipeInput) -> ChemistryResponse:
         predicted_surface=analysis.predicted_surface,
         predicted_cone_range=analysis.predicted_cone_range,
         issues=analysis.issues,
-        warnings=analysis.warnings,
+        warnings=warnings,
         recommendations=analysis.recommendations,
     )
 
@@ -1587,6 +1601,41 @@ def _convert_recipe_input(recipe: RecipeInput) -> GlazeRecipe:
         glaze_type=GlazeType(recipe.glaze_type),
         expected_surface=GlazeSurface(recipe.expected_surface),
         notes=recipe.notes,
+    )
+
+
+# ============== Reference Export Endpoints ==============
+
+@app.get("/api/export/reference.zip")
+async def export_reference_bundle():
+    """Download the whole reference layer as a zip of CSVs."""
+    return Response(
+        content=exporter.export_all_zip(materials_db),
+        media_type="application/zip",
+        headers={"Content-Disposition": 'attachment; filename="glaze-reference.zip"'},
+    )
+
+
+@app.get("/api/export/{dataset}.csv")
+async def export_reference_csv(dataset: str):
+    """Download one reference dataset as CSV.
+
+    Datasets: materials, colorants, umf-limits, substitutions.
+    """
+    try:
+        content = exporter.export_dataset(dataset, materials_db)
+    except ValueError:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Unknown dataset '{dataset}'. Available: {', '.join(exporter.DATASETS)}",
+        )
+
+    return Response(
+        content=content,
+        media_type="text/csv; charset=utf-8",
+        headers={
+            "Content-Disposition": f'attachment; filename="glaze-reference-{dataset}.csv"'
+        },
     )
 
 

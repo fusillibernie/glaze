@@ -340,6 +340,9 @@ class Material:
     # Solubility
     soluble: bool = False  # Soluble materials (e.g. Soda Ash) migrate to surface during drying
 
+    # Availability
+    discontinued: bool = False  # No longer produced (e.g. Albany Slip, Custer as of 2024)
+
     # Physical properties
     mesh_size: Optional[int] = None  # Typical mesh
     specific_gravity: Optional[float] = None
@@ -366,6 +369,7 @@ class Material:
             "glazy_id": self.glazy_id,
             "alternate_names": self.alternate_names,
             "soluble": self.soluble,
+            "discontinued": self.discontinued,
             "supplier": self.supplier,
             "product_code": self.product_code,
             "mesh_size": self.mesh_size,
@@ -407,11 +411,13 @@ class Material:
             analysis=MaterialAnalysis(
                 oxide_analysis=OxideAnalysis.from_dict(oxide_data),
                 molecular_weight=analysis_data.get("molecular_weight") if "oxide_analysis" in analysis_data else None,
-                source=analysis_data.get("source") if "oxide_analysis" in analysis_data else None,
+                # Full format nests source under analysis; simple format carries it top-level.
+                source=analysis_data.get("source") if "oxide_analysis" in analysis_data else data.get("source"),
             ),
             glazy_id=data.get("glazy_id"),
             alternate_names=data.get("alternate_names", []),
             soluble=data.get("soluble", False),
+            discontinued=data.get("discontinued", False),
             supplier=data.get("supplier"),
             product_code=data.get("product_code"),
             mesh_size=data.get("mesh_size"),

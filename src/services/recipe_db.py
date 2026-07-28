@@ -1,9 +1,12 @@
 """Unified recipe database loading from multiple sources."""
 
 import json
+import logging
 from pathlib import Path
 from typing import Optional
 
+
+logger = logging.getLogger(__name__)
 
 DEFAULT_DATA_DIR = Path(__file__).parent.parent.parent / "data"
 
@@ -13,7 +16,7 @@ class RecipeDatabase:
 
     Sources:
     - Local curated recipes (data/recipes/*.json)
-    - Glazy bulk data (data/glazy_bulk/recipes.json)
+    - Glazy bulk data (data/glazy_bulk/glazy_recipes.json)
     - Sankey database (data/sankey/recipes.json)
     """
 
@@ -69,11 +72,11 @@ class RecipeDatabase:
                     self._add_recipe(recipe)
 
             except (json.JSONDecodeError, IOError) as e:
-                print(f"Error loading {json_file}: {e}")
+                logger.error("Error loading %s: %s", json_file, e)
 
     def _load_glazy_bulk(self) -> None:
-        """Load bulk Glazy data from data/glazy_bulk/recipes.json."""
-        path = self.data_dir / "glazy_bulk" / "recipes.json"
+        """Load bulk Glazy data from data/glazy_bulk/glazy_recipes.json."""
+        path = self.data_dir / "glazy_bulk" / "glazy_recipes.json"
         if not path.exists():
             return
 
@@ -84,10 +87,18 @@ class RecipeDatabase:
             recipes = data.get("recipes", []) if isinstance(data, dict) else data
             for recipe in recipes:
                 recipe.setdefault("source", "glazy-data")
+                # Bulk records use `id` and an `atmospheres` list; the search/browse
+                # filters expect `glazy_id` and a scalar `atmosphere`.
+                if "glazy_id" not in recipe and "id" in recipe:
+                    recipe["glazy_id"] = recipe["id"]
+                if "atmosphere" not in recipe:
+                    atmospheres = recipe.get("atmospheres") or []
+                    if atmospheres:
+                        recipe["atmosphere"] = ", ".join(str(a) for a in atmospheres)
                 self._add_recipe(recipe)
 
         except (json.JSONDecodeError, IOError) as e:
-            print(f"Error loading glazy bulk: {e}")
+            logger.error("Error loading glazy bulk: %s", e)
 
     def _load_sankey(self) -> None:
         """Load Sankey database from data/sankey/recipes.json."""
@@ -105,7 +116,7 @@ class RecipeDatabase:
                 self._add_recipe(recipe)
 
         except (json.JSONDecodeError, IOError) as e:
-            print(f"Error loading sankey: {e}")
+            logger.error("Error loading sankey: %s", e)
 
     def _add_recipe(self, recipe: dict) -> None:
         """Add a recipe to the database."""
