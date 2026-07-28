@@ -1,15 +1,8 @@
 """Tests for API endpoints."""
 
 import pytest
-from fastapi.testclient import TestClient
 
-from api.main import app
-
-
-@pytest.fixture
-def client():
-    """Create test client."""
-    return TestClient(app)
+# `client` fixture lives in conftest.py
 
 
 class TestMaterialsAPI:
@@ -31,6 +24,36 @@ class TestMaterialsAPI:
         """Test getting non-existent material."""
         response = client.get("/api/materials/NonExistentMaterial123")
         assert response.status_code == 404
+
+    def test_get_material_returns_boron(self, client):
+        """Boron-bearing materials must expose B2O3.
+
+        The detail endpoint used to hand-write a 9-oxide dict that omitted
+        B2O3/Li2O/BaO/SrO/P2O5, so every frit and boron material came back
+        with its principal oxide missing.
+        """
+        response = client.get("/api/materials/Colemanite")
+        assert response.status_code == 200
+        data = response.json()
+        assert data["oxide_analysis"]["B2O3"] == pytest.approx(50.8)
+        assert data["source"] == "digitalfire"
+
+    def test_get_material_exposes_minor_fluxes(self, client):
+        """Li2O must survive the detail response (Spodumene is 7.5% Li2O)."""
+        response = client.get("/api/materials/Spodumene")
+        assert response.status_code == 200
+        assert response.json()["oxide_analysis"]["Li2O"] == pytest.approx(7.5)
+
+    def test_get_material_zero_oxides_omitted(self, client):
+        """to_dict() excludes zeros, so absent oxides must not appear as 0.0."""
+        data = client.get("/api/materials/Whiting (Calcium Carbonate)").json()
+        assert data["oxide_analysis"]["CaO"] == pytest.approx(56.0)
+        assert "PbO" not in data["oxide_analysis"]
+
+    def test_discontinued_flag(self, client):
+        """Custer Feldspar was discontinued in 2024."""
+        assert client.get("/api/materials/Custer Feldspar").json()["discontinued"] is True
+        assert client.get("/api/materials/Silica (Flint)").json()["discontinued"] is False
 
 
 class TestRecipeAPI:
