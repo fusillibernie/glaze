@@ -1,11 +1,14 @@
 """Materials database for ceramic raw materials."""
 
 import json
+import logging
 from pathlib import Path
 from typing import Optional
 
 from ..models.materials import Material, MaterialType, MaterialAnalysis, OxideAnalysis
 
+
+logger = logging.getLogger(__name__)
 
 DEFAULT_DATA_DIR = Path(__file__).parent.parent.parent / "data" / "materials"
 
@@ -21,6 +24,7 @@ class MaterialsDatabase:
         """
         self.data_dir = data_dir or DEFAULT_DATA_DIR
         self._materials: dict[str, Material] = {}
+        self._aliases: dict[str, Material] = {}
         self._by_type: dict[MaterialType, list[Material]] = {}
         self._loaded = False
 
@@ -47,13 +51,27 @@ class MaterialsDatabase:
                     material = Material.from_dict(item)
                     self._materials[material.name.lower()] = material
 
+                    # Index alternate spellings. A real material name always wins
+                    # over an alias, so aliases are resolved after exact matches
+                    # and never overwrite an entry in _materials.
+                    for alias in material.alternate_names:
+                        key = alias.lower()
+                        if key in self._aliases and self._aliases[key] is not material:
+                            logger.warning(
+                                "Alias %r claimed by both %r and %r; keeping %r",
+                                alias, self._aliases[key].name, material.name,
+                                self._aliases[key].name,
+                            )
+                            continue
+                        self._aliases[key] = material
+
                     # Index by type
                     if material.material_type not in self._by_type:
                         self._by_type[material.material_type] = []
                     self._by_type[material.material_type].append(material)
 
             except (json.JSONDecodeError, IOError) as e:
-                print(f"Error loading {json_file}: {e}")
+                logger.error("Error loading %s: %s", json_file, e)
                 continue
 
         self._loaded = True
@@ -74,18 +92,45 @@ class MaterialsDatabase:
             Material if found, None otherwise.
         """
         self._ensure_loaded()
+        name_lower = name.lower().strip()
+
         # Exact match first
-        result = self._materials.get(name.lower())
+        result = self._materials.get(name_lower)
         if result:
             return result
 
-        # Partial match: check if query matches the start of any material name
-        name_lower = name.lower()
-        for key, material in self._materials.items():
-            if key.startswith(name_lower):
-                return material
+        # Known alternate spelling (e.g. "OM4 Ball Clay" -> "Ball Clay (OM4)")
+        result = self._aliases.get(name_lower)
+        if result:
+            return result
+
+        # Partial match: check if query matches the start of any material name.
+        # Ambiguous prefixes resolve to the alphabetically first match so the
+        # result does not depend on file load order.
+        candidates = sorted(
+            (key for key in self._materials if key.startswith(name_lower))
+        )
+        if candidates:
+            return self._materials[candidates[0]]
 
         return None
+
+    def unresolved(self, names) -> list[str]:
+        """Return the subset of `names` that do not resolve to any material.
+
+        Ingredient names are dropped from chemistry calculations when they do
+        not resolve, which silently understates the affected oxides. Callers
+        use this to warn rather than report a confidently wrong analysis.
+        """
+        self._ensure_loaded()
+        seen, missing = set(), []
+        for name in names:
+            if not name or name.lower() in seen:
+                continue
+            seen.add(name.lower())
+            if self.get(name) is None:
+                missing.append(name)
+        return missing
 
     def get_by_type(self, material_type: MaterialType) -> list[Material]:
         """Get all materials of a specific type.

@@ -1,5 +1,6 @@
 """Glaze formulation engine."""
 
+import logging
 from dataclasses import dataclass, field
 from typing import Optional
 
@@ -125,6 +126,9 @@ class ResolvedInheritance:
     inherited_ingredients: list[GlazeIngredient]
 
 
+logger = logging.getLogger(__name__)
+
+
 class GlazeFormulator:
     """Engine for creating and adjusting glaze recipes."""
 
@@ -225,6 +229,29 @@ class GlazeFormulator:
             inherited_ingredients=inherited,
         )
 
+    def _resolve(self, ingredient: GlazeIngredient) -> Optional[Material]:
+        """Look up an ingredient's material, logging when it cannot be resolved.
+
+        An unresolved ingredient is excluded from the oxide totals, which are
+        then normalized to unity — so the resulting UMF looks valid while
+        understating whatever the missing material contributed. Callers that
+        report chemistry to a user should also surface
+        `MaterialsDatabase.unresolved()` so the omission is visible.
+        """
+        material = self.materials_db.get(ingredient.material_name)
+        if material is None:
+            logger.warning(
+                "Unresolved ingredient %r (%.1f%%) excluded from analysis",
+                ingredient.material_name, ingredient.percentage,
+            )
+        return material
+
+    def unresolved_ingredients(self, recipe: GlazeRecipe) -> list[str]:
+        """Ingredient names in `recipe` that match no known material."""
+        return self.materials_db.unresolved(
+            i.material_name for i in recipe.ingredients
+        )
+
     def calculate_recipe_analysis(
         self,
         recipe: GlazeRecipe,
@@ -240,7 +267,7 @@ class GlazeFormulator:
         combined = OxideAnalysis()
 
         for ingredient in recipe.ingredients:
-            material = self.materials_db.get(ingredient.material_name)
+            material = self._resolve(ingredient)
             if not material:
                 continue
 
@@ -284,7 +311,7 @@ class GlazeFormulator:
         insoluble_ingredients = []
 
         for ingredient in recipe.ingredients:
-            material = self.materials_db.get(ingredient.material_name)
+            material = self._resolve(ingredient)
             if not material:
                 insoluble_ingredients.append(ingredient)
                 continue
@@ -314,6 +341,7 @@ class GlazeFormulator:
 
         # Add insoluble materials fully to both body and surface
         for ingredient in insoluble_ingredients:
+            # Already logged when first resolved above.
             material = self.materials_db.get(ingredient.material_name)
             if not material:
                 continue
@@ -350,7 +378,7 @@ class GlazeFormulator:
         flux_oxides = ["Na2O", "K2O", "Li2O", "CaO", "MgO", "BaO", "SrO", "ZnO", "PbO"]
 
         for ingredient in recipe.ingredients:
-            material = self.materials_db.get(ingredient.material_name)
+            material = self._resolve(ingredient)
             if not material:
                 continue
             factor = ingredient.percentage / 100.0
