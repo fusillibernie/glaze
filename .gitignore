@@ -62,3 +62,6 @@ data/glazy_cache/
 data/glazy_bulk/
 data/results/
 !data/results/firing_results.json
+
+# Generated reference document (rebuild: py scripts/build_reference_pdf.py)
+glaze-reference.pdf
