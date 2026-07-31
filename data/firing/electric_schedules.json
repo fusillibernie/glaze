@@ -1,0 +1,36 @@
+{
+  "description": "Electric kiln ramp/hold/soak firing schedules, sourced from Digitalfire ahead of the site's shutdown. Complements data/firing/woodfire_schedules.json, which covers wood/reduction kilns only.",
+  "source": "digitalfire",
+  "electric_schedules": [
+    {
+      "name": "Cone 6 Drop-and-Hold Slow Cool",
+      "code": "C6DHSC",
+      "target_cone": "6",
+      "description": "Plainsman cone 6 drop-and-hold, slow-cool schedule for reactive/glossy glazes. Improves brilliance and surface quality, reduces pinholing, and encourages microcrystal development in mattes.",
+      "atmosphere": "oxidation",
+      "kiln_type": "electric",
+      "steps": [
+        {"step": 1, "rate_c_per_hr": 60, "rate_f_per_hr": 108, "target_c": 121, "target_f": 250, "hold_min": 60},
+        {"step": 2, "rate_c_per_hr": 194, "rate_f_per_hr": 350, "target_c": 1148, "target_f": 2100, "hold_min": 15},
+        {"step": 3, "rate_c_per_hr": 60, "rate_f_per_hr": 108, "target_c": 1204, "target_f": 2200, "hold_min": 10, "notes": "Peak (~cone 6)"},
+        {"step": 4, "rate_c_per_hr": 500, "rate_f_per_hr": 900, "target_c": 1148, "target_f": 2100, "hold_min": 30, "notes": "Drop-and-hold: fast drop from peak, then hold"},
+        {"step": 5, "rate_c_per_hr": 83, "rate_f_per_hr": 150, "target_c": 760, "target_f": 1400, "hold_min": 0, "notes": "Slow cool through the glaze-stiffening range"}
+      ],
+      "total_time_hours": 14.5,
+      "notes": "The drop-and-hold at step 4 lets the melt level and heal bubbles before the slow-cool step encourages surface quality and matte crystal development. Applicable as a general template for any reactive or matte cone 6 glaze prone to pinholing or dull surface."
+    },
+    {
+      "name": "Quartz Inversion Safe Cooling",
+      "code": "generic-dunting-guard",
+      "description": "Not a full schedule - a rule of thumb to prevent dunting/cracking, applicable to any cone/body. Insert a slow ramp on both heating and cooling through the quartz inversion point.",
+      "critical_point_c": 570,
+      "critical_point_f": 1063,
+      "guidance": [
+        "Slow the ramp approaching and departing 570C/1063F in both directions - dunting risk exists on heat-up and cool-down",
+        "Most critical for thick, heavy, or unevenly-walled ware and for bodies with high free-quartz content",
+        "Electric kilns lack the natural draft of gas kilns and need slower firing overall to avoid gradients",
+        "Candle overnight at the boiling point before ramping up for damp or thick greenware"
+      ]
+    }
+  ]
+}

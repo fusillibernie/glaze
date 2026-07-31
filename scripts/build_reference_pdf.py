@@ -1,8 +1,9 @@
 """Build a printable PDF of the glaze reference data.
 
 Renders materials (grouped by type, with oxide analyses and provenance),
-colorants, UMF limit tables and substitutions into a landscape document
-intended for studio use.
+colorants, UMF limit tables, substitutions, per-oxide properties, defect
+troubleshooting and firing schedules into a landscape document intended
+for studio use.
 
     py scripts/build_reference_pdf.py [output.pdf]
 """
@@ -251,6 +252,149 @@ def substitutions_section(story, st):
     story.append(table)
 
 
+def oxide_properties_section(story, st):
+    data = json.loads((DATA / "reference" / "oxide_properties.json").read_text(encoding="utf-8"))
+    story.append(PageBreak())
+    story.append(Paragraph("Oxide Properties", st["H"]))
+    story.append(Paragraph(data.get("coe_note", ""), st["Note"]))
+    story.append(Spacer(1, 8))
+
+    rows = [["Oxide", "Name", "Role", "COE Factor", "Effects"]]
+    for symbol, ox in data.get("oxides", {}).items():
+        rows.append([
+            Paragraph(f"<b>{symbol}</b>", st["Cell"]),
+            ox.get("name", ""),
+            ox.get("role", "").replace("_", " "),
+            fmt(ox.get("coe_factor")),
+            Paragraph(ox.get("effects", ""), st["Cell"]),
+        ])
+
+    table = Table(rows, repeatRows=1, colWidths=[
+        0.6 * inch, 1.0 * inch, 1.15 * inch, 0.75 * inch, 6.5 * inch])
+    table.setStyle(base_table_style())
+    table.setStyle(TableStyle([("ALIGN", (0, 0), (2, -1), "LEFT"),
+                               ("ALIGN", (4, 0), (4, -1), "LEFT")]))
+    story.append(table)
+
+
+def defect_guide_section(story, st):
+    data = json.loads((DATA / "reference" / "defect_guide.json").read_text(encoding="utf-8"))
+    story.append(PageBreak())
+    story.append(Paragraph("Defect Troubleshooting", st["H"]))
+    story.append(Paragraph(
+        "Cause-and-cure reference for common glaze and body defects. Chemistry "
+        "fixes should be re-checked against the UMF after applying — a fix for "
+        "one defect can introduce another.",
+        st["Note"]))
+    story.append(Spacer(1, 8))
+
+    for key, defect in data.get("defects", {}).items():
+        title = key.replace("_", " ").title()
+        story.append(Paragraph(title, st["H2"]))
+        story.append(Paragraph(defect.get("summary", ""), st["Body"]))
+        story.append(Spacer(1, 3))
+
+        cause = defect.get("chemistry_cause")
+        if cause:
+            story.append(Paragraph(f"<b>Chemistry cause:</b> {cause}", st["Body"]))
+
+        causes = defect.get("causes")
+        if isinstance(causes, list):
+            for c in causes:
+                story.append(Paragraph(f"&#183; {c}", st["Note"]))
+        elif isinstance(causes, dict):
+            for group, items in causes.items():
+                story.append(Paragraph(f"<b>{group.title()}:</b>", st["Note"]))
+                for c in items:
+                    story.append(Paragraph(f"&#183; {c}", st["Note"]))
+
+        for field, label in (
+            ("chemistry_remedies", "Chemistry remedies"),
+            ("other_remedies", "Other remedies"),
+            ("remedies", "Remedies"),
+        ):
+            items = defect.get(field)
+            if items:
+                story.append(Paragraph(f"<b>{label}:</b>", st["Note"]))
+                for r in items:
+                    story.append(Paragraph(f"&#183; {r}", st["Note"]))
+
+        story.append(Spacer(1, 8))
+
+
+def firing_schedules_section(story, st):
+    story.append(PageBreak())
+    story.append(Paragraph("Firing Schedules", st["H"]))
+
+    electric_path = DATA / "firing" / "electric_schedules.json"
+    if electric_path.exists():
+        data = json.loads(electric_path.read_text(encoding="utf-8"))
+        story.append(Paragraph("Electric Kiln", st["H2"]))
+        for sched in data.get("electric_schedules", []):
+            name = sched.get("name", "")
+            code = f" ({sched['code']})" if sched.get("code") else ""
+            story.append(Paragraph(f"{name}{code}", st["H2"]))
+            story.append(Paragraph(sched.get("description", ""), st["Body"]))
+            story.append(Spacer(1, 3))
+
+            steps = sched.get("steps")
+            if steps:
+                rows = [["Step", "Rate (C/hr)", "Rate (F/hr)", "Target C",
+                          "Target F", "Hold (min)", "Notes"]]
+                for step in steps:
+                    rows.append([
+                        str(step.get("step", "")),
+                        fmt(step.get("rate_c_per_hr")),
+                        fmt(step.get("rate_f_per_hr")),
+                        fmt(step.get("target_c")),
+                        fmt(step.get("target_f")),
+                        fmt(step.get("hold_min")),
+                        Paragraph(step.get("notes", ""), st["Cell"]),
+                    ])
+                table = Table(rows, repeatRows=1, colWidths=[
+                    0.5 * inch, 0.9 * inch, 0.9 * inch, 0.7 * inch,
+                    0.7 * inch, 0.8 * inch, 3.5 * inch])
+                table.setStyle(base_table_style())
+                table.setStyle(TableStyle([("ALIGN", (-1, 0), (-1, -1), "LEFT")]))
+                story.append(table)
+
+            guidance = sched.get("guidance")
+            if guidance:
+                for g in guidance:
+                    story.append(Paragraph(f"&#183; {g}", st["Note"]))
+
+            notes = sched.get("notes")
+            if notes:
+                story.append(Paragraph(notes, st["Note"]))
+            story.append(Spacer(1, 10))
+
+    woodfire_path = DATA / "firing" / "woodfire_schedules.json"
+    if woodfire_path.exists():
+        data = json.loads(woodfire_path.read_text(encoding="utf-8"))
+        story.append(Paragraph("Wood Kiln", st["H2"]))
+
+        rows = [["Kiln", "Cone", "Peak", "Duration (hr)", "Atmosphere", "Notes"]]
+        for sched in data.get("woodfire_schedules", []):
+            rows.append([
+                Paragraph(f"<b>{sched.get('name', '')}</b>", st["Cell"]),
+                sched.get("target_cone", ""),
+                f"{fmt(sched.get('peak_temp_c'))}C / {fmt(sched.get('peak_temp_f'))}F",
+                str(sched.get("typical_duration_hours", "")),
+                sched.get("atmosphere", "").replace("_", " "),
+                Paragraph(sched.get("notes", ""), st["Cell"]),
+            ])
+        table = Table(rows, repeatRows=1, colWidths=[
+            1.3 * inch, 0.6 * inch, 1.3 * inch, 0.9 * inch, 1.1 * inch, 4.4 * inch])
+        table.setStyle(base_table_style())
+        table.setStyle(TableStyle([("ALIGN", (0, 0), (0, -1), "LEFT"),
+                                   ("ALIGN", (4, 0), (-1, -1), "LEFT")]))
+        story.append(table)
+        story.append(Paragraph(
+            "See data/firing/woodfire_schedules.json for per-kiln-position firing "
+            "notes and cone variation, omitted here for space.",
+            st["Note"]))
+
+
 def provenance_section(story, st, db):
     story.append(PageBreak())
     story.append(Paragraph("Provenance &amp; Known Gaps", st["H"]))
@@ -286,10 +430,9 @@ def provenance_section(story, st, db):
     story.append(Paragraph("Not in this reference", st["H2"]))
     story.append(Paragraph(
         "Referenced by recipes or substitution entries but absent, because no published "
-        "analysis was available. Recipes using these will calculate from the remaining "
+        "analysis could be found. Recipes using these will calculate from the remaining "
         "ingredients and flag the omission rather than silently absorbing it: "
-        "<b>Tennessee Ball Clay</b>, <b>XX Saggar Ball Clay</b>, <b>Sheffield Slip</b>, "
-        "<b>Fusion Frit F-69</b>, <b>Fusion Frit F-75</b>, and species-specific wood ashes "
+        "<b>XX Saggar Ball Clay</b> and species-specific wood ashes "
         "(<b>oak</b>, <b>apple</b>, <b>pine</b>) whose chemistry differs enough from the "
         "mixed-hardwood entry that substituting it would mislead.",
         st["Note"]))
@@ -337,7 +480,8 @@ def build(out_path: Path):
     story = [
         Paragraph("Glaze Reference Data", st["DocTitle"]),
         Paragraph(
-            f"Materials, colorants, UMF limits and substitutions &#183; "
+            f"Materials, colorants, UMF limits, substitutions, oxide properties, "
+            f"defect troubleshooting and firing schedules &#183; "
             f"generated {date.today().isoformat()}",
             st["Sub"]),
     ]
@@ -345,6 +489,9 @@ def build(out_path: Path):
     colorants_section(story, st)
     limits_section(story, st)
     substitutions_section(story, st)
+    oxide_properties_section(story, st)
+    defect_guide_section(story, st)
+    firing_schedules_section(story, st)
     provenance_section(story, st, db)
 
     doc.build(story, onFirstPage=decorate, onLaterPages=decorate)

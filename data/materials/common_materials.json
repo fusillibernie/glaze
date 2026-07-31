@@ -321,11 +321,12 @@
         "LOI": 11.0
       },
       "alternate_names": [
-        "OM4 Ball Clay",
+        "OM-4",
         "OM-4 Ball Clay",
         "OM4",
-        "OM-4",
-        "Old Mine #4"
+        "OM4 Ball Clay",
+        "Old Mine #4",
+        "Tennessee Ball Clay"
       ]
     },
     {
@@ -559,6 +560,8 @@
       "alternate_names": [
         "Bone Ash",
         "Calcium Phosphate",
+        "Synthetic Bone Ash",
+        "Synthetic Calcium Phosphate",
         "Tricalcium Phosphate"
       ]
     },
@@ -875,6 +878,137 @@
         "K2O": 1.4,
         "Fe2O3": 0.1,
         "LOI": 19.0
+      }
+    },
+    {
+      "name": "Sheffield Slip",
+      "type": "clay",
+      "description": "Albany Slip substitute: Sheffield (MA) glacial clay blended with fluxes, designed to duplicate 100% Albany at cone 10 in oxidation or reduction.",
+      "source": "digitalfire",
+      "analysis": {
+        "SiO2": 56.1,
+        "Al2O3": 14.8,
+        "CaO": 5.9,
+        "MgO": 4.7,
+        "Fe2O3": 3.1,
+        "K2O": 3.1,
+        "FeO": 2.4,
+        "Na2O": 1.0,
+        "TiO2": 0.9,
+        "LOI": 8.0
+      }
+    },
+    {
+      "name": "Fusion Frit F-69",
+      "type": "frit",
+      "description": "Low-expansion magnesium frit with no Na2O/K2O. Base for low-expansion glazes; added to low/mid-fire glazes to solve crazing. Softening point 1700F; listed COE 3.96e-6. May need added CaO or other flux to melt fully.",
+      "source": "digitalfire",
+      "alternate_names": [
+        "F-69",
+        "Fusion F-69"
+      ],
+      "analysis": {
+        "SiO2": 44.5,
+        "B2O3": 30.2,
+        "MgO": 12.8,
+        "Al2O3": 12.5
+      }
+    },
+    {
+      "name": "Fusion Frit F-75",
+      "type": "frit",
+      "description": "High-sodium high-expansion low-boron bond frit, very similar to Ferro 3110 (flows slightly more freely, lower surface tension). Used for crackle glazes, concentrated Na2O supply, and clarity in crystalline glazes.",
+      "source": "digitalfire",
+      "alternate_names": [
+        "F-75",
+        "Fusion F-75"
+      ],
+      "analysis": {
+        "SiO2": 70.0,
+        "Na2O": 15.3,
+        "CaO": 6.4,
+        "Al2O3": 3.7,
+        "B2O3": 2.5,
+        "K2O": 2.1
+      }
+    },
+    {
+      "name": "Helmer Kaolin",
+      "type": "clay",
+      "description": "Idaho kaolin used primarily for its flashing properties in wood firing. Wet-processed to remove soluble salts and iron. Distributed by Plainsman as 'Troy Clay' (hammermilled ~40 mesh).",
+      "source": "digitalfire",
+      "alternate_names": [
+        "Helmer",
+        "Troy Clay"
+      ],
+      "analysis": {
+        "SiO2": 46.0,
+        "Al2O3": 36.0,
+        "Fe2O3": 1.3,
+        "TiO2": 1.13,
+        "K2O": 0.53,
+        "CaO": 0.48,
+        "MgO": 0.26,
+        "Na2O": 0.08,
+        "LOI": 13.22
+      }
+    },
+    {
+      "name": "Newman Red Clay",
+      "type": "clay",
+      "description": "High-temperature red-burning low-plasticity stoneware/fireclay. Staining power beyond what its iron suggests - stays bright red at 50% dilution in oxidation. Usually compounded with ball clay and feldspar.",
+      "source": "digitalfire",
+      "alternate_names": [
+        "Newman Red"
+      ],
+      "analysis": {
+        "SiO2": 59.66,
+        "Al2O3": 16.64,
+        "Fe2O3": 5.58,
+        "TiO2": 2.05,
+        "MgO": 1.35,
+        "Na2O": 0.23,
+        "LOI": 7.3
+      }
+    },
+    {
+      "name": "Lincoln 60",
+      "type": "clay",
+      "description": "Dark buff-firing plastic stoneware ('not really a fireclay' despite the name). Gladding McBean sewer-pipe clay from the late 1800s; backbone of West Coast pottery bodies. Vitrifies unglazed by cone 10.",
+      "source": "digitalfire",
+      "alternate_names": [
+        "Lincoln Fireclay",
+        "Lincoln 60 Fireclay"
+      ],
+      "analysis": {
+        "SiO2": 52.0,
+        "Al2O3": 32.5,
+        "Fe2O3": 2.2,
+        "K2O": 0.75,
+        "MgO": 0.6,
+        "Na2O": 0.3,
+        "CaO": 0.2,
+        "LOI": 11.2
+      }
+    },
+    {
+      "name": "Mahavir Potash Feldspar",
+      "type": "feldspar",
+      "description": "Indian high-grade white-firing potash feldspar, imported by Laguna. Positioned as the G-200/Custer successor: marginally higher K2O and SiO2, slightly lower alumina. Melting temperature ~1220C.",
+      "source": "digitalfire",
+      "alternate_names": [
+        "Mahavir Feldspar",
+        "Mahavir"
+      ],
+      "analysis": {
+        "SiO2": 67.0,
+        "Al2O3": 17.5,
+        "K2O": 11.5,
+        "Na2O": 3.0,
+        "CaO": 0.15,
+        "MgO": 0.15,
+        "Fe2O3": 0.08,
+        "LOI": 0.5
       }
     }
   ]

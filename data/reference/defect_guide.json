@@ -1,0 +1,139 @@
+{
+  "description": "Structured glaze/body defect troubleshooting, sourced from Digitalfire's Troubles pages ahead of the site's shutdown. Intended to replace the predictor's explicitly-labeled 'heuristic estimates not calibrated against firing data' with published cause/cure reasoning.",
+  "source": "digitalfire",
+  "defects": {
+    "crazing": {
+      "category": "glaze_fit",
+      "stress_type": "tension",
+      "summary": "Fine surface cracks. The fired glaze has a significantly higher coefficient of thermal expansion than the body - no amount of careful firing or thin application avoids it once the mismatch is real.",
+      "chemistry_cause": "Excess high-expansion oxides, chiefly K2O and Na2O.",
+      "chemistry_remedies": [
+        "Replace K2O/Na2O with lower-expansion fluxes: MgO, CaO, ZnO",
+        "Introduce B2O3 to replace some of the alkali flux",
+        "Increase SiO2 in glossy, well-melted glazes (raises Si:Al but lowers expansion)",
+        "Add enough flux to allow more SiO2 and Al2O3 - both are very low expansion"
+      ],
+      "other_remedies": [
+        "Use 325 mesh silica instead of 200 mesh for better melt dissolution",
+        "Adjust the clay body itself: add talc or dolomite to raise body expansion to meet the glaze",
+        "Add zirconium opacifier (up to ~3%) to slightly reduce expansion",
+        "Substitute a lower-expansion frit, especially where frit is 30%+ of the recipe"
+      ]
+    },
+    "shivering": {
+      "category": "glaze_fit",
+      "stress_type": "compression",
+      "summary": "The opposite of crazing: the glaze is under compression and flakes off the body, especially at edges. Glaze tolerates compression far worse than tension, so shivering is less common but more dangerous - flakes can be razor-sharp, a food-safety hazard.",
+      "chemistry_cause": "Glaze COE too low relative to the body COE.",
+      "chemistry_remedies": [
+        "Raise glaze expansion by substituting some CaO/MgO/Li2O/SrO/ZnO for Na2O",
+        "Switch to a higher-sodium frit (e.g. Ferro 3110)",
+        "Change only the Na2O/K2O balance when adjusting via chemistry software, compensating for any other oxides a feldspar or frit swap would introduce"
+      ],
+      "other_remedies": []
+    },
+    "crawling": {
+      "category": "surface",
+      "summary": "Molten glaze withdraws into islands, leaving bare clay patches.",
+      "causes": [
+        "Excessive drying shrinkage from too much raw clay in the glaze (over ~20% ball clay/kaolin)",
+        "Poor glaze-to-bisque bond",
+        "Slow drying (thick walls, dense bisque, high water content) that prolongs the fragile pre-crack stage"
+      ],
+      "remedies": [
+        "Replace some high-plasticity clay (ball clay) with a less plastic kaolin",
+        "Calcine part of the clay content - e.g. 35% kaolin as 15% calcined + 20% raw",
+        "Check specific gravity of the slurry; use deflocculant/flocculant to correct",
+        "Add gum binder to harden the dried layer and bond it to bisque",
+        "Apply thinner layers; a fountain-glazing approach for interiors",
+        "Speed drying: preheat bisque before dipping, thinner coats, more porous (lower-fired) bisque",
+        "Replace Gerstley Borate with a boron frit; use calcined rather than raw zinc oxide",
+        "For multi-coat glazes: make the upper layer lower-clay/lower-shrinkage, apply thin and fast-drying, or bisque between coats"
+      ]
+    },
+    "pinholing_pitting": {
+      "category": "surface",
+      "summary": "Small holes or pits where escaping gas disrupted the melt before it could heal over.",
+      "causes_by_source": {
+        "body": [
+          "Large or gas-producing particles that decompose late",
+          "Particles that melt too vigorously, forming glass chemistry that resists healing",
+          "Talc/dolomite/whiting release large gas volumes during decomposition",
+          "Soluble salts migrating to the surface on drying, forming a reactive layer",
+          "Open/porous body structure venting gas faster than the glaze can heal",
+          "Immature (underfired) body robbing the glaze of flux",
+          "Rough bisque surface from grog, sand, or trimming marks"
+        ],
+        "glaze": [
+          "Binder decomposing at high temperature",
+          "Late-decomposing materials (whiting, dolomite, talc, coloring carbonates) still gassing after the glaze starts to melt",
+          "Standard glaze fired on a fast-fire schedule it was not formulated for",
+          "Viscous melt that resists gas bubbles passing through",
+          "Glaze sealing over before the body finishes outgassing"
+        ],
+        "application": [
+          "Too-thin application with insufficient glaze to heal disruptions",
+          "Excessive slurry water, poor bonding, trapped air",
+          "Contamination; insufficient ball milling"
+        ],
+        "firing": [
+          "Firing too rapidly for the melt to smooth over disruptions",
+          "Mismatched gas-evolution timing between body and glaze",
+          "Inadequate kiln ventilation",
+          "Uneven heating (electric kiln, heavy or shaded ware)",
+          "Fast cooldown - pitting can occur on cooling too, especially with high-sulphur bodies"
+        ]
+      },
+      "remedies": [
+        "Sieve-analyze and replace coarse or gassy body particles",
+        "Substitute wollastonite for whiting (CaO), frits for MgO/talc, ceramic stains for carbonates",
+        "Bisque as high and as long as practical, with good oxidizing airflow",
+        "Slow the firing curve toward cone end (e.g. ~1 hour/cone at cone 6); soak if possible",
+        "Slow cool from peak - drop-and-hold, or ~150F/hr cooling through the critical range",
+        "Increase melt fluidity (more flux, lower Al2O3:SiO2, ZnO/SrO/Li2O additions) so bubbles can pass",
+        "Screen and ball-mill (12+ hours) to remove contamination",
+        "Reduce slurry water and increase specific gravity toward ~1.8 for denser laydown",
+        "For once-fired ware: switch to bisque firing, or use a fast-fire glaze with a soak"
+      ]
+    },
+    "blistering": {
+      "category": "surface",
+      "summary": "Larger ruptured bubbles in the fired surface; related to pinholing but driven more by melt rheology than raw gas volume.",
+      "causes": [
+        "Insufficient melt fluidity to heal bubble ruptures",
+        "Paradoxically, a fluid melt with high surface tension can also trap bubbles (common in reactive high-boron glazes)",
+        "Excessive gas generation from dolomite, whiting, manganese dioxide, or other carbonates",
+        "Body gassing (from organics, up to ~950C) escaping through an already-melted glaze",
+        "High boron (0.7+ molar at cone 6) causing phase separation into glass regions of differing surface tension - these often blister worse on a refire"
+      ],
+      "remedies": [
+        "Reformulate for more fluidity: more flux, or a lower Al2O3:SiO2 ratio",
+        "Use a drop-and-hold schedule - cool to a lower, higher-viscosity temperature where bubbles break but the melt still levels",
+        "Substitute frits/wollastonite/cleaner clays for high-gas carbonates",
+        "Use a fast-fire glaze formulation that stays unmelted until after ~950C",
+        "Reduce boron; expect worse blistering on any refire of a high-boron glaze",
+        "Fire bisque hot (cone 04-02) and slow through 700-950C (50C/hr is 'slow')",
+        "Apply thinner; raise slurry specific gravity toward 1.8; ball-mill up to 12 hours",
+        "In gas kilns: avoid heavy reduction, start reduction 1-2 cones above bisque temperature, avoid flame impingement"
+      ]
+    },
+    "dunting_cracking": {
+      "category": "body",
+      "summary": "Cracks from thermal stress during firing or cooling, distinct from drying cracks.",
+      "causes": [
+        "Temperature gradients within a piece from uneven heating or cooling",
+        "Cooling (or heating) too fast through the quartz inversion point (~1050F / 570C)",
+        "Thick, uneven wall sections; sharp concave angles that concentrate stress",
+        "Wide flat bottoms absorbing heat unevenly from kiln shelves",
+        "Rapid heat-up rate amplifying existing gradients in thick or irregular pieces"
+      ],
+      "remedies": [
+        "Slow the firing cycle through quartz inversion in both directions, especially cooling",
+        "Extended low-temperature holds to remove moisture gradually",
+        "Round and compress sharp concave angles; aim for even wall thickness",
+        "Ensure even kiln heat distribution; electric kilns need slower firing (no draft to even things out)",
+        "Overnight candling at the boiling point before ramping up"
+      ]
+    }
+  }
+}
