@@ -1,10 +1,17 @@
 """Glaze formulation engine."""
 
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields as dataclass_fields
 from typing import Optional
 
 from ..models.materials import Material, MaterialType, OxideAnalysis, OXIDE_MOLECULAR_WEIGHTS
+
+# Every combinable oxide on OxideAnalysis (LOI excluded - it's not part of
+# the fired glass). Derived from the dataclass rather than hand-listed: the
+# three call sites below used to each hardcode their own copy of this list,
+# and all three had silently drifted to the same incomplete 23-of-26 set
+# (missing MnO2, V2O5, F). A derived list can't drift out of sync again.
+_COMBINABLE_OXIDES = [f.name for f in dataclass_fields(OxideAnalysis) if f.name != "LOI"]
 from ..models.glaze import (
     GlazeRecipe,
     GlazeIngredient,
@@ -275,12 +282,7 @@ class GlazeFormulator:
             factor = ingredient.percentage / 100.0
             analysis = material.analysis.oxide_analysis
 
-            for oxide in [
-                "SiO2", "Al2O3", "B2O3", "Na2O", "K2O", "Li2O",
-                "CaO", "MgO", "BaO", "SrO", "ZnO", "PbO",
-                "Fe2O3", "FeO", "TiO2", "MnO", "CuO", "CoO",
-                "Cr2O3", "NiO", "ZrO2", "SnO2", "P2O5"
-            ]:
+            for oxide in _COMBINABLE_OXIDES:
                 current = getattr(combined, oxide)
                 addition = getattr(analysis, oxide) * factor
                 setattr(combined, oxide, current + addition)
@@ -332,12 +334,7 @@ class GlazeFormulator:
         body_analysis = OxideAnalysis()
         surface_analysis = OxideAnalysis()
 
-        oxides = [
-            "SiO2", "Al2O3", "B2O3", "Na2O", "K2O", "Li2O",
-            "CaO", "MgO", "BaO", "SrO", "ZnO", "PbO",
-            "Fe2O3", "FeO", "TiO2", "MnO", "CuO", "CoO",
-            "Cr2O3", "NiO", "ZrO2", "SnO2", "P2O5"
-        ]
+        oxides = _COMBINABLE_OXIDES
 
         # Add insoluble materials fully to both body and surface
         for ingredient in insoluble_ingredients:
@@ -433,14 +430,8 @@ class GlazeFormulator:
         # Add virtual ash: multiply ash composition by position multiplier
         # and add to the base analysis
         modified_analysis = OxideAnalysis()
-        oxides = [
-            "SiO2", "Al2O3", "B2O3", "Na2O", "K2O", "Li2O",
-            "CaO", "MgO", "BaO", "SrO", "ZnO", "PbO",
-            "Fe2O3", "FeO", "TiO2", "MnO", "CuO", "CoO",
-            "Cr2O3", "NiO", "ZrO2", "SnO2", "P2O5"
-        ]
 
-        for oxide in oxides:
+        for oxide in _COMBINABLE_OXIDES:
             base_val = getattr(base_analysis, oxide)
             ash_val = ash_comp.get(oxide, 0.0) * multiplier
             setattr(modified_analysis, oxide, base_val + ash_val)
