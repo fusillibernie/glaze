@@ -1,6 +1,8 @@
 """Outcome prediction based on glaze data and firing results."""
 
 import json
+import os
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
@@ -74,25 +76,40 @@ class OutcomePredictor:
         self.results = results_database or self._load_results()
 
     def _load_results(self) -> list[FiringResult]:
-        """Load persisted results from disk."""
+        """Load persisted results from disk, deduplicated by result_id.
+
+        A duplicate can only reach the file through a bug (this class used to
+        lose fired_at and photos on every reload-then-save cycle, silently
+        rewriting history). Keep the first occurrence of each id rather than
+        fail to load.
+        """
         if not self.results_path.exists():
             return []
         try:
             with open(self.results_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
-            # Results stored as plain dicts; reconstruct minimal FiringResult objects
             results = []
+            seen_ids = set()
             for item in data:
                 try:
-                    results.append(FiringResult.from_dict(item))
+                    result = FiringResult.from_dict(item)
                 except Exception:
-                    pass
+                    continue
+                if result.result_id in seen_ids:
+                    continue
+                seen_ids.add(result.result_id)
+                results.append(result)
             return results
         except Exception:
             return []
 
     def _save_results(self) -> None:
-        """Persist results to disk."""
+        """Persist results to disk atomically.
+
+        Writes to a temp file in the same directory and replaces the target
+        in one step, so a crash or concurrent write mid-save cannot truncate
+        or corrupt the existing file.
+        """
         self.results_path.parent.mkdir(parents=True, exist_ok=True)
         serializable = []
         for r in self.results:
@@ -100,8 +117,17 @@ class OutcomePredictor:
                 serializable.append(r.to_dict())
             except Exception:
                 pass
-        with open(self.results_path, "w", encoding="utf-8") as f:
-            json.dump(serializable, f, indent=2, default=str)
+
+        fd, tmp_path = tempfile.mkstemp(
+            dir=self.results_path.parent, suffix=".tmp"
+        )
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as f:
+                json.dump(serializable, f, indent=2, default=str)
+            os.replace(tmp_path, self.results_path)
+        except BaseException:
+            os.unlink(tmp_path)
+            raise
 
     def add_result(self, result: FiringResult) -> None:
         """Add a firing result to the database and persist.

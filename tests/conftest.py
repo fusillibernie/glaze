@@ -6,10 +6,23 @@ from fastapi.testclient import TestClient
 
 
 @pytest.fixture
-def client():
-    """FastAPI test client."""
-    from api.main import app
-    return TestClient(app)
+def client(tmp_path, monkeypatch):
+    """FastAPI test client with an isolated firing-results store.
+
+    api.main.predictor is a module-level singleton backed by the real
+    data/results/firing_results.json. Without this override, any test that
+    posts to /api/results (e.g. test_submit_result) permanently mutates that
+    tracked file - every pytest run added one more "Test Recipe" entry to
+    production data. Point the singleton at a per-test tmp_path instead.
+    """
+    import api.main as main_module
+    from src.services.predictor import OutcomePredictor
+
+    monkeypatch.setattr(
+        main_module, "predictor",
+        OutcomePredictor(results_path=tmp_path / "test_firing_results.json"),
+    )
+    return TestClient(main_module.app)
 
 
 @pytest.fixture

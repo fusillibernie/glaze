@@ -109,6 +109,23 @@ class ResultPhoto:
             "view_type": self.view_type,
         }
 
+    @classmethod
+    def from_dict(cls, data: dict) -> "ResultPhoto":
+        """Create from dictionary."""
+        uploaded_at = data.get("uploaded_at")
+        return cls(
+            photo_id=data.get("photo_id", uuid4().hex[:12]),
+            filename=data.get("filename", ""),
+            file_path=data.get("file_path"),
+            url=data.get("url"),
+            uploaded_at=datetime.fromisoformat(uploaded_at) if uploaded_at else datetime.now(),
+            caption=data.get("caption"),
+            width=data.get("width"),
+            height=data.get("height"),
+            file_size_bytes=data.get("file_size_bytes"),
+            view_type=data.get("view_type", "general"),
+        )
+
 
 @dataclass
 class FiringResult:
@@ -191,8 +208,9 @@ class FiringResult:
             color = ColorDescription(**data["color"])
 
         defects = [GlazeDefect(d) for d in data.get("defects", [])]
+        photos = [ResultPhoto.from_dict(p) for p in data.get("photos", [])]
 
-        return cls(
+        kwargs = dict(
             result_id=data.get("result_id", uuid4().hex[:12]),
             recipe_id=data.get("recipe_id"),
             recipe_name=data.get("recipe_name", ""),
@@ -208,6 +226,7 @@ class FiringResult:
             achieved_surface=GlazeSurface(data["achieved_surface"]) if data.get("achieved_surface") else None,
             color=color,
             defects=defects,
+            photos=photos,
             rating=data.get("rating"),
             would_repeat=data.get("would_repeat", True),
             notes=data.get("notes"),
@@ -215,3 +234,9 @@ class FiringResult:
             fired_by=data.get("fired_by"),
             location=data.get("location"),
         )
+        # Previously omitted: without this, every reload reset fired_at to
+        # "now" and the next save silently rewrote history in the JSON file.
+        if data.get("fired_at"):
+            kwargs["fired_at"] = datetime.fromisoformat(data["fired_at"])
+
+        return cls(**kwargs)
