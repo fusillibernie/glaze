@@ -676,14 +676,14 @@ async def predict_outcome(
 
     firing_schedule = FiringSchedule(
         name="Custom",
-        cone=ConeTemperature(firing.cone),
-        atmosphere=AtmosphereType(firing.atmosphere),
-        firing_type=FiringType(firing.firing_type),
+        cone=_enum_from_value(ConeTemperature, firing.cone, "firing.cone"),
+        atmosphere=_enum_from_value(AtmosphereType, firing.atmosphere, "firing.atmosphere"),
+        firing_type=_enum_from_value(FiringType, firing.firing_type, "firing.firing_type"),
         hold_time_minutes=firing.hold_time_minutes,
         cooling_rate=firing.cooling_rate,
     )
 
-    clay = ClayBody(clay_body)
+    clay = _enum_from_value(ClayBody, clay_body, "clay_body")
 
     prediction = predictor.predict_outcome(glaze_recipe, firing_schedule, clay)
 
@@ -712,8 +712,8 @@ async def formulate_glaze(target: FormulationTargetInput):
         colorant_dicts = [c.model_dump() for c in target.colorants]
 
     formulation_target = FormulationTarget(
-        cone=ConeTemperature(target.cone),
-        surface=GlazeSurface(target.surface),
+        cone=_enum_from_value(ConeTemperature, target.cone, "cone"),
+        surface=_enum_from_value(GlazeSurface, target.surface, "surface"),
         atmosphere=target.atmosphere,
         category=target.category,
         colorants=colorant_dicts,
@@ -1304,14 +1304,14 @@ async def submit_result(result: ResultInput = Body(...), photo_ids: list[str] = 
         recipe_name=result.recipe_name,
         firing_schedule=FiringSchedule(
             name="User Firing",
-            cone=ConeTemperature(result.firing_cone),
-            atmosphere=AtmosphereType(result.firing_atmosphere),
-            firing_type=FiringType(result.firing_type),
+            cone=_enum_from_value(ConeTemperature, result.firing_cone, "firing_cone"),
+            atmosphere=_enum_from_value(AtmosphereType, result.firing_atmosphere, "firing_atmosphere"),
+            firing_type=_enum_from_value(FiringType, result.firing_type, "firing_type"),
         ),
-        clay_body=ClayBody(result.clay_body),
-        surface_quality=SurfaceQuality(result.surface_quality),
+        clay_body=_enum_from_value(ClayBody, result.clay_body, "clay_body"),
+        surface_quality=_enum_from_value(SurfaceQuality, result.surface_quality, "surface_quality"),
         color=color,
-        defects=[GlazeDefect(d) for d in result.defects],
+        defects=[_enum_from_value(GlazeDefect, d, "defect") for d in result.defects],
         photos=photos,
         notes=result.notes,
         fired_at=datetime.now(timezone.utc),
@@ -1613,6 +1613,26 @@ async def get_community_image(request: Request, recipe_id: int):
 
 # ============== Helper Functions ==============
 
+def _enum_from_value(enum_cls, value: str, field_name: str):
+    """Convert a request string to an enum member.
+
+    Bare EnumClass(value) raises a plain ValueError on a bad value, which
+    FastAPI does not catch - it surfaces as an unhandled 500 with a stack
+    trace instead of a normal validation error. Every recipe/result
+    endpoint builds its model this way, so a single typo'd cone or
+    atmosphere currently crashes the request instead of explaining what
+    went wrong.
+    """
+    try:
+        return enum_cls(value)
+    except ValueError:
+        valid = [e.value for e in enum_cls]
+        raise HTTPException(
+            status_code=422,
+            detail=f"Invalid {field_name} {value!r}. Valid values: {valid}",
+        )
+
+
 def _convert_recipe_input(recipe: RecipeInput) -> GlazeRecipe:
     """Convert API input to GlazeRecipe model."""
     ingredients = [
@@ -1633,16 +1653,16 @@ def _convert_recipe_input(recipe: RecipeInput) -> GlazeRecipe:
         for c in recipe.colorants
     ]
 
-    atmospheres = [AtmosphereType(a) for a in recipe.atmospheres]
+    atmospheres = [_enum_from_value(AtmosphereType, a, "atmosphere") for a in recipe.atmospheres]
 
     return GlazeRecipe(
         name=recipe.name,
         ingredients=ingredients,
         colorants=colorants,
-        target_cone=ConeTemperature(recipe.target_cone),
+        target_cone=_enum_from_value(ConeTemperature, recipe.target_cone, "target_cone"),
         suitable_atmospheres=atmospheres,
-        glaze_type=GlazeType(recipe.glaze_type),
-        expected_surface=GlazeSurface(recipe.expected_surface),
+        glaze_type=_enum_from_value(GlazeType, recipe.glaze_type, "glaze_type"),
+        expected_surface=_enum_from_value(GlazeSurface, recipe.expected_surface, "expected_surface"),
         notes=recipe.notes,
     )
 

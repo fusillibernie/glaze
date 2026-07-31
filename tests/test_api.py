@@ -56,6 +56,87 @@ class TestMaterialsAPI:
         assert client.get("/api/materials/Silica (Flint)").json()["discontinued"] is False
 
 
+class TestEnumValidation:
+    """A typo'd cone/atmosphere/etc used to crash with a raw 500 - bare
+    EnumClass(value) raises ValueError, which FastAPI doesn't catch. Every
+    endpoint that builds a GlazeRecipe or FiringResult from request strings
+    now goes through _enum_from_value, which turns that into a 422. These
+    pin the crash-to-clean-error conversion on every site that was fixed.
+    """
+
+    def _base_recipe(self, **overrides):
+        recipe = {
+            "name": "Test Recipe",
+            "ingredients": [{"material_name": "Custer Feldspar", "percentage": 100.0}],
+            "target_cone": "6",
+            "atmospheres": ["oxidation"],
+        }
+        recipe.update(overrides)
+        return recipe
+
+    def test_bad_target_cone_is_422_not_500(self, client):
+        response = client.post(
+            "/api/recipes/analyze", json=self._base_recipe(target_cone="not-a-cone")
+        )
+        assert response.status_code == 422
+        assert "not-a-cone" in response.json()["detail"]
+
+    def test_bad_atmosphere_is_422_not_500(self, client):
+        response = client.post(
+            "/api/recipes/calculate-umf", json=self._base_recipe(atmospheres=["bogus"])
+        )
+        assert response.status_code == 422
+
+    def test_bad_glaze_type_is_422_not_500(self, client):
+        response = client.post(
+            "/api/recipes/analyze", json=self._base_recipe(glaze_type="not-a-type")
+        )
+        assert response.status_code == 422
+
+    def test_bad_expected_surface_is_422_not_500(self, client):
+        response = client.post(
+            "/api/recipes/analyze", json=self._base_recipe(expected_surface="not-a-surface")
+        )
+        assert response.status_code == 422
+
+    def test_valid_recipe_still_works(self, client):
+        """The fix must not have broken the happy path."""
+        response = client.post("/api/recipes/analyze", json=self._base_recipe())
+        assert response.status_code == 200
+
+    def test_submit_result_bad_cone_is_422_not_500(self, client):
+        response = client.post("/api/results", json={
+            "recipe_name": "t", "firing_cone": "not-a-cone",
+            "firing_atmosphere": "oxidation", "firing_type": "electric",
+            "clay_body": "stoneware", "surface_quality": "good",
+            "color_description": "x", "defects": [],
+        })
+        assert response.status_code == 422
+
+    def test_submit_result_bad_defect_is_422_not_500(self, client):
+        response = client.post("/api/results", json={
+            "recipe_name": "t", "firing_cone": "6",
+            "firing_atmosphere": "oxidation", "firing_type": "electric",
+            "clay_body": "stoneware", "surface_quality": "good",
+            "color_description": "x", "defects": ["not-a-real-defect"],
+        })
+        assert response.status_code == 422
+
+    def test_predict_bad_clay_body_is_422_not_500(self, client):
+        response = client.post("/api/recipes/predict", json={
+            "recipe": self._base_recipe(),
+            "firing": {"cone": "6", "atmosphere": "oxidation", "firing_type": "electric"},
+            "clay_body": "not-a-real-body",
+        })
+        assert response.status_code == 422
+
+    def test_formulate_bad_cone_is_422_not_500(self, client):
+        response = client.post("/api/recipes/formulate", json={
+            "cone": "not-a-cone", "surface": "glossy", "atmosphere": "oxidation",
+        })
+        assert response.status_code == 422
+
+
 class TestRecipeAPI:
     """Tests for recipe endpoints."""
 
