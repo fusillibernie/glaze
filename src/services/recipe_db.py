@@ -130,6 +130,11 @@ class RecipeDatabase:
         if not self._loaded:
             self.load()
 
+    def get_all(self) -> list[dict]:
+        """Every loaded recipe, unfiltered, in raw dict form."""
+        self._ensure_loaded()
+        return list(self._recipes)
+
     def search(
         self,
         query: Optional[str] = None,

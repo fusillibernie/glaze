@@ -92,6 +92,72 @@ class TestRecipeAPI:
         response = client.post("/api/recipes/analyze", json=recipe_data)
         assert response.status_code in [200, 422]
 
+    def test_analyze_omits_fit_without_clay_body(self, client):
+        """No clay body given -> no thermal_expansion block, rather than a
+        guessed one."""
+        recipe_data = {
+            "name": "Test Recipe",
+            "ingredients": [
+                {"material_name": "Custer Feldspar", "percentage": 50.0},
+                {"material_name": "Silica (Flint)", "percentage": 30.0},
+                {"material_name": "EPK Kaolin", "percentage": 20.0},
+            ],
+            "target_cone": "6",
+        }
+        data = client.post("/api/recipes/analyze", json=recipe_data).json()
+        assert data["thermal_expansion"] is None
+
+    def test_analyze_with_named_clay_body_returns_fit(self, client):
+        recipe_data = {
+            "name": "Test Recipe",
+            "ingredients": [
+                {"material_name": "Custer Feldspar", "percentage": 50.0},
+                {"material_name": "Silica (Flint)", "percentage": 30.0},
+                {"material_name": "EPK Kaolin", "percentage": 20.0},
+            ],
+            "target_cone": "6",
+        }
+        response = client.post(
+            "/api/recipes/analyze?clay_body_name=Standard+Stoneware", json=recipe_data
+        )
+        assert response.status_code == 200
+        fit = response.json()["thermal_expansion"]
+        assert fit is not None
+        assert fit["clay_body_coe"] == 6.5
+        assert fit["crazing_risk"] in ["low", "medium", "high"]
+
+    def test_analyze_with_clay_body_type_uses_average(self, client):
+        recipe_data = {
+            "name": "Test Recipe",
+            "ingredients": [{"material_name": "Custer Feldspar", "percentage": 100.0}],
+            "target_cone": "6",
+        }
+        response = client.post(
+            "/api/recipes/analyze?clay_body_type=porcelain", json=recipe_data
+        )
+        fit = response.json()["thermal_expansion"]
+        assert fit is not None
+        assert 4.0 < fit["clay_body_coe"] < 7.0
+
+    def test_analyze_unknown_clay_body_name_falls_back_to_type(self, client):
+        recipe_data = {
+            "name": "Test Recipe",
+            "ingredients": [{"material_name": "Custer Feldspar", "percentage": 100.0}],
+            "target_cone": "6",
+        }
+        response = client.post(
+            "/api/recipes/analyze?clay_body_name=Not+A+Real+Body&clay_body_type=stoneware",
+            json=recipe_data,
+        )
+        assert response.json()["thermal_expansion"] is not None
+
+    def test_clay_bodies_detailed_endpoint(self, client):
+        response = client.get("/api/reference/clay-bodies-detailed")
+        assert response.status_code == 200
+        data = response.json()
+        assert len(data) == 15
+        assert all("coe" in b for b in data)
+
     def test_predict_outcome(self, client):
         """Test outcome prediction endpoint."""
         recipe_data = {
@@ -156,6 +222,32 @@ class TestReferenceAPI:
         assert "Al2O3" in data
 
 
+class TestSearchAPI:
+    """Tests for classifier-backed search endpoints.
+
+    These returned an empty index on every fresh boot until something
+    happened to POST /api/classify first - classifier._recipe_index was
+    never seeded from the 10,899-recipe corpus at startup. Real counts (not
+    just 200 OK) are the actual regression guard here.
+    """
+
+    def test_by_region_returns_indexed_recipes(self, client):
+        response = client.get("/api/search/by-region/glossy")
+        assert response.status_code == 200
+        data = response.json()
+        assert data["count"] > 0
+        assert len(data["recipes"]) == data["count"]
+
+    def test_by_category_returns_indexed_recipes(self, client):
+        response = client.get("/api/search/by-category/clear_glossy")
+        assert response.status_code == 200
+        assert response.json()["count"] > 0
+
+    def test_invalid_region_is_400_not_500(self, client):
+        response = client.get("/api/search/by-region/not-a-region")
+        assert response.status_code == 400
+
+
 class TestGlazyAPI:
     """Tests for Glazy integration endpoints."""
 
@@ -193,3 +285,41 @@ class TestResultsAPI:
         assert response.status_code == 200
         data = response.json()
         assert "result_id" in data
+
+    def test_submitted_result_appears_exactly_once(self, client):
+        """A single submission must read back as a single entry.
+
+        Storage used to double-write each submission (a per-result file and
+        an aggregate array), so GET /api/results returned it twice.
+        """
+        result_data = {
+            "recipe_name": "Duplicate Check Glaze",
+            "firing_cone": "6",
+            "firing_atmosphere": "oxidation",
+            "firing_type": "electric",
+            "clay_body": "stoneware",
+            "surface_quality": "good",
+            "color_description": "Blue",
+            "defects": [],
+        }
+        submitted_id = client.post("/api/results", json=result_data).json()["result_id"]
+
+        results = client.get("/api/results").json()
+        matches = [r for r in results if r["result_id"] == submitted_id]
+        assert len(matches) == 1
+        assert matches[0]["recipe_name"] == "Duplicate Check Glaze"
+        assert matches[0]["cone"] == "6"
+
+    def test_results_filter_by_cone(self, client):
+        base = {
+            "firing_atmosphere": "oxidation", "firing_type": "electric",
+            "clay_body": "stoneware", "surface_quality": "good",
+            "color_description": "x", "defects": [],
+        }
+        client.post("/api/results", json={**base, "recipe_name": "A", "firing_cone": "6"})
+        client.post("/api/results", json={**base, "recipe_name": "B", "firing_cone": "10"})
+
+        results = client.get("/api/results?cone=6").json()
+        assert all(r["cone"] == "6" for r in results)
+        assert any(r["recipe_name"] == "A" for r in results)
+        assert not any(r["recipe_name"] == "B" for r in results)

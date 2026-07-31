@@ -1,6 +1,7 @@
 """FastAPI application for glaze formulation."""
 
 import json
+import logging
 import os
 import uuid
 from datetime import datetime, timezone
@@ -17,7 +18,7 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
-from src.models.materials import Material, MaterialType
+from src.models.materials import Material, MaterialType, OxideAnalysis
 from src.models.glaze import (
     GlazeRecipe,
     GlazeIngredient,
@@ -41,6 +42,7 @@ from src.services.substitution_service import SubstitutionService, AvailabilityS
 from src.integrations.glazy_client import GlazyClient
 from src.services.glazy_bulk import CommunityRecipeService
 from src.services.recipe_db import RecipeDatabase
+from src.services.clay_body_db import ClayBodyDatabase
 from src.services import exporter
 
 
@@ -76,6 +78,43 @@ classifier = GlazeClassifier()
 glazy_client = GlazyClient(cache_dir=DATA_DIR / "glazy_cache")
 community_recipes = CommunityRecipeService(DATA_DIR / "glazy_bulk" / "glazy_recipes.json")
 recipe_db = RecipeDatabase(DATA_DIR)
+clay_body_db = ClayBodyDatabase(DATA_DIR / "materials")
+
+logger = logging.getLogger(__name__)
+
+
+def _seed_classifier_index() -> None:
+    """Pre-populate the classifier's search index from the recipe corpus.
+
+    classifier._recipe_index only grows when classify() is called, and the
+    only caller was POST /api/classify - so /api/search/by-region,
+    /api/search/by-category, /api/search/similar and the Stull chart's
+    glaze overlay all returned empty on every fresh boot until a client
+    happened to classify something first. Bulk records already carry a
+    computed oxide analysis, so this converts each straight to a UMF
+    without touching materials_db or ingredient resolution at all.
+    """
+    indexed, skipped = 0, 0
+    for record in recipe_db.get_all():
+        analysis_dict = record.get("analysis")
+        if not analysis_dict:
+            skipped += 1
+            continue
+        try:
+            oxide_analysis = OxideAnalysis.from_dict(analysis_dict)
+            umf = UMF.from_oxide_analysis(oxide_analysis)
+            if umf.flux_total <= 0:
+                skipped += 1
+                continue
+            name = record.get("name") or record.get("result_id") or "Unnamed"
+            classifier.classify(GlazeRecipe(name=name, umf=umf))
+            indexed += 1
+        except Exception:
+            skipped += 1
+    logger.info("Classifier index seeded: %d indexed, %d skipped", indexed, skipped)
+
+
+_seed_classifier_index()
 
 # Mount static files for uploaded photos
 app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
@@ -176,6 +215,14 @@ class UMFResponse(BaseModel):
     unresolved_materials: list[str] = Field(default_factory=list)
 
 
+class ThermalExpansionResponse(BaseModel):
+    calculated_coe: float
+    clay_body_coe: float
+    crazing_risk: str
+    shivering_risk: str
+    recommendations: list[str]
+
+
 class ChemistryResponse(BaseModel):
     umf: UMFResponse
     predicted_surface: str
@@ -183,6 +230,7 @@ class ChemistryResponse(BaseModel):
     issues: list[str]
     warnings: list[str]
     recommendations: list[str]
+    thermal_expansion: Optional[ThermalExpansionResponse] = None
 
 
 class DualUMFResponse(BaseModel):
@@ -537,13 +585,44 @@ async def calculate_ash_accumulation(
 
 
 @app.post("/api/recipes/analyze")
-async def analyze_recipe(recipe: RecipeInput) -> ChemistryResponse:
-    """Analyze glaze chemistry."""
+async def analyze_recipe(
+    recipe: RecipeInput,
+    clay_body_name: Optional[str] = None,
+    clay_body_type: Optional[str] = None,
+) -> ChemistryResponse:
+    """Analyze glaze chemistry.
+
+    clay_body_name: a specific named body from data/materials/clay_bodies.json
+        (e.g. "Standard Stoneware") - gives an exact COE for the fit check.
+    clay_body_type: a broad ClayBody enum value (e.g. "stoneware") used only
+        if clay_body_name is not given or not found - resolves to the
+        average COE across named bodies of that type.
+    Fit analysis is included whenever either resolves to a real COE;
+    otherwise thermal_expansion is omitted rather than guessed.
+    """
     glaze_recipe = _convert_recipe_input(recipe)
     glaze_recipe.umf = formulator.calculate_umf(glaze_recipe)
 
     analysis = analyzer.analyze_chemistry(glaze_recipe)
     umf = analysis.umf
+
+    clay_coe = None
+    if clay_body_name:
+        body = clay_body_db.get(clay_body_name)
+        clay_coe = body.get("coe") if body else None
+    if clay_coe is None and clay_body_type:
+        clay_coe = clay_body_db.get_default_coe(clay_body_type)
+
+    thermal_expansion = None
+    if clay_coe is not None:
+        fit = analyzer.analyze_thermal_expansion(glaze_recipe, clay_body_coe=clay_coe)
+        thermal_expansion = ThermalExpansionResponse(
+            calculated_coe=fit.calculated_coe,
+            clay_body_coe=fit.clay_body_coe,
+            crazing_risk=fit.crazing_risk,
+            shivering_risk=fit.shivering_risk,
+            recommendations=fit.recommendations,
+        )
 
     # Unresolved ingredients are dropped before normalization, so the analysis
     # below describes only the part of the batch we could identify. Lead with
@@ -581,6 +660,7 @@ async def analyze_recipe(recipe: RecipeInput) -> ChemistryResponse:
         issues=analysis.issues,
         warnings=warnings,
         recommendations=analysis.recommendations,
+        thermal_expansion=thermal_expansion,
     )
 
 
@@ -1199,58 +1279,10 @@ async def upload_result_photo(
     }
 
 
-RESULTS_DIR = DATA_DIR / "results"
-RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-
-
-def _save_result_to_disk(result_id: str, result: ResultInput, photo_ids: list[str], fired_at: str):
-    """Persist a firing result to disk as JSON."""
-    record = {
-        "result_id": result_id,
-        "recipe_name": result.recipe_name,
-        "firing_cone": result.firing_cone,
-        "firing_atmosphere": result.firing_atmosphere,
-        "firing_type": result.firing_type,
-        "clay_body": result.clay_body,
-        "surface_quality": result.surface_quality,
-        "color_description": result.color_description,
-        "defects": result.defects,
-        "notes": result.notes,
-        "photo_ids": photo_ids,
-        "fired_at": fired_at,
-    }
-    result_file = RESULTS_DIR / f"{result_id}.json"
-    with open(result_file, "w", encoding="utf-8") as f:
-        json.dump(record, f, indent=2)
-
-
-def _get_cone(r: dict) -> str | None:
-    """Extract cone value from either user-submitted or seed format."""
-    return r.get("firing_cone") or (r.get("firing_schedule", {}) or {}).get("cone")
-
-
-def _load_results_from_disk() -> list[dict]:
-    """Load all firing results from disk. Handles both single-result and array files."""
-    results = []
-    for f in RESULTS_DIR.glob("*.json"):
-        try:
-            with open(f, "r", encoding="utf-8") as fh:
-                data = json.load(fh)
-            if isinstance(data, list):
-                results.extend(d for d in data if isinstance(d, dict))
-            elif isinstance(data, dict):
-                results.append(data)
-        except (json.JSONDecodeError, IOError):
-            continue
-    results.sort(key=lambda r: r.get("fired_at", ""), reverse=True)
-    return results
-
-
 @app.post("/api/results")
 async def submit_result(result: ResultInput = Body(...), photo_ids: list[str] = Query(default=[])):
     """Submit a firing result."""
     result_id = str(uuid.uuid4())
-    fired_at = datetime.now(timezone.utc).isoformat()
 
     # Build photos list
     photos = []
@@ -1285,11 +1317,11 @@ async def submit_result(result: ResultInput = Body(...), photo_ids: list[str] = 
         fired_at=datetime.now(timezone.utc),
     )
 
-    # Add to predictor database
+    # predictor.add_result() is the single write path: it appends to the
+    # in-memory list and persists the whole list atomically. There is no
+    # separate per-result file - that used to exist alongside this and every
+    # submission was silently double-counted when both were read back.
     predictor.add_result(firing_result)
-
-    # Persist to disk
-    _save_result_to_disk(result_id, result, photo_ids, fired_at)
 
     return {
         "result_id": result_id,
@@ -1305,46 +1337,36 @@ async def list_results(
     limit: int = 50,
 ):
     """List submitted firing results."""
-    # Load from disk for persistence across restarts
-    disk_results = _load_results_from_disk()
+    # predictor.results is the single source of truth, loaded once at startup
+    # and kept in sync by add_result() - no disk re-read or format merging.
+    results = predictor.results
 
     if recipe_name:
-        disk_results = [r for r in disk_results if recipe_name.lower() in r.get("recipe_name", "").lower()]
+        needle = recipe_name.lower()
+        results = [r for r in results if needle in (r.recipe_name or "").lower()]
 
     if cone:
-        disk_results = [r for r in disk_results if _get_cone(r) == cone]
+        results = [r for r in results if r.firing_schedule and r.firing_schedule.cone.value == cone]
 
-    results_out = []
-    for r in disk_results[:limit]:
-        # Resolve photo URLs from photo_ids
-        photos = []
-        for pid in r.get("photo_ids", []):
-            for f in UPLOADS_DIR.glob(f"{pid}.*"):
-                photos.append({"url": f"/uploads/{f.name}", "caption": None})
-                break
-        # Also include photos from seed data format
-        for p in r.get("photos", []):
-            if isinstance(p, dict) and p.get("url"):
-                photos.append({"url": p["url"], "caption": p.get("caption")})
+    results = sorted(results, key=lambda r: r.fired_at, reverse=True)
 
-        # Normalize: support both user-submitted format (firing_cone) and seed format (firing_schedule.cone)
-        fs = r.get("firing_schedule", {}) or {}
-        results_out.append({
-            "result_id": r.get("result_id"),
-            "recipe_name": r.get("recipe_name"),
-            "cone": r.get("firing_cone") or fs.get("cone"),
-            "atmosphere": r.get("firing_atmosphere") or fs.get("atmosphere"),
-            "firing_type": r.get("firing_type") or fs.get("firing_type"),
-            "clay_body": r.get("clay_body"),
-            "surface_quality": r.get("surface_quality"),
-            "color": r.get("color_description") or (r.get("color", {}) or {}).get("primary_color") if isinstance(r.get("color"), dict) else r.get("color_description") or r.get("color"),
-            "defects": r.get("defects", []),
-            "notes": r.get("notes"),
-            "photos": photos,
-            "fired_at": r.get("fired_at"),
-        })
-
-    return results_out
+    return [
+        {
+            "result_id": r.result_id,
+            "recipe_name": r.recipe_name,
+            "cone": r.firing_schedule.cone.value if r.firing_schedule else None,
+            "atmosphere": r.firing_schedule.atmosphere.value if r.firing_schedule else None,
+            "firing_type": r.firing_schedule.firing_type.value if r.firing_schedule else None,
+            "clay_body": r.clay_body.value if r.clay_body else None,
+            "surface_quality": r.surface_quality.value if r.surface_quality else None,
+            "color": r.color.primary_color if r.color else None,
+            "defects": [d.value for d in r.defects],
+            "notes": r.notes,
+            "photos": [{"url": p.url, "caption": p.caption} for p in r.photos],
+            "fired_at": r.fired_at.isoformat(),
+        }
+        for r in results[:limit]
+    ]
 
 
 # ============== Reference Data Endpoints ==============
@@ -1366,8 +1388,29 @@ async def list_atmospheres():
 
 @app.get("/api/reference/clay-bodies")
 async def list_clay_bodies():
-    """List clay body types."""
+    """List clay body types (the abstract ClayBody categories, not named bodies)."""
     return [{"value": c.value} for c in ClayBody]
+
+
+@app.get("/api/reference/clay-bodies-detailed")
+async def list_clay_bodies_detailed():
+    """List named clay bodies with real fit-relevant properties.
+
+    Unlike /api/reference/clay-bodies (bare ClayBody enum values with no
+    chemistry), these come from data/materials/clay_bodies.json and carry
+    an actual COE per named body - what the glaze-fit check needs to give a
+    real answer instead of one hardcoded default for every body.
+    """
+    return [
+        {
+            "name": b.get("name"),
+            "type": b.get("type"),
+            "coe": b.get("coe"),
+            "cone_range": b.get("cone_range"),
+            "description": b.get("description"),
+        }
+        for b in clay_body_db.get_all()
+    ]
 
 
 @app.get("/api/reference/umf-ranges/{cone}")

@@ -1,9 +1,12 @@
 """Glaze chemistry analysis service."""
 
+import json
+import logging
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Optional
 
-from ..models.materials import OxideAnalysis
+from ..models.materials import OxideAnalysis, OXIDE_MOLECULAR_WEIGHTS
 from ..models.glaze import (
     GlazeRecipe,
     ConeTemperature,
@@ -11,6 +14,30 @@ from ..models.glaze import (
     GlazeSurface,
 )
 from ..models.umf import UMF, StullPoint, get_umf_ranges
+
+logger = logging.getLogger(__name__)
+
+_REFERENCE_DIR = Path(__file__).parent.parent.parent / "data" / "reference"
+
+
+def _load_oxide_properties() -> dict:
+    path = _REFERENCE_DIR / "oxide_properties.json"
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f).get("oxides", {})
+    except (json.JSONDecodeError, IOError) as e:
+        logger.error("Error loading oxide_properties.json: %s", e)
+        return {}
+
+
+def _load_defect_guide() -> dict:
+    path = _REFERENCE_DIR / "defect_guide.json"
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f).get("defects", {})
+    except (json.JSONDecodeError, IOError) as e:
+        logger.error("Error loading defect_guide.json: %s", e)
+        return {}
 
 
 @dataclass
@@ -39,7 +66,8 @@ class ChemistryAnalysis:
 @dataclass
 class ThermalExpansionAnalysis:
     """Analysis of thermal expansion and fit."""
-    calculated_coe: float  # Coefficient of expansion
+    calculated_coe: float  # Coefficient of expansion, x10^-6/C
+    clay_body_coe: float
     crazing_risk: str  # "low", "medium", "high"
     shivering_risk: str
     recommendations: list[str]
@@ -47,6 +75,24 @@ class ThermalExpansionAnalysis:
 
 class GlazeAnalyzer:
     """Analyze glaze chemistry and predict properties."""
+
+    def __init__(
+        self,
+        oxide_properties: Optional[dict] = None,
+        defect_guide: Optional[dict] = None,
+    ):
+        """Args:
+            oxide_properties: symbol -> {coe_factor, ...}. Defaults to
+                data/reference/oxide_properties.json (Digitalfire-sourced).
+            defect_guide: defect key -> {chemistry_remedies, other_remedies,
+                ...}. Defaults to data/reference/defect_guide.json.
+        """
+        self.oxide_properties = (
+            oxide_properties if oxide_properties is not None else _load_oxide_properties()
+        )
+        self.defect_guide = (
+            defect_guide if defect_guide is not None else _load_defect_guide()
+        )
 
     def analyze_chemistry(
         self,
@@ -154,27 +200,27 @@ class GlazeAnalyzer:
 
         Args:
             recipe: Glaze recipe with UMF.
-            clay_body_coe: Coefficient of expansion of clay body.
+            clay_body_coe: Coefficient of expansion of the clay body, x10^-6/C
+                (see data/materials/clay_bodies.json for real per-body
+                values - callers should resolve one there rather than pass
+                nothing). Falls back to 6.0, a generic stoneware midpoint,
+                only if the caller has no body information at all.
 
         Returns:
-            ThermalExpansionAnalysis with fit predictions.
+            ThermalExpansionAnalysis with fit predictions. calculated_coe is
+            an estimate from oxide chemistry, not a dilatometer measurement -
+            see _calculate_coe for what that does and doesn't capture.
         """
         if not recipe.umf:
             raise ValueError("Recipe must have UMF calculated")
 
-        umf = recipe.umf
+        coe = self._calculate_coe(recipe.umf)
+        clay_coe = clay_body_coe if clay_body_coe is not None else 6.0
 
-        # Calculate approximate COE using Appen factors
-        # This is simplified - real calculation would use full Appen method
-        coe = self._calculate_approximate_coe(umf)
-
-        # Typical clay body COE ranges
-        # Stoneware: ~5.5-6.5 x 10^-6
-        # Porcelain: ~4.5-5.5 x 10^-6
-        default_clay_coe = 6.0
-        clay_coe = clay_body_coe or default_clay_coe
-
-        # Determine risks
+        # Determine risks. Thresholds unchanged from the previous
+        # implementation - they were tuned against the same ~5-8 output
+        # scale this real formula also produces (validated against typical
+        # cone 6 glossy UMFs during development).
         coe_diff = coe - clay_coe
 
         if coe_diff > 1.0:
@@ -191,20 +237,29 @@ class GlazeAnalyzer:
         else:
             shivering_risk = "low"
 
-        recommendations = ["COE is approximate (+/- 1.0) — test with dilatometer for production use"]
+        recommendations = [
+            "Calculated from oxide chemistry, not measured - clay bodies in "
+            "particular cannot be predicted this way (see the caveat in "
+            "data/reference/oxide_properties.json). Confirm with a real fit "
+            "test before production use."
+        ]
         if crazing_risk in ("medium", "high"):
-            recommendations.append("Reduce alkali flux (Na2O, K2O) to lower expansion")
-            recommendations.append("Add more silica or boron")
+            recommendations += self._defect_remedies("crazing")
         if shivering_risk in ("medium", "high"):
-            recommendations.append("Increase alkali flux to raise expansion")
-            recommendations.append("Reduce silica slightly")
+            recommendations += self._defect_remedies("shivering")
 
         return ThermalExpansionAnalysis(
             calculated_coe=coe,
+            clay_body_coe=clay_coe,
             crazing_risk=crazing_risk,
             shivering_risk=shivering_risk,
             recommendations=recommendations,
         )
+
+    def _defect_remedies(self, defect_key: str) -> list[str]:
+        """Chemistry-only remedies for a defect from the archived guide."""
+        defect = self.defect_guide.get(defect_key, {})
+        return list(defect.get("chemistry_remedies", []))
 
     def compare_recipes(
         self,
@@ -259,42 +314,44 @@ class GlazeAnalyzer:
         else:
             return (8, 12)
 
-    def _calculate_approximate_coe(self, umf: UMF) -> float:
-        """Calculate approximate coefficient of expansion.
+    def _calculate_coe(self, umf: UMF) -> float:
+        """Estimate glaze coefficient of thermal expansion from its UMF.
 
-        Uses simplified Appen factors. Values are x 10^-6.
+        Method: convert each oxide's UMF molar amount to weight percent of
+        the fired glass (molar x molecular weight, normalized to 100), then
+        sum weight_percent x coe_factor across oxides. coe_factor values are
+        archived from Digitalfire (data/reference/oxide_properties.json).
+        Validated against typical cone 6 glossy UMFs to land in the ~5-8
+        x10^-6/C range that matches the clay body COEs already in
+        data/materials/clay_bodies.json, so the two numbers are comparable.
 
-        DISCLAIMER: This is a rough approximation using weighted averages of
-        simplified Appen factors. Real COE depends on oxide interactions,
-        cooling rate, and crystallization. Accuracy is estimated at +/- 1.0.
-        For food-safe or production work, test with a dilatometer.
+        This estimates a GLAZE's expansion only. Digitalfire is explicit
+        that the same approach does not work for clay bodies: fired clay is
+        a mix of unreacted mineral grains, melted glass and altered crystal
+        phases, not a single oxide-formula glass. Always resolve clay body
+        COE from data/materials/clay_bodies.json (or a real measurement),
+        never calculate it.
         """
-        # Appen factors (simplified)
-        factors = {
-            "SiO2": 0.5,
-            "Al2O3": 1.0,
-            "B2O3": -1.5,  # Reduces expansion
-            "Na2O": 7.0,
-            "K2O": 6.5,
-            "Li2O": 5.0,
-            "CaO": 3.0,
-            "MgO": 0.5,
-            "BaO": 3.5,
-            "ZnO": 1.5,
-        }
+        if not self.oxide_properties:
+            return 6.0  # No factor data available - can't estimate.
 
-        total = 0.0
-        weight_sum = 0.0
+        weights: dict[str, float] = {}
+        for oxide, molecular_weight in OXIDE_MOLECULAR_WEIGHTS.items():
+            molar = getattr(umf, oxide, 0.0)
+            if molar > 0:
+                weights[oxide] = molar * molecular_weight
 
-        for oxide, factor in factors.items():
-            value = getattr(umf, oxide, 0.0)
-            if value > 0:
-                total += value * factor
-                weight_sum += value
+        total_weight = sum(weights.values())
+        if total_weight <= 0:
+            return 6.0
 
-        if weight_sum > 0:
-            return total / weight_sum * 10  # Scale to typical range
-        return 6.0  # Default
+        coe = 0.0
+        for oxide, weight in weights.items():
+            factor = self.oxide_properties.get(oxide, {}).get("coe_factor")
+            if factor is not None:
+                coe += (weight / total_weight * 100) * factor
+
+        return round(coe, 2)
 
     def _compare_ingredients(
         self,

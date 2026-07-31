@@ -1470,6 +1470,10 @@
                         <span class="card-title-icon">📊</span>
                         Full Recipe Analysis
                     </h3>
+                    <select id="analyze-clay-body-select" style="margin-right:0.5rem;"
+                            data-tooltip="Check glaze fit against a real clay body COE">
+                        <option value="">Fit check: no clay body selected</option>
+                    </select>
                     <button id="analyze-recipe-btn" class="small">Analyze Recipe</button>
                 </div>
                 <div id="analysis-results">
@@ -2161,6 +2165,22 @@
                 }
             }
         });
+
+        // Load named clay bodies (with real COE) for the glaze-fit check
+        async function loadClayBodiesDetailed() {
+            try {
+                const response = await fetch(`${API_BASE}/api/reference/clay-bodies-detailed`);
+                const bodies = await response.json();
+                const select = document.getElementById('analyze-clay-body-select');
+                if (!select) return;
+                select.innerHTML = '<option value="">Fit check: no clay body selected</option>'
+                    + bodies.map(b =>
+                        `<option value="${escapeHtml(b.name)}">${escapeHtml(b.name)} (COE ${b.coe})</option>`
+                    ).join('');
+            } catch (error) {
+                console.error('Failed to load clay bodies:', error);
+            }
+        }
 
         // Load materials
         async function loadMaterials() {
@@ -3553,7 +3573,11 @@
 
             try {
                 const validColorants = recipeColorants.filter(c => c.name && c.percentage > 0);
-                const response = await fetch(`${API_BASE}/api/recipes/analyze`, {
+                const clayBodyName = document.getElementById('analyze-clay-body-select')?.value || '';
+                const url = new URL(`${API_BASE}/api/recipes/analyze`, window.location.origin);
+                if (clayBodyName) url.searchParams.set('clay_body_name', clayBodyName);
+
+                const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -3577,6 +3601,51 @@
                 console.error('Failed to analyze:', error);
                 showToast('Failed to analyze recipe', 'error');
             }
+        }
+
+        function renderThermalExpansion(fit) {
+            if (!fit) {
+                return `
+                    <div class="analysis-section" style="margin-bottom:0.75rem;">
+                        <h4 style="margin-bottom:0.5rem;">Glaze Fit</h4>
+                        <p class="text-muted" style="font-size:0.85rem;">
+                            Select a clay body above and re-analyze to check crazing/shivering risk
+                            against a real body COE.
+                        </p>
+                    </div>
+                `;
+            }
+
+            const riskBadge = (risk) => {
+                const cls = risk === 'high' ? 'badge-danger' : risk === 'medium' ? 'badge-warning' : 'badge-success';
+                return `<span class="badge ${cls}">${escapeHtml(risk)}</span>`;
+            };
+
+            return `
+                <div class="analysis-section" style="margin-bottom:0.75rem;">
+                    <h4 style="margin-bottom:0.5rem;">Glaze Fit</h4>
+                    <div class="grid grid-2" style="gap:0.5rem;font-size:0.85rem;margin-bottom:0.5rem;">
+                        <div style="padding:0.5rem;background:var(--bg-secondary);border-radius:var(--radius-sm);">
+                            <div style="color:var(--text-muted);font-size:0.75rem;">Calculated Glaze COE</div>
+                            <div style="font-weight:600;">${fit.calculated_coe.toFixed(2)} &times;10&#8315;&#8310;/&#176;C</div>
+                        </div>
+                        <div style="padding:0.5rem;background:var(--bg-secondary);border-radius:var(--radius-sm);">
+                            <div style="color:var(--text-muted);font-size:0.75rem;">Clay Body COE</div>
+                            <div style="font-weight:600;">${fit.clay_body_coe.toFixed(2)} &times;10&#8315;&#8310;/&#176;C</div>
+                        </div>
+                    </div>
+                    <p style="margin-bottom:0.5rem;">
+                        Crazing risk: ${riskBadge(fit.crazing_risk)}
+                        &nbsp;&nbsp;Shivering risk: ${riskBadge(fit.shivering_risk)}
+                    </p>
+                    ${fit.recommendations.map(r => `
+                        <div class="recommendation-item">
+                            <span class="issue-icon">💡</span>
+                            <span>${escapeHtml(r)}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
         }
 
         function renderAnalysis(data) {
@@ -3672,6 +3741,8 @@
                         ${fluxes.length === 0 ? '<p class="text-muted" style="font-size:0.85rem;">No fluxes detected</p>' : ''}
                     </div>
                 </div>
+
+                ${renderThermalExpansion(data.thermal_expansion)}
 
                 ${issues.length ? `
                     <div class="analysis-section" style="margin-bottom:0.75rem;">
@@ -5061,6 +5132,7 @@
         loadMaterialTypes();
         loadColorants();
         loadUnavailableMaterials();
+        loadClayBodiesDetailed();
 
         // Show quick start on first visit
         if (!localStorage.getItem('glaze-visited')) {
