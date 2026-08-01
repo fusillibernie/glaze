@@ -1199,6 +1199,19 @@
                                 <button class="small" onclick="calculateBatch()" style="margin-bottom:0.1rem;">Calculate</button>
                             </div>
                             <div id="batch-results"></div>
+
+                            <div class="mt-1" style="padding-top:0.75rem;border-top:1px solid var(--border);">
+                                <label style="font-size:0.8rem;">Slurry Specific Gravity</label>
+                                <p class="text-muted" style="font-size:0.75rem;margin-bottom:0.5rem;">
+                                    Weigh a measured volume of mixed slurry, then enter both
+                                    (e.g. 140g in a 100mL sample = 1.40).
+                                </p>
+                                <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+                                    <input type="number" id="sg-weight" placeholder="Weight (g)" min="0" step="0.1" style="width:110px;" oninput="updateSpecificGravity()">
+                                    <input type="number" id="sg-volume" placeholder="Volume (mL)" min="0" step="0.1" style="width:110px;" oninput="updateSpecificGravity()">
+                                    <span id="sg-result" class="font-mono" style="font-weight:600;"></span>
+                                </div>
+                            </div>
                         </div>
                     </details>
                 </div>
@@ -2878,6 +2891,22 @@
             html += '</table>';
 
             document.getElementById('batch-results').innerHTML = html;
+        }
+
+        // SG = weight / volume - Digitalfire's documented measurement method
+        // (e.g. "100 ccs weighs 140 grams, that is 1.4 specific gravity").
+        // Measures an already-mixed slurry sample; this is not a predictive
+        // calculation of how much water a dry batch needs to reach a target
+        // SG - no verified formula for that was found when this was built.
+        function updateSpecificGravity() {
+            const weight = parseFloat(document.getElementById('sg-weight').value);
+            const volume = parseFloat(document.getElementById('sg-volume').value);
+            const resultEl = document.getElementById('sg-result');
+            if (!isFinite(weight) || !isFinite(volume) || volume <= 0) {
+                resultEl.textContent = '';
+                return;
+            }
+            resultEl.textContent = `SG: ${(weight / volume).toFixed(3)}`;
         }
 
         // Load saved recipes on startup
