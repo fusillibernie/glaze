@@ -17,7 +17,8 @@
       },
       "alternate_names": [
         "Custer",
-        "Custer Spar"
+        "Custer Spar",
+        "Potash Feldspar"
       ]
     },
     {
@@ -94,7 +95,8 @@
         "EP Kaolin",
         "EPK",
         "Edgar Plastic Kaolin",
-        "Kaolin"
+        "Kaolin",
+        "China Clay"
       ]
     },
     {
@@ -686,7 +688,10 @@
         "Fe2O3": 0.2,
         "TiO2": 0.15,
         "MgO": 0.14
-      }
+      },
+      "alternate_names": [
+        "Cornish Stone"
+      ]
     },
     {
       "name": "Colemanite",

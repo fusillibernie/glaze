@@ -139,6 +139,14 @@ class TestCuratedRecipeIntegrity:
         (Burnt Umber, Yellow Ochre), one missing common material (Borax),
         and a Mason stain product code not in colorants.json. Same
         reasoning as the baseline - these should warn, not be guessed at.
+
+        +10 from data/recipes/wood_chinese_glazes.json (Nigel Wood,
+        "Chinese Glazes", 1999): UK specialty ball-clay brands with no US
+        equivalent in this database (Hyplas 71 x5, SMD, BBV) and Molochite
+        (a branded calcined china clay) x2 - deliberately left unresolved
+        rather than approximated to a generic clay, since their oxide
+        analyses (given in the book) differ meaningfully from any US
+        ball clay already in the database.
         """
         unresolved = 0
         for path in glob.glob("data/recipes/*.json"):
@@ -154,7 +162,7 @@ class TestCuratedRecipeIntegrity:
                     name = ing.get("material") or ing.get("name")
                     if name and db.get(name) is None:
                         unresolved += 1
-        assert unresolved <= 16, f"unresolved ingredient refs rose to {unresolved}"
+        assert unresolved <= 26, f"unresolved ingredient refs rose to {unresolved}"
 
 
 class TestUnresolvedAPI:
