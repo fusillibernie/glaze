@@ -78,8 +78,17 @@ class CommunityRecipeService:
         # Start with candidate indexes
         candidates = None
 
-        if cone and cone in self._cone_index:
-            candidates = set(self._cone_index[cone])
+        # Unlike surface/atmosphere/subtype below, this used to only apply
+        # the cone filter `if cone in self._cone_index` - an unmatched cone
+        # value (typo, or a value the index never indexed) left `candidates`
+        # at None, which falls through to "no filter", silently returning
+        # the entire unfiltered corpus instead of zero results. .get(cone, [])
+        # matches the other three filters: an unmatched value narrows to an
+        # empty set like it should, found by
+        # test_unknown_cone_returns_empty_not_everything.
+        if cone:
+            idx = set(self._cone_index.get(cone, []))
+            candidates = idx if candidates is None else candidates & idx
         if surface:
             surface_lower = surface.lower()
             idx = set(self._surface_index.get(surface_lower, []))
