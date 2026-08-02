@@ -154,6 +154,88 @@
         "Ensure even kiln heat distribution; electric kilns need slower firing (no draft to even things out)",
         "Overnight candling at the boiling point before ramping up"
       ]
+    },
+    "bittiness": {
+      "category": "surface",
+      "summary": "Small imperfections make the fired glaze surface look and feel slightly rough, despite adequate glaze thickness over the body.",
+      "causes": [
+        "Glaze not sieved, or sieved through too coarse a mesh, or a faulty sieve",
+        "Material added to the glaze after sieving",
+        "Contamination from material clinging to the clay/bisque surface, dislodged during dipping",
+        "Crystals of calcium carbonate growing in stored slop glaze - frits have a small but real solubility in water, and dissolved calcium recombines with carbonate ions from dissolved CO2 in the water over time (worse in warm weather, worse with more soluble/alkaline frits)"
+      ],
+      "remedies": [
+        "Resieve the glaze through a sufficiently fine mesh; fit a recirculation pump to keep glaze in suspension and continuously screened",
+        "Store slop glaze cool - calcium carbonate crystal growth is markedly slower in cold storage",
+        "Store glaze dry rather than as a slop where practical",
+        "Reformulate toward stiffer, less soluble frits if recurring",
+        "A small acid addition (hydrochloric or acetic) delays carbonate bead formation, but flocculates the glaze - usually not worth the tradeoff"
+      ],
+      "cross_reference": {
+        "source": "fraser-ceramic-faults-2005",
+        "note": "Removing the tiny calcium carbonate beads before use does not measurably change the fired glaze, since the calcium removed is a small fraction of the total."
+      }
+    },
+    "bloating": {
+      "category": "body",
+      "summary": "Bulges or blisters appear in ware fired to vitrification (stoneware/porcelain), revealing a cavity when broken open. Rare in porous bodies like earthenware.",
+      "chemistry_cause": "Gas generation (from carbonaceous material burning off, or dissociation of iron oxides/sulphides/carbonates/manganese) coinciding with vitrification sealing the body's surface before the gas can escape.",
+      "causes": [
+        "Overfiring, or firing too quickly through the 650-1000C carbon-burnout range before the surface vitrifies",
+        "Increased volatile/carbonaceous material content in the clay batch (fireclays and ball clays can vary 1-2% batch to batch)",
+        "Residual moisture in once-fired ware at the point the surface densifies, trapping interior gas",
+        "Reduction within the 650-1000C range converts Fe2O3 to FeO, a much more vigorous flux that seals the surface early",
+        "More common in electric kilns (poor ventilation vs. a gas kiln's moving atmosphere) and in tightly packed loads"
+      ],
+      "remedies": [
+        "Lower the maximum firing temperature (treats the symptom, not the cause, but usually works)",
+        "Slow the firing through the 650-1000C carbon-burnout range, or extend once-fired ware's time in that range to 5+ hours",
+        "Add grog or coarse sand to open the body structure and let gases escape more easily",
+        "Use low-iron clays/grogs if firing in reduction, since high-iron material fluxes and softens early, allowing easier deformation",
+        "Ensure ware is fully dry before firing, or slow the firing to compensate for residual moisture",
+        "To diagnose: refire some unglazed ware from the same load - if it stays bloat-free while glazed ware bloats, the cause is trapped gas rather than overfiring"
+      ],
+      "cross_reference": {
+        "source": "fraser-ceramic-faults-2005",
+        "note": "Electric kilns bloat more readily than gas due to poorer ventilation during the carbon-burnout stage."
+      }
+    },
+    "blow_out": {
+      "category": "body",
+      "summary": "A piece of biscuit or glazed biscuit flakes/ejects away from the pot, usually during biscuit firing, leaving a cavity - often with a white or off-white particle remnant visible at its base.",
+      "causes": [
+        "Particles of pyrites or lime-bearing nodules in the clay, which hydrate and swell after a low-temperature biscuit firing",
+        "With once-fired (not twice-fired) ware, pyrite particles can eject pieces of ware directly"
+      ],
+      "remedies": [
+        "Source clay with fewer mineral inclusions, or screen/process to remove them",
+        "Lime blow-outs are rare in stoneware/porcelain: the higher firing temperature converts the lime nodule into stable complex silicates instead of reverting to reactive calcium oxide on cooling, and the fired body is strong enough to resist the hydration pressure"
+      ],
+      "cross_reference": {
+        "source": "fraser-ceramic-faults-2005",
+        "note": "Distinct from bloating: blow-out is a biscuit-stage mineral-inclusion problem, not a glost-stage gas-trapping problem."
+      }
+    },
+    "colemanite_splutter": {
+      "category": "glaze_fit",
+      "summary": "Pieces of glaze are ejected from the pot during firing when colemanite releases its water of crystallisation too quickly (colemanite is ~27% water by weight, typically released 400-800C) - leaves bare patches on the ware and glaze speckles on the kiln shelf.",
+      "chemistry_cause": "Colemanite (hydrated calcium borate, ~2CaO*3B2O3*5H2O, composition varies by source) is a variable, partly-soluble natural mineral - unlike a fritted boron source, its water of crystallisation is released raw during firing rather than already driven off during manufacture.",
+      "causes": [
+        "Too much colemanite in the recipe relative to what the glaze film thickness can tolerate",
+        "European (Turkish) colemanite splutters more readily than American sources at the same percentage"
+      ],
+      "chemistry_remedies": [
+        "Replace colemanite with calcium borate frit (an exact drop-in for the boron/calcium chemistry, with the water already removed during fritting) - the standard industry fix",
+        "Keep raw colemanite to roughly 7-10% of the recipe for European sources if it must be used raw (American colemanite tolerates somewhat more)"
+      ],
+      "other_remedies": [
+        "Fire more slowly up to about 800C",
+        "Keep the glaze film as thin as possible"
+      ],
+      "cross_reference": {
+        "source": "fraser-ceramic-faults-2005",
+        "note": "Gerstley Borate behaves similarly - it's an ore containing colemanite plus ulexite (sodium calcium borate)."
+      }
     }
   }
 }

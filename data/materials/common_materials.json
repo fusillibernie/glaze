@@ -691,7 +691,7 @@
     {
       "name": "Colemanite",
       "type": "boron",
-      "description": "Natural calcium borate mineral. Very high B2O3 content — insoluble boron source. High concentrations cause decrepitation (wrinkling/spalling). Industry prefers boron frits; colemanite chemistry varies by source (Turkey, Chile, California).",
+      "description": "Natural calcium borate mineral. Very high B2O3 content — insoluble boron source. High concentrations cause decrepitation (wrinkling/spalling). Industry prefers boron frits; colemanite chemistry varies by source (Turkey, Chile, California). Fraser (Ceramic Faults and Their Remedies) puts a practical ceiling on raw use: keep to roughly 7-10% of the recipe (European/Turkish sources; American colemanite tolerates somewhat more) or risk 'splutter' - glaze pieces ejecting from the ware as colemanite's ~27%-by-weight water of crystallisation releases too fast, typically 400-800C. Calcium borate frit is chemically equivalent with that water already removed, and is the standard fix.",
       "source": "digitalfire",
       "analysis": {
         "B2O3": 50.8,
