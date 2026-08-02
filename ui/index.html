@@ -2599,20 +2599,55 @@
             showToast('Recipe cleared', 'info');
         });
 
-        // ============== Recipe Save/Load (localStorage) ==============
-        const SAVED_RECIPES_KEY = 'glaze-saved-recipes';
+        // ============== Recipe Save/Load (backend, GET/POST/DELETE /api/recipes/saved) ==============
+        // Was localStorage-only: clearing the browser or switching devices
+        // silently lost every saved recipe. cachedSavedRecipes mirrors the
+        // `materials`-array pattern used elsewhere in this file so
+        // onclick="loadSavedRecipe(id)" handlers (which only get an id, not
+        // a fetch-friendly async context) can look a recipe up synchronously.
+        const SAVED_RECIPES_KEY = 'glaze-saved-recipes'; // legacy, migration-only
+        let cachedSavedRecipes = [];
 
-        function getSavedRecipes() {
+        async function fetchSavedRecipes() {
             try {
-                return JSON.parse(localStorage.getItem(SAVED_RECIPES_KEY) || '[]');
-            } catch { return []; }
+                const response = await fetch(`${API_BASE}/api/recipes/saved`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                cachedSavedRecipes = Array.isArray(data) ? data : [];
+            } catch (error) {
+                console.error('Failed to load saved recipes:', error);
+                cachedSavedRecipes = [];
+            }
+            return cachedSavedRecipes;
         }
 
-        function setSavedRecipes(recipes) {
-            localStorage.setItem(SAVED_RECIPES_KEY, JSON.stringify(recipes));
+        // One-time, non-destructive: if this browser has recipes saved from
+        // before this backend existed and the backend has none yet, adopt
+        // them. localStorage itself is left alone either way.
+        async function migrateLocalStorageRecipesIfNeeded() {
+            let legacy;
+            try {
+                legacy = JSON.parse(localStorage.getItem(SAVED_RECIPES_KEY) || '[]');
+            } catch { legacy = []; }
+            if (!legacy.length) return;
+
+            const current = await fetchSavedRecipes();
+            if (current.length > 0) return;
+
+            for (const recipe of legacy) {
+                try {
+                    await fetch(`${API_BASE}/api/recipes/saved`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(recipe),
+                    });
+                } catch (error) {
+                    console.error('Failed to migrate saved recipe:', recipe.name, error);
+                }
+            }
         }
 
-        function saveCurrentRecipe() {
+        async function saveCurrentRecipe() {
             const name = document.getElementById('recipe-name').value.trim();
             if (!name) {
                 showToast('Please name your recipe before saving', 'warning');
@@ -2626,8 +2661,9 @@
             }
 
             const validColorants = recipeColorants.filter(c => c.name && c.percentage > 0);
+            const existing = cachedSavedRecipes.find(r => r.name === name);
             const recipe = {
-                id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+                id: existing?.id,
                 name,
                 cone: targetCone,
                 ingredients: validIngredients.map(i => ({ name: i.name, percentage: i.percentage })),
@@ -2640,24 +2676,23 @@
                 savedAt: new Date().toISOString(),
             };
 
-            const saved = getSavedRecipes();
-            // Check if same name exists — update it
-            const existingIdx = saved.findIndex(r => r.name === name);
-            if (existingIdx >= 0) {
-                recipe.id = saved[existingIdx].id;
-                saved[existingIdx] = recipe;
-                showToast(`Updated "${name}"`, 'success');
-            } else {
-                saved.unshift(recipe);
-                showToast(`Saved "${name}"`, 'success');
+            try {
+                const response = await fetch(`${API_BASE}/api/recipes/saved`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(recipe),
+                });
+                if (!response.ok) throw new Error('Save failed');
+                showToast(existing ? `Updated "${name}"` : `Saved "${name}"`, 'success');
+                await renderSavedRecipes();
+            } catch (error) {
+                console.error('Failed to save recipe:', error);
+                showToast('Failed to save recipe', 'error');
             }
-            setSavedRecipes(saved);
-            renderSavedRecipes();
         }
 
         function loadSavedRecipe(id) {
-            const saved = getSavedRecipes();
-            const recipe = saved.find(r => r.id === id);
+            const recipe = cachedSavedRecipes.find(r => r.id === id);
             if (!recipe) return;
 
             document.getElementById('recipe-name').value = recipe.name;
@@ -2673,18 +2708,24 @@
             setTimeout(() => calculateUMF(true), 300);
         }
 
-        function deleteSavedRecipe(id, e) {
+        async function deleteSavedRecipe(id, e) {
             e.stopPropagation();
-            const saved = getSavedRecipes();
-            const recipe = saved.find(r => r.id === id);
-            const filtered = saved.filter(r => r.id !== id);
-            setSavedRecipes(filtered);
-            renderSavedRecipes();
-            showToast(`Deleted "${recipe?.name || 'recipe'}"`, 'info');
+            const recipe = cachedSavedRecipes.find(r => r.id === id);
+            try {
+                const response = await fetch(`${API_BASE}/api/recipes/saved/${encodeURIComponent(id)}`, {
+                    method: 'DELETE',
+                });
+                if (!response.ok) throw new Error('Delete failed');
+                showToast(`Deleted "${recipe?.name || 'recipe'}"`, 'info');
+                await renderSavedRecipes();
+            } catch (error) {
+                console.error('Failed to delete recipe:', error);
+                showToast('Failed to delete recipe', 'error');
+            }
         }
 
-        function renderSavedRecipes() {
-            const saved = getSavedRecipes();
+        async function renderSavedRecipes() {
+            const saved = await fetchSavedRecipes();
             const countEl = document.getElementById('saved-recipe-count');
             const listEl = document.getElementById('saved-recipes-list');
             countEl.textContent = saved.length;
@@ -2909,8 +2950,11 @@
             resultEl.textContent = `SG: ${(weight / volume).toFixed(3)}`;
         }
 
-        // Load saved recipes on startup
-        renderSavedRecipes();
+        // Load saved recipes on startup. migrateLocalStorageRecipesIfNeeded
+        // adopts any pre-backend localStorage recipes the first time this
+        // runs against an empty store; renderSavedRecipes always runs after,
+        // whether or not there was anything to migrate.
+        migrateLocalStorageRecipesIfNeeded().finally(() => renderSavedRecipes());
 
         // UMF Calculation
         document.getElementById('calculate-umf-btn').addEventListener('click', () => calculateUMF(false));
@@ -4274,10 +4318,11 @@
             loadFiringLog();
         }
 
-        function populateFiringRecipeSelect() {
+        async function populateFiringRecipeSelect() {
             const sel = document.getElementById('firing-recipe-name');
-            // Add saved recipes
-            const saved = getSavedRecipes();
+            // Add saved recipes (re-fetch: this lazy-loaded tab can open
+            // before the startup load finishes populating the cache)
+            const saved = await fetchSavedRecipes();
             saved.forEach(r => {
                 const opt = document.createElement('option');
                 opt.value = r.name;

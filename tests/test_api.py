@@ -267,6 +267,76 @@ class TestRecipeAPI:
         assert response.status_code in [200, 422]
 
 
+class TestSavedRecipesAPI:
+    """Tests for the user's saved recipes (backend replacement for what was
+    previously localStorage-only in the browser)."""
+
+    def _sample(self, **overrides):
+        recipe = {
+            "name": "My Test Glaze",
+            "cone": "6",
+            "ingredients": [{"name": "Custer Feldspar", "percentage": 100}],
+            "colorants": [],
+            "umf": None,
+        }
+        recipe.update(overrides)
+        return recipe
+
+    def test_list_starts_empty(self, client):
+        response = client.get("/api/recipes/saved")
+        assert response.status_code == 200
+        assert response.json() == []
+
+    def test_save_then_appears_in_list(self, client):
+        client.post("/api/recipes/saved", json=self._sample())
+        response = client.get("/api/recipes/saved")
+        names = [r["name"] for r in response.json()]
+        assert "My Test Glaze" in names
+
+    def test_save_returns_assigned_id(self, client):
+        response = client.post("/api/recipes/saved", json=self._sample())
+        assert response.status_code == 200
+        assert response.json()["id"]
+
+    def test_save_without_name_is_422(self, client):
+        response = client.post("/api/recipes/saved", json={"ingredients": []})
+        assert response.status_code == 422
+
+    def test_resave_same_name_updates_not_duplicates(self, client):
+        client.post("/api/recipes/saved", json=self._sample(cone="6"))
+        client.post("/api/recipes/saved", json=self._sample(cone="10"))
+
+        recipes = client.get("/api/recipes/saved").json()
+        matching = [r for r in recipes if r["name"] == "My Test Glaze"]
+        assert len(matching) == 1
+        assert matching[0]["cone"] == "10"
+
+    def test_delete_removes_it(self, client):
+        saved = client.post("/api/recipes/saved", json=self._sample()).json()
+        response = client.delete(f"/api/recipes/saved/{saved['id']}")
+        assert response.status_code == 200
+        assert client.get("/api/recipes/saved").json() == []
+
+    def test_delete_unknown_id_is_404(self, client):
+        response = client.delete("/api/recipes/saved/not-a-real-id")
+        assert response.status_code == 404
+
+    def test_deep_fields_round_trip_through_the_api(self, client):
+        """Ingredients/colorants/umf must survive a save+list cycle intact,
+        not just the top-level name/cone fields."""
+        recipe = self._sample(
+            ingredients=[{"name": "Custer Feldspar", "percentage": 60},
+                         {"name": "Silica (Flint)", "percentage": 40}],
+            colorants=[{"name": "Cobalt Carbonate", "percentage": 1.5}],
+            umf={"SiO2": 3.5, "Al2O3": 0.4, "surface": "glossy"},
+        )
+        client.post("/api/recipes/saved", json=recipe)
+        fetched = client.get("/api/recipes/saved").json()[0]
+        assert fetched["ingredients"] == recipe["ingredients"]
+        assert fetched["colorants"] == recipe["colorants"]
+        assert fetched["umf"] == recipe["umf"]
+
+
 class TestReferenceAPI:
     """Tests for reference data endpoints."""
 

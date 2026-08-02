@@ -43,6 +43,7 @@ from src.integrations.glazy_client import GlazyClient
 from src.services.glazy_bulk import CommunityRecipeService
 from src.services.recipe_db import RecipeDatabase
 from src.services.clay_body_db import ClayBodyDatabase
+from src.services.recipe_storage import RecipeStorage
 from src.services import exporter
 
 
@@ -79,6 +80,7 @@ glazy_client = GlazyClient(cache_dir=DATA_DIR / "glazy_cache")
 community_recipes = CommunityRecipeService(DATA_DIR / "glazy_bulk" / "glazy_recipes.json")
 recipe_db = RecipeDatabase(DATA_DIR)
 clay_body_db = ClayBodyDatabase(DATA_DIR / "materials")
+recipe_storage = RecipeStorage(DATA_DIR / "saved_recipes" / "saved_recipes.json")
 
 logger = logging.getLogger(__name__)
 
@@ -995,6 +997,41 @@ async def recipe_statistics():
 async def recipe_sources():
     """Get info about loaded recipe data sources."""
     return recipe_db.get_sources()
+
+
+# ============== Saved Recipes (user's own, not the bulk corpus) ==============
+#
+# Previously localStorage-only in the browser - clearing the browser or
+# switching devices silently lost every saved recipe. No auth on this API
+# (see CLAUDE.md), so "saved recipes" means everything saved through this
+# app instance, same scope localStorage already had.
+
+@app.get("/api/recipes/saved")
+async def list_saved_recipes():
+    """List the user's saved recipes, most recently saved first."""
+    return recipe_storage.get_all()
+
+
+@app.post("/api/recipes/saved")
+async def save_recipe(recipe: dict = Body(...)):
+    """Save or update a recipe.
+
+    An explicit "id" updates that record. Otherwise a "name" match against
+    an existing saved recipe updates it in place - matches the resave
+    behavior the localStorage version already had, so switching to this
+    endpoint doesn't change what "Save" does.
+    """
+    if not recipe.get("name"):
+        raise HTTPException(status_code=422, detail="Recipe must have a name")
+    return recipe_storage.save(recipe)
+
+
+@app.delete("/api/recipes/saved/{recipe_id}")
+async def delete_saved_recipe(recipe_id: str):
+    """Delete a saved recipe by id."""
+    if not recipe_storage.delete(recipe_id):
+        raise HTTPException(status_code=404, detail="Saved recipe not found")
+    return {"deleted": recipe_id}
 
 
 @app.get("/api/reference/umf-limits-all")
