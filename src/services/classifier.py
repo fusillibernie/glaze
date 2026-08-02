@@ -126,15 +126,26 @@ class GlazeClassifier:
 
     def __init__(self):
         """Initialize classifier."""
+        # Keyed by a stable identifier, NOT by name - see _index_recipe.
         self._recipe_index: dict[str, GlazeClassification] = {}
         self._by_region: dict[StullRegion, list[str]] = {r: [] for r in StullRegion}
         self._by_category: dict[GlazeCategory, list[str]] = {c: [] for c in GlazeCategory}
+        # name -> [keys], so lookup by name still works when names collide.
+        self._name_to_keys: dict[str, list[str]] = {}
 
-    def classify(self, recipe: GlazeRecipe) -> GlazeClassification:
+    def classify(
+        self,
+        recipe: GlazeRecipe,
+        index_key: Optional[str] = None,
+    ) -> GlazeClassification:
         """Classify a glaze recipe.
 
         Args:
             recipe: Glaze recipe with calculated UMF.
+            index_key: Stable identifier to index under. Defaults to the
+                recipe name, which is not unique across the corpus - pass
+                a real id (Glazy id, source/source_id) when indexing bulk
+                or curated data.
 
         Returns:
             GlazeClassification with full analysis.
@@ -203,7 +214,7 @@ class GlazeClassifier:
         )
 
         # Index for search
-        self._index_recipe(recipe.name, classification)
+        self._index_recipe(index_key or recipe.name, classification)
 
         return classification
 
@@ -383,19 +394,49 @@ class GlazeClassifier:
 
         return tags
 
-    def _index_recipe(self, name: str, classification: GlazeClassification) -> None:
-        """Index a recipe for search."""
-        self._recipe_index[name.lower()] = classification
-        self._by_region[classification.stull.region].append(name)
-        self._by_category[classification.category].append(name)
+    @staticmethod
+    def _discard(bucket: dict, group, key: str) -> None:
+        """Remove key from bucket[group] if present."""
+        entries = bucket.get(group)
+        if entries and key in entries:
+            entries.remove(key)
+
+    def _index_recipe(self, key: str, classification: GlazeClassification) -> None:
+        """Index a classification under a stable key.
+
+        Keying by name alone silently dropped 1,007 of 10,799 Glazy bulk
+        records whose names collide ("floating blue" appears 22 times,
+        "celadon" 12, and 50 records have no name at all) - those recipes
+        were invisible to every region and category search. The region and
+        category buckets hold keys internally; the search methods map them
+        back to display names so callers see no change.
+        """
+        key = key.strip().lower()
+
+        previous = self._recipe_index.get(key)
+        if previous is not None:
+            # Re-classifying the same key must not leave a stale region
+            # entry behind, nor grow the buckets without bound.
+            self._discard(self._by_region, previous.stull.region, key)
+            self._discard(self._by_category, previous.category, key)
+            self._discard(self._name_to_keys, previous.recipe_name.lower(), key)
+
+        self._recipe_index[key] = classification
+        self._by_region[classification.stull.region].append(key)
+        self._by_category[classification.category].append(key)
+        self._name_to_keys.setdefault(classification.recipe_name.lower(), []).append(key)
+
+    def _names_for(self, keys: list[str]) -> list[str]:
+        """Map internal keys back to display names."""
+        return [self._recipe_index[k].recipe_name for k in keys if k in self._recipe_index]
 
     def search_by_region(self, region: StullRegion) -> list[str]:
         """Find all glazes in a Stull region."""
-        return self._by_region.get(region, [])
+        return self._names_for(self._by_region.get(region, []))
 
     def search_by_category(self, category: GlazeCategory) -> list[str]:
         """Find all glazes in a category."""
-        return self._by_category.get(category, [])
+        return self._names_for(self._by_category.get(category, []))
 
     def search_similar(
         self,
@@ -419,13 +460,13 @@ class GlazeClassifier:
         ref_stull = self._get_stull_coordinates(recipe.umf)
         similar = []
 
-        for name, classification in self._recipe_index.items():
-            if name.lower() == recipe.name.lower():
+        for classification in self._recipe_index.values():
+            if classification.recipe_name.lower() == recipe.name.lower():
                 continue
 
             dist = ref_stull.distance_to(classification.stull)
             if dist <= max_distance:
-                similar.append((name, dist))
+                similar.append((classification.recipe_name, dist))
 
         similar.sort(key=lambda x: x[1])
         return similar[:limit]
@@ -450,11 +491,11 @@ class GlazeClassifier:
         """
         matches = []
 
-        for name, classification in self._recipe_index.items():
+        for classification in self._recipe_index.values():
             stull = classification.stull
             if (sio2_min <= stull.sio2 <= sio2_max and
                 al2o3_min <= stull.al2o3 <= al2o3_max):
-                matches.append(name)
+                matches.append(classification.recipe_name)
 
         return matches
 
@@ -478,7 +519,7 @@ class GlazeClassifier:
         """
         matches = []
 
-        for name, classification in self._recipe_index.items():
+        for classification in self._recipe_index.values():
             if alkali_dominant is not None:
                 if classification.alkali_dominant != alkali_dominant:
                     continue
@@ -492,13 +533,22 @@ class GlazeClassifier:
             if not barium_allowed and classification.barium_present:
                 continue
 
-            matches.append(name)
+            matches.append(classification.recipe_name)
 
         return matches
 
     def get_classification(self, recipe_name: str) -> Optional[GlazeClassification]:
-        """Get classification for a recipe by name."""
-        return self._recipe_index.get(recipe_name.lower())
+        """Get classification for a recipe by name.
+
+        Falls back to the name index when the corpus was indexed under
+        stable ids. Where several recipes share a name, returns the first
+        indexed - previously the later one silently replaced the earlier.
+        """
+        key = recipe_name.strip().lower()
+        if key in self._recipe_index:
+            return self._recipe_index[key]
+        keys = self._name_to_keys.get(key)
+        return self._recipe_index[keys[0]] if keys else None
 
     def get_statistics(self) -> dict:
         """Get statistics about indexed glazes."""

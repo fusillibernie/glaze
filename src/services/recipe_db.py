@@ -313,8 +313,3 @@ class RecipeDatabase:
                 pass
 
         return sources
-
-    def get_all(self) -> list[dict]:
-        """Get all recipes."""
-        self._ensure_loaded()
-        return self._recipes

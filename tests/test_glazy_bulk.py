@@ -21,8 +21,9 @@ SAMPLE_RECIPES = [
         "subtype": "Glaze", "atmospheres": ["Reduction"],
         "description": "A classic amber celadon with iron breaks",
         "ingredients": [{"name": "Custer Feldspar", "pct": 50}],
-        # SiO2 65.7%, Al2O3 11.5% -> SiO2 mol 1.0937, Al2O3 mol 0.1128
-        # -> Si:Al = 9.70
+        # SiO2 65.7% -> 1.0935 mol, Al2O3 11.5% -> 0.1128 mol,
+        # flux = CaO 10.0% -> 0.1783 mol. Normalized to flux unity:
+        # SiO2 UMF 6.13, Al2O3 UMF 0.633, Si:Al ratio 9.70.
         "analysis": {"SiO2": 65.7, "Al2O3": 11.5, "CaO": 10.0},
     },
     {
@@ -70,8 +71,43 @@ class TestLoading:
         assert svc.total == 0
 
     def test_umf_computed_from_analysis(self, service):
+        """UMF is normalized to flux unity, so it shares a coordinate space
+        with user recipes on the Stull chart.
+
+        These fields used to hold the Si:Al ratio in sio2_umf and raw
+        moles-per-100g in al2o3_umf - which put ~70% of the community
+        overlay off the right edge of a chart drawn on [0, 6].
+        """
         r = service.get_by_id(1)
-        assert r["sio2_umf"] == pytest.approx(9.70, abs=0.05)
+        assert r["sio2_umf"] == pytest.approx(6.13, abs=0.02)
+        assert r["al2o3_umf"] == pytest.approx(0.633, abs=0.002)
+        assert r["si_al_ratio"] == pytest.approx(9.70, abs=0.05)
+
+    def test_sio2_umf_is_not_the_ratio(self, service):
+        """Guards the specific regression: the two fields were computed by
+        identical expressions."""
+        r = service.get_by_id(1)
+        assert r["sio2_umf"] != r["si_al_ratio"]
+
+    def test_umf_lands_in_chart_range(self, service):
+        """Resolvable records should plot inside the Stull chart's drawn
+        axes (SiO2 0-6, Al2O3 0-1) rather than off-canvas."""
+        for rid in (1, 2):
+            r = service.get_by_id(rid)
+            assert 0 < r["sio2_umf"] < 6.5, f"recipe {rid} SiO2 off-chart"
+            assert 0 < r["al2o3_umf"] < 1.0, f"recipe {rid} Al2O3 off-chart"
+
+    def test_fluxless_recipe_is_excluded_not_plotted(self, service):
+        """Recipe 3 is SiO2/Al2O3/Fe2O3 only - no flux oxides, so UMF
+        (which normalizes fluxes to unity) is undefined. It must report
+        zero and be dropped from the overlay rather than plotted at a
+        meaningless coordinate, which is what the old ratio-based
+        calculation did.
+        """
+        r = service.get_by_id(3)
+        assert r["sio2_umf"] == 0
+        assert r["al2o3_umf"] == 0
+        assert all(p["id"] != 3 for p in service.stull_scatter())
 
     def test_missing_analysis_defaults_umf_to_zero(self, service):
         r = service.get_by_id(4)
@@ -159,8 +195,8 @@ class TestGetById:
 
 class TestStullNeighbors:
     def test_finds_recipes_within_radius(self, service):
-        # Recipe 1 has sio2_umf ~9.70; search near that point
-        neighbors = service.stull_neighbors(sio2=9.7, al2o3=0.11, radius=0.5)
+        # Recipe 1 sits at SiO2 UMF 6.13 / Al2O3 UMF 0.633
+        neighbors = service.stull_neighbors(sio2=6.13, al2o3=0.633, radius=0.5)
         assert any(n["id"] == 1 for n in neighbors)
 
     def test_excludes_recipes_with_no_umf_data(self, service):
@@ -168,12 +204,12 @@ class TestStullNeighbors:
         assert not any(n["id"] == 4 for n in neighbors)
 
     def test_sorted_by_distance_ascending(self, service):
-        neighbors = service.stull_neighbors(sio2=9.7, al2o3=0.11, radius=999)
+        neighbors = service.stull_neighbors(sio2=6.13, al2o3=0.633, radius=999)
         distances = [n["distance"] for n in neighbors]
         assert distances == sorted(distances)
 
     def test_respects_limit(self, service):
-        neighbors = service.stull_neighbors(sio2=9.7, al2o3=0.11, radius=999, limit=1)
+        neighbors = service.stull_neighbors(sio2=6.13, al2o3=0.633, radius=999, limit=1)
         assert len(neighbors) <= 1
 
 

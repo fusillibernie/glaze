@@ -25,7 +25,8 @@ class CommunityRecipeService:
             self.recipes = json.load(f)
 
         # Precompute UMF for each recipe from percent analysis
-        from src.models.materials import OXIDE_MOLECULAR_WEIGHTS
+        from src.models.materials import OxideAnalysis
+        from src.models.umf import UMF
 
         for i, r in enumerate(self.recipes):
             r["_idx"] = i
@@ -44,17 +45,28 @@ class CommunityRecipeService:
             for atm in r.get("atmospheres", []):
                 self._atmosphere_index.setdefault(atm.lower(), []).append(i)
 
-            # Compute approximate SiO2/Al2O3 UMF values from percent analysis
+            # Compute real UMF (fluxes normalized to unity) from the
+            # published weight-percent analysis, so these coordinates share
+            # a space with user recipes on the Stull chart.
+            #
+            # These three fields previously held: the Si:Al ratio in
+            # _sio2_umf (the identical expression to _si_al_ratio) and raw
+            # moles-per-100g in _al2o3_umf, neither normalized to flux
+            # unity. Against a chart drawn on [0, 6] that put ~70% of the
+            # community dots off the right edge with y values ~3x too low.
             analysis = r.get("analysis", {})
-            sio2_pct = analysis.get("SiO2", 0)
-            al2o3_pct = analysis.get("Al2O3", 0)
-            if sio2_pct and al2o3_pct:
-                # Convert weight% to moles
-                sio2_mol = sio2_pct / 60.08
-                al2o3_mol = al2o3_pct / 101.96
-                r["_sio2_umf"] = round(sio2_mol / max(al2o3_mol, 0.001), 2)
-                r["_al2o3_umf"] = round(al2o3_mol, 4)
-                r["_si_al_ratio"] = round(sio2_mol / max(al2o3_mol, 0.001), 1)
+            if analysis.get("SiO2") and analysis.get("Al2O3"):
+                try:
+                    umf = UMF.from_oxide_analysis(OxideAnalysis.from_dict(analysis))
+                except Exception:
+                    umf = None
+            else:
+                umf = None
+
+            if umf is not None and umf.flux_total > 0 and umf.Al2O3 > 0:
+                r["_sio2_umf"] = round(umf.SiO2, 3)
+                r["_al2o3_umf"] = round(umf.Al2O3, 4)
+                r["_si_al_ratio"] = round(umf.silica_alumina_ratio, 1)
             else:
                 r["_sio2_umf"] = 0
                 r["_al2o3_umf"] = 0

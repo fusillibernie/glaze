@@ -87,6 +87,22 @@ safety_assessor = SafetyAssessor(materials_db)
 logger = logging.getLogger(__name__)
 
 
+def _index_key(record: dict) -> str:
+    """Stable, unique classifier key for a recipe record.
+
+    Names are not unique across the corpus - 1,007 of the 10,799 Glazy
+    bulk records share a name with another ("floating blue" x22, and 50
+    have no name at all), so keying the index by name made those records
+    invisible to region and category search.
+    """
+    if record.get("id") is not None:
+        return f"glazy:{record['id']}"
+    source, source_id = record.get("source"), record.get("source_id")
+    if source and source_id:
+        return f"{source}:{source_id}"
+    return f"name:{(record.get('name') or 'unnamed').strip().lower()}"
+
+
 def _seed_classifier_index() -> None:
     """Pre-populate the classifier's search index from the recipe corpus.
 
@@ -111,7 +127,7 @@ def _seed_classifier_index() -> None:
                 skipped += 1
                 continue
             name = record.get("name") or record.get("result_id") or "Unnamed"
-            classifier.classify(GlazeRecipe(name=name, umf=umf))
+            classifier.classify(GlazeRecipe(name=name, umf=umf), index_key=_index_key(record))
             indexed += 1
         except Exception:
             skipped += 1
