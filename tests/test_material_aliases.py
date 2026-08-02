@@ -147,6 +147,16 @@ class TestCuratedRecipeIntegrity:
         rather than approximated to a generic clay, since their oxide
         analyses (given in the book) differ meaningfully from any US
         ball clay already in the database.
+
+        +97 from data/recipes/zakin_electric_kiln.json (Richard Zakin,
+        "Electric Kiln Ceramics", 2004): Zakin deliberately writes his
+        recipes with generic category names rather than branded products
+        (the book's own stated design - readers substitute their local
+        supplier's equivalent), so "Boron Frit" (44x, many different real
+        frits fit), "Red Clay" and "Stoneware Clay" (27x/25x, Zakin's own
+        unbranded blends) and "Soda Frit" (1x) are left unresolved rather
+        than guessed at - mapping "Boron Frit" to one specific frit would
+        silently pick a UMF that may not match what the reader mixes.
         """
         unresolved = 0
         for path in glob.glob("data/recipes/*.json"):
@@ -162,7 +172,7 @@ class TestCuratedRecipeIntegrity:
                     name = ing.get("material") or ing.get("name")
                     if name and db.get(name) is None:
                         unresolved += 1
-        assert unresolved <= 26, f"unresolved ingredient refs rose to {unresolved}"
+        assert unresolved <= 123, f"unresolved ingredient refs rose to {unresolved}"
 
 
 class TestUnresolvedAPI:
