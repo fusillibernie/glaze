@@ -127,11 +127,27 @@ class TargetResolver:
         # Step 1: Get base UMF ranges from cone bracket + surface
         base_ranges = self._get_base_ranges(cone, surface, target)
 
-        # Step 2: If category is specified, overlay category profile
+        # Step 2: Add the user's own colorant additions first.
+        # _apply_category_profile's required_colorants dedup check reads
+        # target.colorant_additions to skip a category colorant the user
+        # already specified - it must run after this, not before, or the
+        # dedup check always sees an empty list and never dedupes anything
+        # (found by test_required_colorant_not_duplicated_if_user_specified
+        # in tests/test_target_resolver.py, which failed until this was
+        # reordered - a user picking e.g. Celadon and manually adding Red
+        # Iron Oxide got it added twice, doubling the intended iron).
+        if colorants:
+            for c in colorants:
+                target.colorant_additions.append(ColorantAddition(
+                    material_name=c.get("material_name", ""),
+                    percentage=c.get("percentage", 0.0),
+                ))
+
+        # Step 3: If category is specified, overlay category profile
         if category:
             base_ranges = self._apply_category_profile(base_ranges, category, target)
 
-        # Step 3: Convert to OxideRange objects
+        # Step 4: Convert to OxideRange objects
         for oxide, (lo, hi) in base_ranges.items():
             # KNaO gets split into K2O and Na2O later by the solver;
             # store as combined for now
@@ -143,14 +159,6 @@ class TargetResolver:
             target.oxide_ranges.append(OxideRange(
                 oxide=oxide, min_val=lo, max_val=hi, weight=weight,
             ))
-
-        # Step 4: Add colorant additions
-        if colorants:
-            for c in colorants:
-                target.colorant_additions.append(ColorantAddition(
-                    material_name=c.get("material_name", ""),
-                    percentage=c.get("percentage", 0.0),
-                ))
 
         return target
 
