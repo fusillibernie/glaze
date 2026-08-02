@@ -1,5 +1,5 @@
 {
-  "_source_note": "Nine numbered recipes from Chapter 14 ('Glaze Recipes') of Nigel Wood's 'Chinese Glazes: Their Origins, Chemistry and Re-creation' (A & C Black, 1999, reprinted 2007) - ingredient/percentage data and firing notes only, descriptions written independently. These are Wood's own calculated reconstructions of historical Chinese glaze chemistry (derived from published oxide analyses of genuine wares), not the original historical batch recipes, which are lost. UK material terms are mapped to US equivalents already used elsewhere in this database: 'Potash Feldspar' to Custer Feldspar, 'Cornish Stone' to Cornwall Stone, 'China Clay' to EPK Kaolin, 'Flint'/'Quartz' to Silica (Flint). Specific UK ball-clay brands (Hyplas 71, Hymod SMD, BBV) and Molochite (a branded calcined china clay) have no equivalent in this database and are left as unresolved rather than approximated - their oxide analyses are given in the book (roughly: Hyplas 71 is a high-silica ball clay, SMD and BBV are ordinary aluminous ball clays, Molochite is ~54% SiO2/42% Al2O3 calcined china clay). Each recipe also carries the book's fired oxide-percentage analysis (fired_oxide_analysis) as published, alongside the batch recipe - useful as an independent chemistry cross-check, not something this app's UMF calculator currently consumes directly.",
+  "_source_note": "Nine numbered recipes from Chapter 14 ('Glaze Recipes') of Nigel Wood's 'Chinese Glazes: Their Origins, Chemistry and Re-creation' (A & C Black, 1999, reprinted 2007) - ingredient/percentage data and firing notes only, descriptions written independently. These are Wood's own calculated reconstructions of historical Chinese glaze chemistry (derived from published oxide analyses of genuine wares), not the original historical batch recipes, which are lost. UK material terms are mapped to US equivalents already used elsewhere in this database: 'Potash Feldspar' to Custer Feldspar, 'Cornish Stone' to Cornwall Stone, 'China Clay' to EPK Kaolin, 'Flint'/'Quartz' to Silica (Flint). Specific UK ball-clay brands (Hyplas 71, Hymod SMD, BBV) and Molochite (a branded calcined china clay) have no equivalent in this database and are left as unresolved rather than approximated - their oxide analyses are given in the book (roughly: Hyplas 71 is a high-silica ball clay, SMD and BBV are ordinary aluminous ball clays, Molochite is ~54% SiO2/42% Al2O3 calcined china clay). Each recipe also carries the book's fired oxide-percentage analysis (fired_oxide_analysis) as published, alongside the batch recipe - useful as an independent chemistry cross-check, not something this app's UMF calculator currently consumes directly. Where Wood prints a single combined alkali column, it is stored under the literal key 'K2O+Na2O' (glazes 3, 6 and 7) rather than being split - the book does not say how it divides.",
   "wood_chinese_glazes": [
     {
       "name": "Porcelain Glaze (Wood, Glaze 1)",
@@ -133,7 +133,8 @@
         "TiO2": 0.3,
         "Fe2O3": 1.9,
         "CaO": 11.2,
-        "MgO": 1.3
+        "MgO": 1.3,
+        "K2O+Na2O": 5.0
       },
       "notes": "1230-1260C in good reduction; best character between 1230-1250C. Higher-iron versions show attractive straw-yellow/amber in oxidation. Suitable for dry or biscuited clay."
     },
@@ -279,7 +280,8 @@
         "CaO": 9.1,
         "MgO": 0.1,
         "MnO": 2.7,
-        "CoO": 0.3
+        "CoO": 0.3,
+        "K2O+Na2O": 3.0
       },
       "notes": "1220-1250C; tends to run above ~1250C. Best at medium thickness - too thin looks golden-brown/tortoiseshell rather than black, too thick becomes dull and crystalline."
     },
@@ -333,7 +335,8 @@
         "CaO": 7.6,
         "MgO": 1.6,
         "MnO": 1.6,
-        "CoO": 0.3
+        "CoO": 0.3,
+        "K2O+Na2O": 5.52
       },
       "notes": "1250-1310C. Increasing iron oxide to 1.0% darkens/enriches the blue. Needs thorough ball-milling to disperse the cobalt evenly (otherwise fires with visible flecks) - if no ball mill, substitute cobalt carbonate and manganese carbonate for the oxides since they disperse more easily. Green tone from reduced iron is an important part of the colour, so good reduction gives the best results."
     },

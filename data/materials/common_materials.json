@@ -102,7 +102,7 @@
     {
       "name": "Grolleg Kaolin",
       "type": "clay",
-      "description": "English kaolin, very white, good for porcelain",
+      "description": "English kaolin, very white, good for porcelain. Analysis corroborated by Nigel Wood, 'Chinese Glazes' p.266, which publishes SiO2 48.0 / Al2O3 37.0 / K2O 1.85 / Fe2O3 0.75 / TiO2 0.02 for the same clay - agreeing with this entry to within rounding.",
       "analysis": {
         "SiO2": 47.3,
         "Al2O3": 37.0,
@@ -113,7 +113,11 @@
         "Fe2O3": 0.7,
         "TiO2": 0.03,
         "LOI": 12.0
-      }
+      },
+      "alternate_names": [
+        "Grolleg",
+        "Grolleg China Clay"
+      ]
     },
     {
       "name": "Whiting (Calcium Carbonate)",
@@ -1019,6 +1023,91 @@
         "Fe2O3": 0.08,
         "LOI": 0.5
       }
+    },
+    {
+      "name": "Hyplas 71 Ball Clay",
+      "type": "clay",
+      "description": "High-silica ECC ball clay. Wood specifies it where the extra silica matters - substituting an ordinary aluminous ball clay requires roughly 7% clay plus 5% quartz instead. Analysis from Nigel Wood, 'Chinese Glazes' (A & C Black, 1999) p.266. LOI is the balance to 100%. Book publishes KNaO 2.3 combined; split 95:5 K2O:Na2O per the Grolleg and Molochite rows in the same ECC table.",
+      "source": "wood-chinese-glazes-1999",
+      "analysis": {
+        "SiO2": 71.0,
+        "Al2O3": 19.0,
+        "TiO2": 1.5,
+        "Fe2O3": 0.6,
+        "CaO": 0.1,
+        "MgO": 0.14,
+        "K2O": 2.185,
+        "Na2O": 0.115,
+        "LOI": 5.36
+      },
+      "alternate_names": [
+        "Hyplas 71",
+        "Hyplas"
+      ]
+    },
+    {
+      "name": "Hymod SMD Ball Clay",
+      "type": "clay",
+      "description": "ECC ball clay, more aluminous than Hyplas 71. Analysis from Nigel Wood, 'Chinese Glazes' (A & C Black, 1999) p.266. LOI is the balance to 100%. Book publishes KNaO 2.5 combined; split 95:5 K2O:Na2O per the Grolleg and Molochite rows in the same ECC table.",
+      "source": "wood-chinese-glazes-1999",
+      "analysis": {
+        "SiO2": 66.0,
+        "Al2O3": 22.0,
+        "TiO2": 1.6,
+        "Fe2O3": 1.0,
+        "CaO": 0.1,
+        "MgO": 0.5,
+        "K2O": 2.375,
+        "Na2O": 0.125,
+        "LOI": 6.3
+      },
+      "alternate_names": [
+        "SMD Ball Clay",
+        "Hymod SMD",
+        "SMD"
+      ]
+    },
+    {
+      "name": "AT Ball Clay",
+      "type": "clay",
+      "description": "Highly aluminous, comparatively iron-rich ECC ball clay. Analysis from Nigel Wood, 'Chinese Glazes' (A & C Black, 1999) p.266. LOI is the balance to 100%. Book publishes KNaO 3.5 combined; split 95:5 K2O:Na2O per the Grolleg and Molochite rows in the same ECC table.",
+      "source": "wood-chinese-glazes-1999",
+      "analysis": {
+        "SiO2": 52.0,
+        "Al2O3": 30.0,
+        "TiO2": 1.0,
+        "Fe2O3": 2.6,
+        "CaO": 0.2,
+        "MgO": 0.6,
+        "K2O": 3.325,
+        "Na2O": 0.175,
+        "LOI": 10.1
+      },
+      "alternate_names": [
+        "AT Clay"
+      ]
+    },
+    {
+      "name": "Molochite",
+      "type": "clay",
+      "description": "Calcined china clay from English China Clays, used to cut the drying shrinkage of a glaze. Being calcined it has effectively no LOI. Wood notes 15% raw china clay may be substituted if unavailable. Analysis from Nigel Wood, 'Chinese Glazes' (A & C Black, 1999) p.266. LOI is the balance to 100%.",
+      "source": "wood-chinese-glazes-1999",
+      "analysis": {
+        "SiO2": 54.5,
+        "Al2O3": 42.0,
+        "TiO2": 0.07,
+        "Fe2O3": 1.1,
+        "CaO": 0.06,
+        "MgO": 0.31,
+        "K2O": 2.0,
+        "Na2O": 0.1,
+        "LOI": 0.0
+      },
+      "alternate_names": [
+        "Molochite (Calcined China Clay)",
+        "Molochite Dust",
+        "Calcined China Clay"
+      ]
     }
   ]
 }
