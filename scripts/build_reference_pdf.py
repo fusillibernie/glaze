@@ -395,6 +395,61 @@ def firing_schedules_section(story, st):
             st["Note"]))
 
 
+def safety_section(story, st):
+    data = json.loads((DATA / "reference" / "safety_guide.json").read_text(encoding="utf-8"))
+    story.append(PageBreak())
+    story.append(Paragraph("Food-Contact Safety", st["H"]))
+    story.append(Paragraph(data.get("description", ""), st["Note"]))
+    story.append(Spacer(1, 6))
+    core = data.get("core_principle")
+    if core:
+        story.append(Paragraph(f"<b>Core principle:</b> {core}", st["Body"]))
+    story.append(Spacer(1, 10))
+
+    story.append(Paragraph("Concerning Oxides", st["H2"]))
+    rows = [["Oxide", "Name", "In this app's UMF", "Note"]]
+    for symbol, ox in data.get("concerning_oxides", {}).items():
+        rows.append([
+            Paragraph(f"<b>{symbol}</b>", st["Cell"]),
+            ox.get("name", ""),
+            "yes" if ox.get("tracked_in_umf") else "no",
+            Paragraph(ox.get("note", ""), st["Cell"]),
+        ])
+    table = Table(rows, repeatRows=1, colWidths=[0.6 * inch, 0.9 * inch, 1.1 * inch, 7.4 * inch])
+    table.setStyle(base_table_style())
+    table.setStyle(TableStyle([("ALIGN", (0, 0), (2, -1), "LEFT"), ("ALIGN", (3, 0), (3, -1), "LEFT")]))
+    story.append(table)
+    story.append(Spacer(1, 10))
+
+    story.append(Paragraph("Chemistry Risk Factors", st["H2"]))
+    for key, note in data.get("chemistry_risk_factors", {}).items():
+        story.append(Paragraph(f"<b>{key.replace('_', ' ').title()}:</b> {note}", st["Note"]))
+        story.append(Spacer(1, 3))
+    story.append(Spacer(1, 6))
+
+    story.append(Paragraph("Testing Methods", st["H2"]))
+    for key, note in data.get("testing_methods", {}).items():
+        story.append(Paragraph(f"<b>{key.replace('_', ' ').title()}:</b> {note}", st["Note"]))
+        story.append(Spacer(1, 3))
+    story.append(Spacer(1, 6))
+
+    story.append(Paragraph("Safe Formulation Guidance", st["H2"]))
+    for tip in data.get("safe_formulation_guidance", []):
+        story.append(Paragraph(f"&#183; {tip}", st["Note"]))
+        story.append(Spacer(1, 3))
+    story.append(Spacer(1, 6))
+
+    handling = data.get("handling_hazards", {})
+    if handling:
+        story.append(Paragraph("Handling Hazards (raw material dust/fume, not fired-glaze leaching)", st["H2"]))
+        for symbol, h in handling.items():
+            story.append(Paragraph(f"<b>{symbol}:</b> {h.get('note', '')}", st["Note"]))
+            attribution = h.get("attribution")
+            if attribution:
+                story.append(Paragraph(f"<i>Source: {attribution}</i>", st["Note"]))
+            story.append(Spacer(1, 3))
+
+
 def provenance_section(story, st, db):
     story.append(PageBreak())
     story.append(Paragraph("Provenance &amp; Known Gaps", st["H"]))
@@ -492,6 +547,7 @@ def build(out_path: Path):
     oxide_properties_section(story, st)
     defect_guide_section(story, st)
     firing_schedules_section(story, st)
+    safety_section(story, st)
     provenance_section(story, st, db)
 
     doc.build(story, onFirstPage=decorate, onLaterPages=decorate)
