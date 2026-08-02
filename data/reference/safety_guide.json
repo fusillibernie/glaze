@@ -1,0 +1,70 @@
+{
+  "source": "digitalfire",
+  "description": "Food-contact safety guidance archived from Digitalfire ahead of the site's shutdown, primarily 'Are Your Glazes Food Safe or are They Leachable?' (digitalfire.com/article/12), plus oxide-specific hazard pages. This is guidance for spotting known risk patterns, not a certification - the article is explicit that only real leach testing (a lab, or the vinegar/dishwasher tests below) confirms whether a specific glaze is actually safe.",
+  "core_principle": "A glaze is leachable when its glass network is not fully stable - primarily from being underfired, or from having inadequate SiO2/Al2O3 relative to its flux content ('flux saturation'). Concerning oxides (lead, barium, lithium, manganese, copper, chrome, cadmium) are dangerous specifically because an unstable glass releases them; a well-melted, properly formulated glaze holds them far more securely.",
+  "concerning_oxides": {
+    "PbO": {
+      "name": "Lead",
+      "note": "Any presence is a food-safety concern. FDA 1992 CPG set 4% acetic-acid leach limits (cups/mugs at 0.5 micrograms/mL, previously 5.0). Even fritted/leadless-labeled glazes can leach if the glass itself is unstable.",
+      "tracked_in_umf": true
+    },
+    "BaO": {
+      "name": "Barium",
+      "note": "Like lead, leaches from improperly formulated or fired surfaces. Art-glaze levels of ~20-50% BaCO3 (matte/stony-matte effects) are almost certainly leachable. Strontium (SrO) is a non-hazardous substitute for its flux/color effects; calcia (CaO) can substitute for its matting effect.",
+      "tracked_in_umf": true
+    },
+    "Li2O": {
+      "name": "Lithium",
+      "note": "High lithium carbonate (>5% of the batch) is a specific red flag named in the source article, distinct from lithium-bearing feldspars like spodumene at typical percentages.",
+      "tracked_in_umf": true
+    },
+    "CuO": {
+      "name": "Copper",
+      "note": "Copper is well known to destabilize other metals in the fired glass and specifically increases lead solubility. A 10:10 ratio with manganese is called out as a specific heavy-metal leaching risk. 2% copper carbonate is cited as passing leaching tests in a well-formulated glaze - the concern is high concentrations and interaction with other colorants, not copper's mere presence. People with Wilson's disease should avoid it entirely.",
+      "tracked_in_umf": false
+    },
+    "MnO2": {
+      "name": "Manganese",
+      "note": "Public drinking water standards cited at 0.01-0.05 mg/liter as a benchmark. Combines with copper at high concentration as a specific leaching risk (see CuO). Separately a serious inhalation hazard during firing - see handling_hazards.",
+      "tracked_in_umf": false
+    },
+    "Cr2O3": {
+      "name": "Chrome",
+      "note": "Named alongside lead/barium/lithium/manganese/copper/cadmium as a substance requiring caution on food-contact surfaces. Not tracked in this app's UMF model.",
+      "tracked_in_umf": false
+    },
+    "CdO": {
+      "name": "Cadmium",
+      "note": "Named as a concerning oxide. Not tracked anywhere in this app's chemistry model - cadmium-selenium stains produce some bright reds/oranges/yellows and their exact formulation is manufacturer-specific. Check the SDS for saturated warm-color stains used on functional ware.",
+      "tracked_in_umf": false
+    }
+  },
+  "chemistry_risk_factors": {
+    "underfired": "If a glaze is not properly melted it will be leachable, regardless of its recipe. Test firing +/- 2 cones to confirm adequate melt.",
+    "low_glass_formers": "Inadequate SiO2 and Al2O3 relative to flux content is the single biggest chemistry driver of leaching - the same low-silica/low-alumina condition this app's chemistry analysis already flags as an 'issue' for other reasons (matte/dry surface, running) also means less capacity to hold colorants securely.",
+    "flux_saturation": "Excess feldspar (the article's example: 50%+) leaves too little silica/alumina to secure colorants even with normal-looking flux oxides.",
+    "excess_talc": "More than ~5% talc is named as a specific formulation red flag.",
+    "high_boron_frit_high_fire": "More than ~10% boron frit is unusual and flagged as suspicious specifically in high-fire (roughly cone 6+) glazes, where that much low-temperature flux is atypical.",
+    "crazing": "Crazing (fine surface cracks) shares its root cause with leaching - low silica/alumina relative to flux, causing high thermal expansion. A crazed surface is also porous enough to harbor bacteria independent of any metal leaching."
+  },
+  "testing_methods": {
+    "dishwasher_test": "Compare an identical piece left in a cupboard against one run through ~2 months of dishwasher cycles. Changes in color, gloss or texture indicate vulnerability to base attack.",
+    "vinegar_test": "Fill a glazed container halfway with vinegar (lemon juice is stronger) and leave several days; compare the surface above and below the liquid line. Adding 5% cobalt to an otherwise white/transparent glaze amplifies the visible effect - an unstable version may turn white after overnight leaching.",
+    "lab_testing": "Acidic solution held in contact with the glaze, then analyzed for trace metals. Individual metal tests typically run $30-60 each."
+  },
+  "safe_formulation_guidance": [
+    "A 'liner glaze' (clear/white interior food-contact surface, no added color) made from kaolin, ball clay, bentonite, silica, feldspar and calcium-based fluxes is the safest general approach.",
+    "Frits are safe as long as they contain no lead or barium - check the frit's own analysis.",
+    "Prefer ceramic stains over raw metal oxide colorants for functional ware; stains are sintered colorant/stabilizer blends and need far less raw material to achieve the same color than something like 15% raw manganese/cobalt/nickel/iron blends."
+  ],
+  "handling_hazards": {
+    "MnO2": {
+      "note": "Manganese fume during firing is a more serious hazard than the dust - a standard dust mask does not filter it, and open-air/outdoor firing is not sufficient protection on its own. Needs a respirator rated for metal fumes specifically. Source is a first-person account of chronic manganese toxicity from raku firing, not a regulatory standard - treated here as a strong cautionary note, not a numeric limit.",
+      "attribution": "digitalfire.com/hazard/manganese+toxicity+by+elke+blodgett (personal account)"
+    },
+    "CuO": {
+      "note": "OSHA rates copper dust as a relatively low hazard (TLV 1.0 mg/m3 - higher/safer than quartz's 0.05-0.1, lower/more hazardous than barium carbonate's 0.5) but it is an airborne irritant, and volatilized copper during firing can cause temporary metal fume fever.",
+      "attribution": "digitalfire.com/hazard/copper+compounds+toxicology"
+    }
+  }
+}

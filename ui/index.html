@@ -3721,6 +3721,39 @@
             `;
         }
 
+        function renderFoodSafety(safety) {
+            if (!safety) return '';
+
+            const riskBadge = (risk) => {
+                const cls = risk === 'high' ? 'badge-danger' : risk === 'medium' ? 'badge-warning' : 'badge-success';
+                return `<span class="badge ${cls}">${escapeHtml(risk)}</span>`;
+            };
+            const severityIcon = { concern: '❌', caution: '⚠️', info: 'ℹ️' };
+
+            return `
+                <div class="analysis-section" style="margin-bottom:0.75rem;">
+                    <h4 style="margin-bottom:0.5rem;">
+                        Food-Contact Safety ${riskBadge(safety.risk_level)}
+                    </h4>
+                    <p class="text-muted" style="font-size:0.8rem;margin-bottom:0.5rem;">
+                        Known risk patterns, not a certification — only real leach testing confirms
+                        whether a specific glaze is actually safe.
+                    </p>
+                    ${safety.findings.map(f => `
+                        <div class="${f.severity === 'info' ? 'recommendation-item' : 'warning-item'} mb-1">
+                            <span>${severityIcon[f.severity] || 'ℹ️'}</span>
+                            <span>${escapeHtml(f.message)}</span>
+                        </div>
+                    `).join('')}
+                    ${safety.testing_recommendation ? `
+                        <p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.5rem;">
+                            <strong>Test it:</strong> ${escapeHtml(safety.testing_recommendation)}
+                        </p>
+                    ` : ''}
+                </div>
+            `;
+        }
+
         function renderAnalysis(data) {
             // API returns ChemistryResponse at top level, not nested under .analysis
             const umf = data.umf || {};
@@ -3816,6 +3849,7 @@
                 </div>
 
                 ${renderThermalExpansion(data.thermal_expansion)}
+                ${renderFoodSafety(data.food_safety)}
 
                 ${issues.length ? `
                     <div class="analysis-section" style="margin-bottom:0.75rem;">

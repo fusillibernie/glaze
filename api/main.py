@@ -44,6 +44,7 @@ from src.services.glazy_bulk import CommunityRecipeService
 from src.services.recipe_db import RecipeDatabase
 from src.services.clay_body_db import ClayBodyDatabase
 from src.services.recipe_storage import RecipeStorage
+from src.services.safety_assessor import SafetyAssessor
 from src.services import exporter
 
 
@@ -81,6 +82,7 @@ community_recipes = CommunityRecipeService(DATA_DIR / "glazy_bulk" / "glazy_reci
 recipe_db = RecipeDatabase(DATA_DIR)
 clay_body_db = ClayBodyDatabase(DATA_DIR / "materials")
 recipe_storage = RecipeStorage(DATA_DIR / "saved_recipes" / "saved_recipes.json")
+safety_assessor = SafetyAssessor(materials_db)
 
 logger = logging.getLogger(__name__)
 
@@ -217,6 +219,18 @@ class UMFResponse(BaseModel):
     unresolved_materials: list[str] = Field(default_factory=list)
 
 
+class FoodSafetyFindingResponse(BaseModel):
+    key: str
+    severity: str
+    message: str
+
+
+class FoodSafetyResponse(BaseModel):
+    risk_level: str
+    findings: list[FoodSafetyFindingResponse]
+    testing_recommendation: str
+
+
 class ThermalExpansionResponse(BaseModel):
     calculated_coe: float
     clay_body_coe: float
@@ -233,6 +247,7 @@ class ChemistryResponse(BaseModel):
     warnings: list[str]
     recommendations: list[str]
     thermal_expansion: Optional[ThermalExpansionResponse] = None
+    food_safety: Optional[FoodSafetyResponse] = None
 
 
 class DualUMFResponse(BaseModel):
@@ -626,6 +641,23 @@ async def analyze_recipe(
             recommendations=fit.recommendations,
         )
 
+    # Reuses analysis.issues (already flags low SiO2/Al2O3) and the crazing
+    # risk from the fit check above, if one was run - both are risk factors
+    # the source article ties directly to leaching, not separate concerns.
+    safety = safety_assessor.assess(
+        glaze_recipe,
+        chemistry_issues=analysis.issues,
+        crazing_risk=thermal_expansion.crazing_risk if thermal_expansion else None,
+    )
+    food_safety = FoodSafetyResponse(
+        risk_level=safety.risk_level,
+        findings=[
+            FoodSafetyFindingResponse(key=f.key, severity=f.severity, message=f.message)
+            for f in safety.findings
+        ],
+        testing_recommendation=safety.testing_recommendation,
+    )
+
     # Unresolved ingredients are dropped before normalization, so the analysis
     # below describes only the part of the batch we could identify. Lead with
     # that rather than reporting it as a clean result.
@@ -663,6 +695,7 @@ async def analyze_recipe(
         warnings=warnings,
         recommendations=analysis.recommendations,
         thermal_expansion=thermal_expansion,
+        food_safety=food_safety,
     )
 
 

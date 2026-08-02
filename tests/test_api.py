@@ -207,6 +207,41 @@ class TestRecipeAPI:
         assert fit["clay_body_coe"] == 6.5
         assert fit["crazing_risk"] in ["low", "medium", "high"]
 
+    def test_analyze_includes_food_safety(self, client):
+        """food_safety is always computed - unlike the fit check it needs
+        no clay body selection - and replaces the old PbO>0/BaO>0.1-only
+        check with the richer risk-factor assessment."""
+        recipe_data = {
+            "name": "Test Recipe",
+            "ingredients": [
+                {"material_name": "Custer Feldspar", "percentage": 50.0},
+                {"material_name": "Silica (Flint)", "percentage": 30.0},
+                {"material_name": "EPK Kaolin", "percentage": 20.0},
+            ],
+            "target_cone": "6",
+        }
+        response = client.post("/api/recipes/analyze", json=recipe_data)
+        assert response.status_code == 200
+        safety = response.json()["food_safety"]
+        assert safety is not None
+        assert safety["risk_level"] in ["low", "medium", "high"]
+        assert safety["testing_recommendation"]
+
+    def test_analyze_flags_barium_in_food_safety(self, client):
+        recipe_data = {
+            "name": "Barium Test",
+            "ingredients": [
+                {"material_name": "Barium Carbonate", "percentage": 20.0},
+                {"material_name": "Custer Feldspar", "percentage": 50.0},
+                {"material_name": "Silica (Flint)", "percentage": 30.0},
+            ],
+            "target_cone": "6",
+        }
+        response = client.post("/api/recipes/analyze", json=recipe_data)
+        safety = response.json()["food_safety"]
+        assert any(f["key"] == "barium" for f in safety["findings"])
+        assert safety["risk_level"] == "high"
+
     def test_analyze_with_clay_body_type_uses_average(self, client):
         recipe_data = {
             "name": "Test Recipe",
