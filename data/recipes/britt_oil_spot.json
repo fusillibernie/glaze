@@ -1,0 +1,2522 @@
+{
+  "_source_note": "Recipes extracted from John Britt's self-published PDF 'Secrets of Oil Spot Glazes' (2024) - ingredient/percentage data only. Descriptions and notes above are written independently of the book's text, not copied from it. Wild/local materials (Sevier Shale, Vulcan Granite, Rotten Stone/Tripoli, Yellow Ochre, Burnt Umber) and commercial stain codes are not in this app's materials database and will show as unresolved ingredients rather than being silently substituted.",
+  "britt_oil_spot_glazes": [
+    {
+      "name": "John's SG-12",
+      "source": "britt-oil-spot-2024",
+      "source_id": 1,
+      "description": "Britt's primary go-to oil spot base, used with #4 Cover Glaze. A Redart/feldspar/ball clay body with dolomite and bone ash for magnesium.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 38.03
+        },
+        {
+          "material": "Red Art",
+          "percentage": 40.12
+        },
+        {
+          "material": "Ball Clay (OM4)",
+          "percentage": 9.46
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 5.53
+        },
+        {
+          "material": "Bone Ash",
+          "percentage": 2.06
+        },
+        {
+          "material": "Talc",
+          "percentage": 3.08
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 1.73
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 4.5
+        },
+        {
+          "material": "Rutile",
+          "percentage": 1.0
+        }
+      ],
+      "variations": [
+        {
+          "name": "SG-12 R",
+          "colorants": [
+            {
+              "material": "Rutile",
+              "percentage": 2.5
+            }
+          ],
+          "expected_color": "enhanced oil spot with rutile"
+        },
+        {
+          "name": "SG-12 T",
+          "colorants": [
+            {
+              "material": "Titanium Dioxide",
+              "percentage": 3.0
+            }
+          ],
+          "expected_color": "enhanced oil spot with titanium"
+        }
+      ],
+      "notes": "High Redart content (40%) causes shrinkage/cracking on drying; see John's SG-12 Calcined for the calcined-clay fix."
+    },
+    {
+      "name": "Cover Glaze",
+      "source": "britt-oil-spot-2024",
+      "source_id": 4,
+      "description": "Standard clear/amber cover applied over the base oil spot glazes to help differentiate the spots.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 45.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 28.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 13.0
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 11.0
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 8.0
+        }
+      ],
+      "variations": [
+        {
+          "name": "Cover Glaze (black)",
+          "colorants": [
+            {
+              "material": "Cobalt Carbonate",
+              "percentage": 2.0
+            }
+          ],
+          "expected_color": "black (original is brown-on-brown)"
+        }
+      ],
+      "notes": "Applied 1-2 coats over 3-5 coats of the base oil spot glaze."
+    },
+    {
+      "name": "John's SG-12 Calcined",
+      "source": "britt-oil-spot-2024",
+      "source_id": 5,
+      "description": "SG-12 with part of the Redart pre-calcined to reduce drying shrinkage/cracking from the high clay content.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 38.03
+        },
+        {
+          "material": "Red Art",
+          "percentage": 20.12
+        },
+        {
+          "material": "Red Art",
+          "percentage": 20.0
+        },
+        {
+          "material": "Ball Clay (OM4)",
+          "percentage": 9.46
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 5.53
+        },
+        {
+          "material": "Bone Ash",
+          "percentage": 2.06
+        },
+        {
+          "material": "Talc",
+          "percentage": 3.08
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 1.73
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 4.5
+        },
+        {
+          "material": "Rutile",
+          "percentage": 1.0
+        }
+      ],
+      "notes": "20.00% of the Red Art here is calcined separately (weighed raw, then calcined, or adjust for LOI) and combined with 20.12% raw Red Art."
+    },
+    {
+      "name": "Dorothy's SG-12 (FM Oil Spot)",
+      "source": "britt-oil-spot-2024",
+      "source_id": 6,
+      "description": "Albany-slip-based oil spot using soda feldspar and a small borax addition.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Alberta Slip",
+          "percentage": 47.45
+        },
+        {
+          "material": "Minspar 200",
+          "percentage": 37.96
+        },
+        {
+          "material": "Ball Clay (OM4)",
+          "percentage": 12.24
+        },
+        {
+          "material": "Borax",
+          "percentage": 2.35
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 4.8
+        }
+      ]
+    },
+    {
+      "name": "SG-12 (original)",
+      "source": "britt-oil-spot-2024",
+      "source_id": 7,
+      "description": "The original Albany-slip formulation that John's SG-12 was developed from after Albany Slip went out of production.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Alberta Slip",
+          "percentage": 47.37
+        },
+        {
+          "material": "Custer Feldspar",
+          "percentage": 38.02
+        },
+        {
+          "material": "Ball Clay (OM4)",
+          "percentage": 9.45
+        },
+        {
+          "material": "Bone Ash",
+          "percentage": 2.05
+        },
+        {
+          "material": "Talc",
+          "percentage": 3.08
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 4.5
+        },
+        {
+          "material": "Rutile",
+          "percentage": 1.0
+        }
+      ],
+      "notes": "Originally used Albany Slip; the recipe works with Alberta, Redart or other iron slip clays substituted directly for the Albany."
+    },
+    {
+      "name": "Candace Black",
+      "source": "britt-oil-spot-2024",
+      "source_id": 8,
+      "description": "High-iron, high-cobalt single-glaze oil spot - no separate cover needed. Britt's studio black glaze; the source of his original accidental oil-spot discovery.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Minspar 200",
+          "percentage": 65.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 20.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 5.0
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 5.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 5.0
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 8.0
+        },
+        {
+          "material": "Cobalt Carbonate",
+          "percentage": 2.0
+        }
+      ],
+      "notes": "Original recipe used 5% cobalt carbonate; Britt reduced it to 2%."
+    },
+    {
+      "name": "SG-12 Match",
+      "source": "britt-oil-spot-2024",
+      "source_id": 9,
+      "description": "A G-200/EPK-based oil spot with higher alumina, designed to be combined with crackle covers.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "G-200 Feldspar",
+          "percentage": 52.56
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 12.5
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 21.62
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 5.43
+        },
+        {
+          "material": "Talc",
+          "percentage": 4.1
+        },
+        {
+          "material": "Bone Ash",
+          "percentage": 2.25
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 1.54
+        },
+        {
+          "material": "Rutile",
+          "percentage": 1.5
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 6.6
+        }
+      ]
+    },
+    {
+      "name": "John's Oil Spot",
+      "source": "britt-oil-spot-2024",
+      "source_id": 10,
+      "description": "Developed by blending Candace Black (too fluid when modified with more silica/kaolin) with a stiffer variant; a reliable, regularly-healing oil spot.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "F-4 Feldspar",
+          "percentage": 57.27
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 24.23
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 4.41
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 4.41
+        },
+        {
+          "material": "Kaolin",
+          "percentage": 9.69
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 8.0
+        },
+        {
+          "material": "Cobalt Carbonate",
+          "percentage": 2.0
+        }
+      ],
+      "notes": "Original used 5% cobalt carbonate, cut to 2% (both work)."
+    },
+    {
+      "name": "John's Oil Spot 3",
+      "source": "britt-oil-spot-2024",
+      "source_id": 11,
+      "description": "Works well in electric kilns. Slow-cooled (O3 or a comparable electric slow-cool) it can turn entirely silver as cobalt crystals grow and cover the piece.",
+      "cone": "10-12",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Minspar 200",
+          "percentage": 54.62
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 29.41
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 4.2
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 7.56
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 4.2
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 6.72
+        },
+        {
+          "material": "Cobalt Carbonate",
+          "percentage": 2.2
+        }
+      ]
+    },
+    {
+      "name": "Bailey's Oil Spot",
+      "source": "britt-oil-spot-2024",
+      "source_id": 12,
+      "description": "A Tom Coleman-lineage feldspathic oil spot with a boron frit addition. Easy to use, rarely crawls, can produce large spots.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 25.51
+        },
+        {
+          "material": "Minspar 200",
+          "percentage": 35.71
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 15.3
+        },
+        {
+          "material": "Talc",
+          "percentage": 5.1
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 5.1
+        },
+        {
+          "material": "Frit 3110",
+          "percentage": 5.1
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 8.16
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 6.0
+        }
+      ]
+    },
+    {
+      "name": "Traditional Oil Spot",
+      "source": "britt-oil-spot-2024",
+      "source_id": 13,
+      "description": "A Tom Coleman recipe with no clay content at all - difficult to apply (needs bentonite) but produces classic results, especially double-fired oxidation then reduction. The calcined talc is essential.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 85.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 6.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 4.0
+        },
+        {
+          "material": "Talc",
+          "percentage": 5.0
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 8.5
+        }
+      ],
+      "notes": "The talc must be calcined (heated to red heat, or included in a bisque firing) - this makes a significant difference. No clay in the recipe makes it difficult to apply; needs bentonite."
+    },
+    {
+      "name": "Montmollin Oil Spot",
+      "source": "britt-oil-spot-2024",
+      "source_id": 14,
+      "description": "From Britt's High Fire book, contributed by French potter Daniel Montmollin (author of 'The Practice of Stoneware Glazes').",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "F-4 Feldspar",
+          "percentage": 68.4
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 17.8
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 4.9
+        },
+        {
+          "material": "Talc",
+          "percentage": 8.9
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 7.11
+        },
+        {
+          "material": "Cobalt Carbonate",
+          "percentage": 2.0
+        }
+      ]
+    },
+    {
+      "name": "Davis Oil Spot 1 (227)",
+      "source": "britt-oil-spot-2024",
+      "source_id": 15,
+      "description": "A slip-based (Albany/Alberta) oil spot using burnt umber as an additional iron/manganese source.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Nepheline Syenite",
+          "percentage": 57.4
+        },
+        {
+          "material": "Alberta Slip",
+          "percentage": 19.1
+        },
+        {
+          "material": "Burnt Umber",
+          "percentage": 14.4
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 9.1
+        }
+      ],
+      "notes": "Turns very silver when overfired then flash-cooled to cone 6."
+    },
+    {
+      "name": "Old Black Magic (OBM 1)",
+      "source": "britt-oil-spot-2024",
+      "source_id": 16,
+      "description": "An oil spot with no magnesium source at all yet still spots well, using titanium dioxide instead of rutile.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 58.7
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 21.7
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 12.4
+        },
+        {
+          "material": "Ball Clay (OM4)",
+          "percentage": 7.2
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 12.0
+        },
+        {
+          "material": "Titanium Dioxide",
+          "percentage": 3.0
+        }
+      ]
+    },
+    {
+      "name": "Rotten Spot",
+      "source": "britt-oil-spot-2024",
+      "source_id": 17,
+      "description": "Uses Rotten Stone (Tripoli) as a silica-bearing flux component alongside a small wood ash and Barnard slip addition.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 46.5
+        },
+        {
+          "material": "Rotten Stone (Tripoli)",
+          "percentage": 46.5
+        },
+        {
+          "material": "Talc",
+          "percentage": 2.0
+        },
+        {
+          "material": "Wood Ash (Mixed Hardwood)",
+          "percentage": 2.0
+        },
+        {
+          "material": "Barnard Slip",
+          "percentage": 3.0
+        }
+      ],
+      "notes": "Talc should be calcined."
+    },
+    {
+      "name": "Mashiko Kaki 2",
+      "source": "britt-oil-spot-2024",
+      "source_id": 18,
+      "description": "A Cornwall-Stone-based oil spot workable in both oxidation and reduction.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Cornwall Stone",
+          "percentage": 55.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 10.0
+        },
+        {
+          "material": "Kaolin",
+          "percentage": 10.0
+        },
+        {
+          "material": "Ball Clay (OM4)",
+          "percentage": 13.0
+        },
+        {
+          "material": "Wollastonite",
+          "percentage": 6.0
+        },
+        {
+          "material": "Talc",
+          "percentage": 6.0
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 10.0
+        }
+      ]
+    },
+    {
+      "name": "Davis OS/NAO 236",
+      "source": "britt-oil-spot-2024",
+      "source_id": 19,
+      "description": "Feldspar/slip/burnt-umber oil spot using old-style Buckingham potash feldspar (substitute G-200/Mahavir).",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "G-200 Feldspar",
+          "percentage": 63.2
+        },
+        {
+          "material": "Alberta Slip",
+          "percentage": 21.0
+        },
+        {
+          "material": "Burnt Umber",
+          "percentage": 15.8
+        }
+      ]
+    },
+    {
+      "name": "Oil Spot 24",
+      "source": "britt-oil-spot-2024",
+      "source_id": 20,
+      "description": "Highest-alumina of the Currie-blend-derived Candace Black variants; drier and stiffer, yields smaller spots.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "F-4 Feldspar",
+          "percentage": 48.03
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 35.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 3.69
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 3.69
+        },
+        {
+          "material": "Kaolin",
+          "percentage": 9.58
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 8.0
+        },
+        {
+          "material": "Cobalt Carbonate",
+          "percentage": 5.0
+        }
+      ],
+      "notes": "Developed from a Currie grid blend based on Candace Black, along with Oil Spot 28 and 29."
+    },
+    {
+      "name": "Oil Spot 28",
+      "source": "britt-oil-spot-2024",
+      "source_id": 21,
+      "description": "Middle Currie-blend variant of Candace Black; slightly less distinct spotting with some iron spangles.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "F-4 Feldspar",
+          "percentage": 61.03
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 24.17
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 4.69
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 4.69
+        },
+        {
+          "material": "Kaolin",
+          "percentage": 5.42
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 8.0
+        },
+        {
+          "material": "Cobalt Carbonate",
+          "percentage": 5.0
+        }
+      ]
+    },
+    {
+      "name": "Oil Spot 29",
+      "source": "britt-oil-spot-2024",
+      "source_id": 22,
+      "description": "Lowest-alumina Currie-blend variant of Candace Black; can produce large spots that run if applied too thick.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "F-4 Feldspar",
+          "percentage": 51.1
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 36.25
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 3.93
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 3.93
+        },
+        {
+          "material": "Kaolin",
+          "percentage": 4.79
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 8.0
+        },
+        {
+          "material": "Cobalt Carbonate",
+          "percentage": 5.0
+        }
+      ]
+    },
+    {
+      "name": "Fake Mashiko",
+      "source": "britt-oil-spot-2024",
+      "source_id": 23,
+      "description": "35% of the clay content pre-calcined (vs 20% in John's SG-12 Calcined), leaving very little raw clay to suspend the glaze - works fantastically despite the low raw-clay fraction. Tan/kaki in reduction, vigorous oil spot in oxidation.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Minspar 200",
+          "percentage": 37.6
+        },
+        {
+          "material": "Red Art",
+          "percentage": 35.0
+        },
+        {
+          "material": "Red Art",
+          "percentage": 8.2
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 8.9
+        },
+        {
+          "material": "Wollastonite",
+          "percentage": 5.7
+        },
+        {
+          "material": "Talc",
+          "percentage": 4.3
+        },
+        {
+          "material": "Bone Ash",
+          "percentage": 0.4
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 3.6
+        }
+      ],
+      "notes": "35% of the Red Art listed here is calcined separately; only the 8.20% portion is raw clay. Credited to Chet McLaughlin via Britt's High Fire book."
+    },
+    {
+      "name": "Chinese Crackle",
+      "source": "britt-oil-spot-2024",
+      "source_id": 24,
+      "description": "Oil spot cover glaze derived from Kaun Crackle 1, using Zircopax instead of bone ash.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 83.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 8.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 9.0
+        },
+        {
+          "material": "Zircopax",
+          "percentage": 10.0
+        }
+      ],
+      "variations": [
+        {
+          "name": "Chinese Crackle (blue)",
+          "colorants": [
+            {
+              "material": "Cobalt Carbonate",
+              "percentage": 2.5
+            }
+          ],
+          "expected_color": "blue (1-4% range)"
+        }
+      ],
+      "notes": "For iron saturation: omit the zircopax and add 15% red iron oxide instead."
+    },
+    {
+      "name": "Spotted Black",
+      "source": "britt-oil-spot-2024",
+      "source_id": 25,
+      "description": "Alberta-slip-based black glaze using yellow ochre as an additional iron source.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Alberta Slip",
+          "percentage": 66.1
+        },
+        {
+          "material": "Yellow Ochre",
+          "percentage": 17.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 11.8
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 5.1
+        }
+      ],
+      "notes": "Yellow ochre sourcing varies widely; try different types."
+    },
+    {
+      "name": "Linda's Yellow",
+      "source": "britt-oil-spot-2024",
+      "source_id": 26,
+      "description": "A feldspathic base carrying Mason 6433 yellow stain rather than iron oxide.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 32.7
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 16.3
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 31.6
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 14.3
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 5.1
+        }
+      ],
+      "variations": [
+        {
+          "name": "Linda's Yellow (stain)",
+          "colorants": [
+            {
+              "material": "Mason Stain 6433 (Yellow)",
+              "percentage": 11.5
+            }
+          ],
+          "expected_color": "yellow (8-15% stain range)"
+        }
+      ]
+    },
+    {
+      "name": "Bailey's Iron Red",
+      "source": "britt-oil-spot-2024",
+      "source_id": 27,
+      "description": "High-bone-ash, lithium-fluxed oil spot for reds.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 47.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 13.0
+        },
+        {
+          "material": "Talc",
+          "percentage": 10.5
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 13.0
+        },
+        {
+          "material": "Bone Ash",
+          "percentage": 14.0
+        },
+        {
+          "material": "Lithium Carbonate",
+          "percentage": 2.5
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 8.0
+        }
+      ],
+      "notes": "Real bone ash preferred over synthetic (TCP/tricalcium phosphate) if available."
+    },
+    {
+      "name": "Steve Irvine Red",
+      "source": "britt-oil-spot-2024",
+      "source_id": 28,
+      "description": "High-bone-ash iron red with magnesium carbonate.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Minspar 200",
+          "percentage": 41.71
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 22.24
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 6.45
+        },
+        {
+          "material": "Kaolin",
+          "percentage": 6.45
+        },
+        {
+          "material": "Talc",
+          "percentage": 7.34
+        },
+        {
+          "material": "Magnesium Carbonate",
+          "percentage": 5.56
+        },
+        {
+          "material": "Bone Ash",
+          "percentage": 10.23
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 11.12
+        }
+      ]
+    },
+    {
+      "name": "Snow Flake Crackle 1234",
+      "source": "britt-oil-spot-2024",
+      "source_id": 29,
+      "description": "A feldspathic crackle cover with a small boron frit addition.",
+      "cone": "10",
+      "atmosphere": "reduction",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Nepheline Syenite",
+          "percentage": 41.15
+        },
+        {
+          "material": "Custer Feldspar",
+          "percentage": 43.64
+        },
+        {
+          "material": "Talc",
+          "percentage": 4.99
+        },
+        {
+          "material": "Bone Ash",
+          "percentage": 3.24
+        },
+        {
+          "material": "Frit 3134",
+          "percentage": 3.99
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 2.99
+        }
+      ]
+    },
+    {
+      "name": "Randy Johnson's Temmoku",
+      "source": "britt-oil-spot-2024",
+      "source_id": 30,
+      "description": "Barium/zinc-fluxed temmoku with high-purity red iron.",
+      "cone": "10",
+      "atmosphere": "reduction",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 54.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 22.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 13.0
+        },
+        {
+          "material": "Kaolin",
+          "percentage": 6.0
+        },
+        {
+          "material": "Barium Carbonate",
+          "percentage": 2.5
+        },
+        {
+          "material": "Zinc Oxide",
+          "percentage": 2.5
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 7.0
+        }
+      ],
+      "notes": "Contains barium carbonate - not food safe as formulated."
+    },
+    {
+      "name": "Judi's Blue Crystal",
+      "source": "britt-oil-spot-2024",
+      "source_id": 31,
+      "description": "High-dolomite, high-rutile crystal-matte-leaning glaze applied over oil spot bases; especially effective with an electric drop-and-hold cycle.",
+      "cone": "10",
+      "atmosphere": "oxidation",
+      "surface": "satin",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 35.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 30.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 10.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 20.0
+        },
+        {
+          "material": "Kaolin",
+          "percentage": 5.0
+        },
+        {
+          "material": "Rutile",
+          "percentage": 10.0
+        },
+        {
+          "material": "Cobalt Carbonate",
+          "percentage": 0.75
+        }
+      ]
+    },
+    {
+      "name": "John's Iron Saturate",
+      "source": "britt-oil-spot-2024",
+      "source_id": 32,
+      "description": "Simple, high-iron feldspathic saturate glaze, works in both oxidation and reduction.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 83.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 8.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 9.0
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 15.0
+        }
+      ]
+    },
+    {
+      "name": "Hamada Rust",
+      "source": "britt-oil-spot-2024",
+      "source_id": 33,
+      "description": "Gerstley-Borate-fluxed rust/iron glaze workable in either atmosphere.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 77.0
+        },
+        {
+          "material": "Kaolin",
+          "percentage": 4.3
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 6.2
+        },
+        {
+          "material": "Gerstley Borate",
+          "percentage": 12.4
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 7.5
+        }
+      ]
+    },
+    {
+      "name": "SLG-25",
+      "source": "britt-oil-spot-2024",
+      "source_id": 34,
+      "description": "Alberta-slip and nepheline base with a light-rutile crystal effect.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Alberta Slip",
+          "percentage": 33.33
+        },
+        {
+          "material": "Nepheline Syenite",
+          "percentage": 33.33
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 15.56
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 10.0
+        },
+        {
+          "material": "Magnesium Carbonate",
+          "percentage": 2.22
+        },
+        {
+          "material": "Frit 3134",
+          "percentage": 5.56
+        },
+        {
+          "material": "Rutile",
+          "percentage": 11.11
+        }
+      ],
+      "notes": "Mixed to specific gravity 150."
+    },
+    {
+      "name": "Rhodes 32",
+      "source": "britt-oil-spot-2024",
+      "source_id": 35,
+      "description": "Classic Daniel Rhodes magnesium/iron yellow, no zircopax, good in reduction.",
+      "cone": "10-11",
+      "atmosphere": "reduction",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 49.1
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 3.5
+        },
+        {
+          "material": "Kaolin",
+          "percentage": 25.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 22.4
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 3.0
+        }
+      ],
+      "notes": "Red iron oxide ranges 1-5% depending on desired depth."
+    },
+    {
+      "name": "Lau Luster Shino",
+      "source": "britt-oil-spot-2024",
+      "source_id": 36,
+      "description": "Nepheline/soda-ash shino used as an overglaze on fired oil spot tiles, refired.",
+      "cone": "10",
+      "atmosphere": "reduction",
+      "surface": "satin",
+      "ingredients": [
+        {
+          "material": "Nepheline Syenite",
+          "percentage": 53.0
+        },
+        {
+          "material": "Ball Clay (OM4)",
+          "percentage": 25.0
+        },
+        {
+          "material": "Lithium Carbonate",
+          "percentage": 5.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 10.0
+        },
+        {
+          "material": "Soda Ash",
+          "percentage": 5.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 2.0
+        },
+        {
+          "material": "Tin Oxide",
+          "percentage": 2.0
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 2.75
+        }
+      ],
+      "notes": "Red iron oxide 2.5-3.0%. Applied over an already-fired oil spot (e.g. Candace Black) and refired."
+    },
+    {
+      "name": "Penn State Shino",
+      "source": "britt-oil-spot-2024",
+      "source_id": 37,
+      "description": "Spodumene-fluxed shino, reglazed over fired Candace Black and refired in reduction.",
+      "cone": "10",
+      "atmosphere": "reduction",
+      "surface": "satin",
+      "ingredients": [
+        {
+          "material": "Nepheline Syenite",
+          "percentage": 14.6
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 29.0
+        },
+        {
+          "material": "F-4 Feldspar",
+          "percentage": 34.0
+        },
+        {
+          "material": "Ball Clay (OM4)",
+          "percentage": 4.9
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 9.7
+        },
+        {
+          "material": "Soda Ash",
+          "percentage": 7.8
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 2.5
+        }
+      ],
+      "notes": "Red iron oxide 2.0-3.0%."
+    },
+    {
+      "name": "Button Gold",
+      "source": "britt-oil-spot-2024",
+      "source_id": 38,
+      "description": "Simple nepheline/redart/gerstley-borate base for the John's GB frit-substitution series below.",
+      "cone": "10",
+      "atmosphere": "reduction",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Nepheline Syenite",
+          "percentage": 60.0
+        },
+        {
+          "material": "Red Art",
+          "percentage": 30.0
+        },
+        {
+          "material": "Gerstley Borate",
+          "percentage": 10.0
+        }
+      ]
+    },
+    {
+      "name": "John's GB-10",
+      "source": "britt-oil-spot-2024",
+      "source_id": 39,
+      "description": "Button Gold with Gerstley Borate replaced by 10% Ferro Frit 3269 (a substitute for the discontinued Frit P-25).",
+      "cone": "10",
+      "atmosphere": "reduction",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Nepheline Syenite",
+          "percentage": 60.0
+        },
+        {
+          "material": "Red Art",
+          "percentage": 30.0
+        },
+        {
+          "material": "Ferro Frit 3269",
+          "percentage": 10.0
+        }
+      ]
+    },
+    {
+      "name": "John's GB-15",
+      "source": "britt-oil-spot-2024",
+      "source_id": 40,
+      "description": "Button Gold series at 15% frit, retotaled.",
+      "cone": "10",
+      "atmosphere": "reduction",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Nepheline Syenite",
+          "percentage": 57.14
+        },
+        {
+          "material": "Red Art",
+          "percentage": 28.57
+        },
+        {
+          "material": "Ferro Frit 3269",
+          "percentage": 14.29
+        }
+      ]
+    },
+    {
+      "name": "John's GB-20",
+      "source": "britt-oil-spot-2024",
+      "source_id": 41,
+      "description": "Button Gold series at 20% frit, retotaled.",
+      "cone": "10",
+      "atmosphere": "reduction",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Nepheline Syenite",
+          "percentage": 54.55
+        },
+        {
+          "material": "Red Art",
+          "percentage": 27.27
+        },
+        {
+          "material": "Ferro Frit 3269",
+          "percentage": 18.18
+        }
+      ]
+    },
+    {
+      "name": "John's GB-25",
+      "source": "britt-oil-spot-2024",
+      "source_id": 42,
+      "description": "Button Gold series at 25% frit, retotaled.",
+      "cone": "10",
+      "atmosphere": "reduction",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Nepheline Syenite",
+          "percentage": 52.17
+        },
+        {
+          "material": "Red Art",
+          "percentage": 26.1
+        },
+        {
+          "material": "Ferro Frit 3269",
+          "percentage": 21.74
+        }
+      ]
+    },
+    {
+      "name": "John's GB-30",
+      "source": "britt-oil-spot-2024",
+      "source_id": 43,
+      "description": "Button Gold series at 30% frit, retotaled.",
+      "cone": "10",
+      "atmosphere": "reduction",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Nepheline Syenite",
+          "percentage": 50.0
+        },
+        {
+          "material": "Red Art",
+          "percentage": 25.0
+        },
+        {
+          "material": "Ferro Frit 3269",
+          "percentage": 25.0
+        }
+      ]
+    },
+    {
+      "name": "John's GB-35",
+      "source": "britt-oil-spot-2024",
+      "source_id": 44,
+      "description": "Button Gold series at 35% frit, retotaled - most fluid of the series.",
+      "cone": "10",
+      "atmosphere": "reduction",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Nepheline Syenite",
+          "percentage": 48.0
+        },
+        {
+          "material": "Red Art",
+          "percentage": 24.0
+        },
+        {
+          "material": "Ferro Frit 3269",
+          "percentage": 28.0
+        }
+      ],
+      "notes": "The GB-10 through GB-35 series are all Button Gold with increasing frit substitution (10-35%) for Gerstley Borate; each has a distinct look."
+    },
+    {
+      "name": "Meyer Shino",
+      "source": "britt-oil-spot-2024",
+      "source_id": 45,
+      "description": "Tin-opacified nepheline shino, similar base to Lau Luster with tin instead of extra iron.",
+      "cone": "10",
+      "atmosphere": "reduction",
+      "surface": "satin",
+      "ingredients": [
+        {
+          "material": "Nepheline Syenite",
+          "percentage": 53.0
+        },
+        {
+          "material": "Ball Clay (OM4)",
+          "percentage": 25.0
+        },
+        {
+          "material": "Lithium Carbonate",
+          "percentage": 5.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 10.0
+        },
+        {
+          "material": "Soda Ash",
+          "percentage": 5.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 2.0
+        },
+        {
+          "material": "Tin Oxide",
+          "percentage": 10.0
+        }
+      ]
+    },
+    {
+      "name": "Red Iron Wash",
+      "source": "britt-oil-spot-2024",
+      "source_id": 46,
+      "description": "A brushable iron wash for use between or over glaze coats.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 50.0
+        },
+        {
+          "material": "Gerstley Borate",
+          "percentage": 50.0
+        }
+      ]
+    },
+    {
+      "name": "Cobalt Wash",
+      "source": "britt-oil-spot-2024",
+      "source_id": 47,
+      "description": "A brushable cobalt wash for use between or over glaze coats.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Cobalt Carbonate",
+          "percentage": 50.0
+        },
+        {
+          "material": "Gerstley Borate",
+          "percentage": 50.0
+        }
+      ]
+    },
+    {
+      "name": "Rutile Wash",
+      "source": "britt-oil-spot-2024",
+      "source_id": 48,
+      "description": "A brushable rutile wash for use between or over glaze coats.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Rutile",
+          "percentage": 50.0
+        },
+        {
+          "material": "Gerstley Borate",
+          "percentage": 50.0
+        }
+      ]
+    },
+    {
+      "name": "Burnt Umber Wash",
+      "source": "britt-oil-spot-2024",
+      "source_id": 49,
+      "description": "A brushable pigment wash of pure burnt umber with a small clay/whiting binder addition.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Burnt Umber",
+          "percentage": 100.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 5.0
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 5.0
+        }
+      ]
+    },
+    {
+      "name": "Old Gold",
+      "source": "britt-oil-spot-2024",
+      "source_id": 50,
+      "description": "Alberta-slip base carrying a very heavy manganese dioxide and copper carbonate addition for a metallic gold effect.",
+      "cone": "10",
+      "atmosphere": "reduction",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 80.0
+        },
+        {
+          "material": "Alberta Slip",
+          "percentage": 20.0
+        }
+      ],
+      "variations": [
+        {
+          "name": "Old Gold",
+          "colorants": [
+            {
+              "material": "Manganese Dioxide",
+              "percentage": 35.0
+            },
+            {
+              "material": "Copper Carbonate",
+              "percentage": 15.0
+            }
+          ],
+          "expected_color": "metallic gold"
+        }
+      ],
+      "notes": "Manganese dioxide (35%) and copper carbonate (15%) are additions on top of the 100% Custer/Alberta base, per the source - unusually heavy, defining this recipe's character rather than a minor colorant tweak."
+    },
+    {
+      "name": "Pinnell Manganese",
+      "source": "britt-oil-spot-2024",
+      "source_id": 51,
+      "description": "Feldspathic base carrying a very heavy manganese dioxide addition, with bentonite for suspension.",
+      "cone": "10",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 80.8
+        },
+        {
+          "material": "Minspar 200",
+          "percentage": 3.5
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 1.2
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 7.0
+        },
+        {
+          "material": "Ball Clay (OM4)",
+          "percentage": 5.7
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 1.8
+        }
+      ],
+      "variations": [
+        {
+          "name": "Pinnell Manganese",
+          "colorants": [
+            {
+              "material": "Manganese Dioxide",
+              "percentage": 29.3
+            },
+            {
+              "material": "Red Iron Oxide",
+              "percentage": 0.8
+            },
+            {
+              "material": "Bentonite",
+              "percentage": 4.0
+            }
+          ],
+          "expected_color": "manganese brown/purple"
+        }
+      ],
+      "notes": "Manganese dioxide (29.3%), red iron oxide (0.8%) and bentonite (4%) are additions on top of the 100% base, per the source."
+    },
+    {
+      "name": "Pig Skin Temmoku",
+      "source": "britt-oil-spot-2024",
+      "source_id": 52,
+      "description": "A wild-material temmoku using Britt's local Sevier Shale and Vulcan Granite alongside wood ash.",
+      "cone": "10",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Sevier Shale",
+          "percentage": 53.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 23.0
+        },
+        {
+          "material": "Vulcan Granite",
+          "percentage": 7.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 6.0
+        },
+        {
+          "material": "Wood Ash (Mixed Hardwood)",
+          "percentage": 9.0
+        }
+      ],
+      "notes": "Sevier Shale and Vulcan Granite are Britt's own local materials (Johnson City, TN); no standard analysis available. Substitute a local iron-bearing shale/clay and granite dust, or see Johnson City OS for a Redart-substitutable version."
+    },
+    {
+      "name": "Johnson City OS",
+      "source": "britt-oil-spot-2024",
+      "source_id": 53,
+      "description": "John's SG-12 with Sevier Shale substituted directly for Redart - demonstrates that most local iron-bearing clays work as a substitute in this base.",
+      "cone": "10-11",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 38.03
+        },
+        {
+          "material": "Sevier Shale",
+          "percentage": 40.12
+        },
+        {
+          "material": "Ball Clay (OM4)",
+          "percentage": 9.46
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 5.53
+        },
+        {
+          "material": "Bone Ash",
+          "percentage": 2.06
+        },
+        {
+          "material": "Talc",
+          "percentage": 3.08
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 1.73
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 4.5
+        },
+        {
+          "material": "Rutile",
+          "percentage": 1.0
+        }
+      ],
+      "notes": "Sevier Shale is Britt's local material; substitute Redart or a comparable local iron-bearing clay."
+    },
+    {
+      "name": "Johnson City Temmoku",
+      "source": "britt-oil-spot-2024",
+      "source_id": 54,
+      "description": "Simple three-material temmoku built on local Sevier Shale.",
+      "cone": "10",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Sevier Shale",
+          "percentage": 70.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 10.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 20.0
+        }
+      ],
+      "notes": "Sevier Shale is Britt's local material (may not be obtainable); substitute Redart or a local clay."
+    },
+    {
+      "name": "John's Ash",
+      "source": "britt-oil-spot-2024",
+      "source_id": 55,
+      "description": "Local shale, nepheline and wood ash - intended thin over oil spots.",
+      "cone": "10",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Sevier Shale",
+          "percentage": 40.0
+        },
+        {
+          "material": "Nepheline Syenite",
+          "percentage": 40.0
+        },
+        {
+          "material": "Wood Ash (Mixed Hardwood)",
+          "percentage": 20.0
+        }
+      ],
+      "notes": "Sevier Shale is Britt's local material; substitute Redart or a local clay if unavailable."
+    },
+    {
+      "name": "Albany Substitute (Krakowski)",
+      "source": "britt-oil-spot-2024",
+      "source_id": 56,
+      "description": "Lili Krakowski's Albany Slip substitute recipe - Britt's preferred one of the two he tested.",
+      "cone": "10",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Red Art",
+          "percentage": 84.67
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 3.64
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 11.67
+        }
+      ],
+      "notes": "Not itself an oil spot glaze - a material substitute usable in place of Albany Slip in other recipes."
+    },
+    {
+      "name": "Albany Substitute (Hendley)",
+      "source": "britt-oil-spot-2024",
+      "source_id": 57,
+      "description": "David Hendley's Albany Slip substitute recipe - Britt's second-choice alternative.",
+      "cone": "10",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Red Art",
+          "percentage": 72.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 10.0
+        },
+        {
+          "material": "Minspar 200",
+          "percentage": 8.0
+        },
+        {
+          "material": "Talc",
+          "percentage": 5.0
+        },
+        {
+          "material": "Kaolin",
+          "percentage": 5.0
+        }
+      ],
+      "notes": "Not itself an oil spot glaze - a material substitute usable in place of Albany Slip in other recipes."
+    },
+    {
+      "name": "Candace Black (Cone 6)",
+      "source": "britt-oil-spot-2024",
+      "source_id": 58,
+      "description": "Candace Black adapted to cone 6 with a Frit 3110 addition for lower-temperature melting.",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Minspar 200",
+          "percentage": 65.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 20.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 5.0
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 5.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 5.0
+        },
+        {
+          "material": "Frit 3110",
+          "percentage": 5.0
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 8.0
+        },
+        {
+          "material": "Cobalt Carbonate",
+          "percentage": 2.0
+        }
+      ],
+      "notes": "Britt suggests Frit 3134 instead of 3110 might improve results (adds more boron)."
+    },
+    {
+      "name": "Oil Spot Combo 1",
+      "source": "britt-oil-spot-2024",
+      "source_id": 59,
+      "description": "Cone 6 base layer for the Oil Spot Combo pairing (apply Combo 2 cover over this).",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "G-200 Feldspar",
+          "percentage": 47.83
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 23.91
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 17.39
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 10.87
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 9.78
+        }
+      ]
+    },
+    {
+      "name": "Oil Spot Combo 2 (Cover)",
+      "source": "britt-oil-spot-2024",
+      "source_id": 60,
+      "description": "Cone 6 zircon-opacified cover for Oil Spot Combo 1, with several stain/oxide color variants.",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 30.0
+        },
+        {
+          "material": "Gerstley Borate",
+          "percentage": 30.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 25.0
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 5.0
+        },
+        {
+          "material": "Zircopax",
+          "percentage": 10.0
+        }
+      ],
+      "notes": "Color variants (add on top of base): 5% Mason 6485 yellow; 5% Mason 6001 pink; 5% Mason 6363 blue; 4% Degussa yellow stain + 2% cobalt carbonate; 2% each copper carbonate/cobalt carbonate/chrome oxide; 8% red iron oxide; 2% chrome oxide; 2% nickel oxide."
+    },
+    {
+      "name": "Licorice",
+      "source": "britt-oil-spot-2024",
+      "source_id": 61,
+      "description": "A genuine cone 5/6 oil spot (most cone 6 'oil spots' in this book rely on stains rather than true thermal iron reduction - this one uses real red iron oxide). Enhanced with a white cover and a slow-cool schedule.",
+      "cone": "5-6",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Frit 3134",
+          "percentage": 26.0
+        },
+        {
+          "material": "Custer Feldspar",
+          "percentage": 22.0
+        },
+        {
+          "material": "Talc",
+          "percentage": 5.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 4.0
+        },
+        {
+          "material": "Kaolin",
+          "percentage": 17.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 26.0
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 9.0
+        },
+        {
+          "material": "Cobalt Carbonate",
+          "percentage": 2.0
+        }
+      ],
+      "notes": "Mix to specific gravity 150-155; apply 2-3 coats in a tiered manner. Best with a white cover glaze and a slow-cool electric schedule."
+    },
+    {
+      "name": "John's Brown",
+      "source": "britt-oil-spot-2024",
+      "source_id": 62,
+      "description": "Licorice with the cobalt carbonate omitted - a revised brown version.",
+      "cone": "5-6",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Frit 3134",
+          "percentage": 26.0
+        },
+        {
+          "material": "Custer Feldspar",
+          "percentage": 22.0
+        },
+        {
+          "material": "Talc",
+          "percentage": 5.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 4.0
+        },
+        {
+          "material": "Kaolin",
+          "percentage": 17.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 26.0
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 9.0
+        }
+      ],
+      "notes": "Mix to specific gravity 150-155; apply 2-3 coats in a tiered manner."
+    },
+    {
+      "name": "Pierre's Temmoku",
+      "source": "britt-oil-spot-2024",
+      "source_id": 63,
+      "description": "High-iron cone 6 temmoku base for the Pierre's pairing.",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 52.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 20.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 19.0
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 17.0
+        },
+        {
+          "material": "Bentonite",
+          "percentage": 2.0
+        }
+      ]
+    },
+    {
+      "name": "Pierre's Cover",
+      "source": "britt-oil-spot-2024",
+      "source_id": 64,
+      "description": "Frit-fluxed cone 6 cover glaze paired with Pierre's Temmoku.",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Frit 3110",
+          "percentage": 32.0
+        },
+        {
+          "material": "Nepheline Syenite",
+          "percentage": 13.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 24.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 9.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 11.0
+        },
+        {
+          "material": "Bone Ash",
+          "percentage": 11.0
+        }
+      ]
+    },
+    {
+      "name": "Vickery OS1",
+      "source": "britt-oil-spot-2024",
+      "source_id": 65,
+      "description": "Cone 6 base layer for the Vickery pairing.",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "G-200 Feldspar",
+          "percentage": 47.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 21.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 18.0
+        },
+        {
+          "material": "Kaolin",
+          "percentage": 11.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 3.0
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 10.0
+        },
+        {
+          "material": "Bentonite",
+          "percentage": 2.0
+        }
+      ]
+    },
+    {
+      "name": "Vickery Cover 2",
+      "source": "britt-oil-spot-2024",
+      "source_id": 66,
+      "description": "Zircon-opacified Gerstley Borate cover for Vickery OS1, with a stain variant option.",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 37.4
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 18.0
+        },
+        {
+          "material": "Kaolin",
+          "percentage": 6.3
+        },
+        {
+          "material": "Gerstley Borate",
+          "percentage": 37.5
+        },
+        {
+          "material": "Zircopax",
+          "percentage": 10.0
+        },
+        {
+          "material": "Bentonite",
+          "percentage": 2.0
+        }
+      ],
+      "notes": "Alternative: substitute the 10% Zircopax with 10% Mason Stain 6200."
+    },
+    {
+      "name": "OS1",
+      "source": "britt-oil-spot-2024",
+      "source_id": 67,
+      "description": "A simpler G-200-based cone 6 oil spot base, close relative of Vickery OS1.",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "G-200 Feldspar",
+          "percentage": 47.8
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 23.9
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 17.4
+        },
+        {
+          "material": "Kaolin",
+          "percentage": 10.9
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 9.8
+        },
+        {
+          "material": "Bentonite",
+          "percentage": 2.0
+        }
+      ]
+    },
+    {
+      "name": "OS Combo 2",
+      "source": "britt-oil-spot-2024",
+      "source_id": 68,
+      "description": "Gerstley-borate cover glaze for the OS1 pairing, with an optional Mason stain addition.",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 33.3
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 27.8
+        },
+        {
+          "material": "Kaolin",
+          "percentage": 5.6
+        },
+        {
+          "material": "Gerstley Borate",
+          "percentage": 33.3
+        },
+        {
+          "material": "Zircopax",
+          "percentage": 11.1
+        },
+        {
+          "material": "Bentonite",
+          "percentage": 2.0
+        }
+      ],
+      "notes": "Optional: add up to 5% Mason stain of choice."
+    },
+    {
+      "name": "John's Spotted Black",
+      "source": "britt-oil-spot-2024",
+      "source_id": 69,
+      "description": "Not a true oil spot (no iron oxide) - a revised satin matte base carrying Mason 6612 Onyx Black, which bubbles similarly to oil spots when fired. A cone 5 revision of Britt's Charcoal Satin Matte.",
+      "cone": "5",
+      "atmosphere": "oxidation",
+      "surface": "satin",
+      "ingredients": [
+        {
+          "material": "Frit 3124",
+          "percentage": 31.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 14.1
+        },
+        {
+          "material": "Wollastonite",
+          "percentage": 23.2
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 31.7
+        },
+        {
+          "material": "Rutile",
+          "percentage": 6.0
+        }
+      ],
+      "variations": [
+        {
+          "name": "John's Spotted Black (stain)",
+          "colorants": [
+            {
+              "material": "Mason Stain 6612 (Onyx Black)",
+              "percentage": 10.0
+            }
+          ],
+          "expected_color": "black, spotted texture"
+        }
+      ],
+      "notes": "Mix to specific gravity 150-155; apply 2-3 coats in a tiered manner. Best under John's Crystal White/Yellow Matte cover with a slow-cool electric schedule."
+    },
+    {
+      "name": "John's Spotted Red",
+      "source": "britt-oil-spot-2024",
+      "source_id": 70,
+      "description": "Same charcoal-satin-matte base as John's Spotted Black, carrying an inclusion stain (e.g. Rose, Green, Orange, Tangerine) instead of black.",
+      "cone": "5",
+      "atmosphere": "oxidation",
+      "surface": "satin",
+      "ingredients": [
+        {
+          "material": "Frit 3124",
+          "percentage": 31.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 14.1
+        },
+        {
+          "material": "Wollastonite",
+          "percentage": 23.2
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 31.7
+        },
+        {
+          "material": "Rutile",
+          "percentage": 6.0
+        }
+      ],
+      "variations": [
+        {
+          "name": "John's Spotted Red (rose)",
+          "colorants": [
+            {
+              "material": "Rutile",
+              "percentage": 6.0
+            }
+          ],
+          "expected_color": "rose/red (10% inclusion stain, e.g. #1352 Rose from Uspigment.com)"
+        }
+      ],
+      "notes": "Mix to specific gravity 150-155; apply 3 coats in a tiered manner. Britt notes several inclusion-stain color variants (rose, green, orange, tangerine) using the same base."
+    },
+    {
+      "name": "John's Crystal White Matte",
+      "source": "britt-oil-spot-2024",
+      "source_id": 71,
+      "description": "Talc-heavy zinc matte cover for the spotted-glaze series; a slight variant of Britt's 'Autumn's Crystal Matte' from his Mid-Range book.",
+      "cone": "5",
+      "atmosphere": "oxidation",
+      "surface": "matte",
+      "ingredients": [
+        {
+          "material": "Minspar 200",
+          "percentage": 34.4
+        },
+        {
+          "material": "Nepheline Syenite",
+          "percentage": 12.3
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 10.7
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 4.8
+        },
+        {
+          "material": "Talc",
+          "percentage": 24.6
+        },
+        {
+          "material": "Frit 3134",
+          "percentage": 9.9
+        },
+        {
+          "material": "Zinc Oxide",
+          "percentage": 3.3
+        }
+      ],
+      "notes": "Mix to specific gravity 145; apply thin, 1-2 coats - will blister if too thick."
+    },
+    {
+      "name": "John's Crystal Yellow Matte",
+      "source": "britt-oil-spot-2024",
+      "source_id": 72,
+      "description": "John's Crystal White Matte with Mason 6485 yellow stain added.",
+      "cone": "5",
+      "atmosphere": "oxidation",
+      "surface": "matte",
+      "ingredients": [
+        {
+          "material": "Minspar 200",
+          "percentage": 34.4
+        },
+        {
+          "material": "Nepheline Syenite",
+          "percentage": 12.3
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 10.7
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 4.8
+        },
+        {
+          "material": "Talc",
+          "percentage": 24.6
+        },
+        {
+          "material": "Frit 3134",
+          "percentage": 9.9
+        },
+        {
+          "material": "Zinc Oxide",
+          "percentage": 3.3
+        },
+        {
+          "material": "Mason Stain 6485 (Yellow)",
+          "percentage": 10.0
+        }
+      ]
+    },
+    {
+      "name": "John's Rutile",
+      "source": "britt-oil-spot-2024",
+      "source_id": 73,
+      "description": "The Charcoal-Satin-Matte-derived liner glaze for the spotted series, without any stain added.",
+      "cone": "5",
+      "atmosphere": "oxidation",
+      "surface": "satin",
+      "ingredients": [
+        {
+          "material": "Frit 3124",
+          "percentage": 31.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 14.1
+        },
+        {
+          "material": "Wollastonite",
+          "percentage": 23.2
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 31.7
+        },
+        {
+          "material": "Rutile",
+          "percentage": 6.0
+        }
+      ],
+      "notes": "Mix to specific gravity 150-155; apply 1-2 coats."
+    }
+  ]
+}
