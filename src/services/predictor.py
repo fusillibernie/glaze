@@ -22,6 +22,7 @@ from ..models.results import (
     ColorDescription,
 )
 from ..models.umf import UMF
+from . import surface_model
 
 
 @dataclass
@@ -44,6 +45,14 @@ class OutcomePrediction:
     # Similar results from database
     similar_results: list[FiringResult] = None
 
+    # Calibrated surface detail. `confidence` above is the probability of
+    # `predicted_surface`; these expose the rest of the distribution so a
+    # caller can tell a strong call from a coin toss.
+    surface_probabilities: dict[str, float] = None
+    surface_basis: Optional[str] = None
+    surface_caveat: str = ""
+    stability_flags: list[str] = None
+
     def __post_init__(self):
         if self.defect_risks is None:
             self.defect_risks = {}
@@ -53,6 +62,10 @@ class OutcomePrediction:
             self.firing_recommendations = []
         if self.similar_results is None:
             self.similar_results = []
+        if self.surface_probabilities is None:
+            self.surface_probabilities = {}
+        if self.stability_flags is None:
+            self.stability_flags = []
 
 
 _DEFAULT_RESULTS_PATH = Path(__file__).parent.parent.parent / "data" / "results" / "firing_results.json"
@@ -159,12 +172,18 @@ class OutcomePredictor:
 
         umf = recipe.umf
 
-        # Predict surface based on Stull chart
+        # Predict surface from the calibrated model
+        surface = surface_model.predict_surface(umf)
         predicted_surface = self._predict_surface(umf, firing)
 
-        # Calculate confidence based on data availability
+        # Confidence is the model's own probability for the predicted
+        # class. It used to be min(0.5 + len(similar) * 0.1, 0.95) - and
+        # since _find_similar_results kept anything matching on cone OR
+        # atmosphere, and every stored firing result is cone 6 oxidation,
+        # that saturated at 0.95 for essentially every recipe. It carried
+        # no information at all.
         similar = self._find_similar_results(recipe, firing, clay_body)
-        confidence = min(0.5 + len(similar) * 0.1, 0.95)
+        confidence = surface.confidence
 
         # Predict color
         color_family, color_notes = self._predict_color(recipe, firing)
@@ -185,6 +204,10 @@ class OutcomePredictor:
             application_recommendations=app_recs,
             firing_recommendations=firing_recs,
             similar_results=similar[:5],  # Top 5 similar
+            surface_probabilities=dict(surface.probabilities),
+            surface_basis=surface.basis,
+            surface_caveat=surface.caveat,
+            stability_flags=list(surface.stability),
         )
 
     def _predict_surface(
@@ -192,19 +215,26 @@ class OutcomePredictor:
         umf: UMF,
         firing: FiringSchedule,
     ) -> GlazeSurface:
-        """Predict glaze surface based on chemistry."""
-        stull_prediction = umf.stull_point.surface_prediction
+        """Predict glaze surface from the calibrated model.
+
+        `firing` is accepted but unused: cone, atmosphere, hold and
+        cooling rate all affect the real outcome, but none of them are in
+        the training data, so claiming to use them would be false
+        precision. See surface_model for the ~67% ceiling this implies.
+        """
+        prediction = surface_model.predict_surface(umf)
 
         surface_map = {
             "glossy": GlazeSurface.GLOSSY,
-            "glossy_runny": GlazeSurface.GLOSSY,
             "satin": GlazeSurface.SATIN,
             "matte": GlazeSurface.MATTE,
-            "matte_dry": GlazeSurface.DRY_MATTE,
-            "underfired_runny": GlazeSurface.GLOSSY,
         }
-
-        return surface_map.get(stull_prediction, GlazeSurface.SATIN)
+        # High alumina distinguishes a dry matte from a smooth one - a
+        # melt-stiffness effect, applied only once the model has already
+        # concluded matte.
+        if prediction.label == "matte" and "stiff" in prediction.stability:
+            return GlazeSurface.DRY_MATTE
+        return surface_map.get(prediction.label, GlazeSurface.SATIN)
 
     def _predict_color(
         self,
@@ -388,7 +418,12 @@ class OutcomePredictor:
             if result.clay_body == clay_body:
                 score += 1
 
-            if score >= 2:
+            # Requires cone AND atmosphere (or a direct glaze match), not
+            # either alone. At >= 2 a single shared attribute qualified,
+            # and since every stored result is cone 6 oxidation, every
+            # cone-6-or-oxidation query matched the entire table - which
+            # is what made the old confidence formula saturate.
+            if score >= 4:
                 similar.append((score, result))
 
         # Sort by score and return results

@@ -80,6 +80,18 @@ class UMF:
         """Get position on Stull Chart."""
         return StullPoint(al2o3=self.Al2O3, sio2=self.SiO2)
 
+    def predict_surface(self):
+        """Calibrated surface prediction using the full flux composition.
+
+        More accurate than `stull_point.surface_prediction` because it can
+        see MgO and CaO - the magnesia and calcia mattes are invisible to
+        a Si:Al chart point. Returns a SurfacePrediction carrying the
+        probability distribution, not just a label.
+        """
+        from ..services.surface_model import predict_surface
+
+        return predict_surface(self)
+
     def to_dict(self) -> dict:
         """Convert to dictionary, excluding zero values."""
         result = {}
@@ -159,30 +171,43 @@ class StullPoint:
     sio2: float
 
     @property
-    def surface_prediction(self) -> str:
-        """Predict surface quality based on position."""
-        ratio = self.sio2 / self.al2o3 if self.al2o3 > 0 else float('inf')
+    def prediction(self):
+        """Full calibrated prediction: distribution, confidence, stability.
 
-        # Rough Stull Chart regions (for cone 6-10)
-        if self.al2o3 < 0.15:
-            return "underfired_runny"
-        elif self.al2o3 > 0.65:
-            return "matte_dry"
-        elif ratio < 6:
-            return "matte"
-        elif ratio > 12:
-            return "glossy_runny"
-        elif 8 <= ratio <= 11:
-            return "glossy"
-        else:
-            return "satin"
+        A chart point carries only SiO2 and Al2O3, so this uses the
+        model's ratio-only tier (65.3% held-out accuracy). Callers with a
+        complete UMF should use UMF.predict_surface(), which additionally
+        uses the magnesia and calcia matte cells.
+        """
+        from ..services.surface_model import predict_surface_from_ratio
+
+        ratio = self.sio2 / self.al2o3 if self.al2o3 > 0 else 0.0
+        return predict_surface_from_ratio(ratio, self.al2o3)
+
+    @property
+    def surface_prediction(self) -> str:
+        """Most likely surface: "glossy", "satin" or "matte".
+
+        Previously returned six values from thresholds hardcoded here and
+        contradicted in three other places - a glaze at Si:Al 11.5 was
+        "satin" here and GLOSSY in GlazeClassifier. It also conflated
+        gloss with melt stability: "underfired_runny", "glossy_runny" and
+        "matte_dry" mixed the two axes together. Stability now lives on
+        `prediction.stability`, and the vocabulary is the three calibrated
+        classes. See src/services/surface_model.py.
+        """
+        return self.prediction.label
 
     def to_dict(self) -> dict:
         """Convert to dictionary."""
+        prediction = self.prediction
         return {
             "al2o3": round(self.al2o3, 4),
             "sio2": round(self.sio2, 4),
-            "surface_prediction": self.surface_prediction,
+            "surface_prediction": prediction.label,
+            "surface_probabilities": prediction.probabilities,
+            "surface_confidence": round(prediction.confidence, 4),
+            "stability": prediction.stability,
         }
 
 

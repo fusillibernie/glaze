@@ -14,6 +14,7 @@ from ..models.glaze import (
     GlazeSurface,
 )
 from ..models.umf import UMF, StullPoint, get_umf_ranges
+from . import surface_model
 
 logger = logging.getLogger(__name__)
 
@@ -156,11 +157,16 @@ class GlazeAnalyzer:
             warnings.append("High alkali ratio may cause crazing")
             recommendations.append("Substitute some alkali flux with calcium or magnesium")
 
-        # Si:Al ratio
-        if si_al_ratio < 5:
-            issues.append("Low Si:Al ratio - glaze will be very matte/dry")
-        elif si_al_ratio > 15:
-            issues.append("High Si:Al ratio - glaze may be runny")
+        # Melt stability from the shared calibrated thresholds, rather
+        # than the si_al < 5 / > 15 cuts this method used to carry - which
+        # disagreed with the 6 / 12 used everywhere else in the codebase.
+        for flag in surface_model.predict_surface(umf).stability:
+            if flag == "runny":
+                issues.append("High Si:Al ratio - glaze may be runny")
+            elif flag == "underfired":
+                issues.append("Very low alumina - glaze may be underfired and unstable")
+            elif flag == "stiff":
+                issues.append("Very high alumina - glaze may be stiff and dry")
 
         # Soluble material warning
         if hasattr(recipe, '_has_soluble') and recipe._has_soluble:

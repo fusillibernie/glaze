@@ -62,26 +62,88 @@ class TestUMF:
 
 
 class TestStullPoint:
-    """Tests for Stull chart predictions."""
+    """Tests for Stull chart predictions.
 
-    def test_glossy_prediction(self):
-        """Test glossy surface prediction."""
-        # High silica, low alumina = glossy
-        stull = StullPoint(sio2=4.0, al2o3=0.3)
-        assert "glossy" in stull.surface_prediction
+    These assert on the probability distribution and on trends, not on a
+    single hard label. A chart point carries only SiO2 and Al2O3, and
+    against 7,575 labelled community recipes those two features reach
+    65.3% - so pinning an exact label would be asserting more certainty
+    than the data supports. Trends are what the model can actually be
+    held to.
+    """
 
-    def test_matte_prediction(self):
-        """Test matte surface prediction."""
-        # Low silica, high alumina = matte
-        stull = StullPoint(sio2=2.5, al2o3=0.5)
-        assert "matte" in stull.surface_prediction
+    def test_glossy_at_high_silica_ratio(self):
+        stull = StullPoint(sio2=4.0, al2o3=0.3)  # Si:Al 13.3
+        assert stull.surface_prediction == "glossy"
 
-    def test_satin_prediction(self):
-        """Test satin surface prediction."""
-        # Balanced = satin
-        stull = StullPoint(sio2=3.2, al2o3=0.4)
-        prediction = stull.surface_prediction
-        assert prediction in ["satin", "matte", "glossy"]
+    def test_silica_starved_glazes_are_far_mattier(self):
+        """Less silica per alumina means a stiffer, less glassy melt. The
+        effect is large and unambiguous at the bottom of the range."""
+        low = StullPoint(sio2=1.6, al2o3=0.4).prediction    # Si:Al 4.0
+        mid = StullPoint(sio2=3.2, al2o3=0.4).prediction    # Si:Al 8.0
+
+        assert low.probabilities["matte"] > 4 * mid.probabilities["matte"]
+        assert low.label == "matte"
+        assert mid.label == "glossy"
+
+    def test_gloss_does_not_increase_monotonically_with_ratio(self):
+        """Real signal that every one of the legacy threshold sets missed.
+
+        All four hardcoded copies assumed gloss rises with Si:Al up to a
+        single "runny" cutoff. The corpus says otherwise: the 9-11 band is
+        79% glossy but Si:Al >=11 falls back to 68%, and matte ticks up
+        again (0.092 vs 0.085 at 7-9). Very high silica ratios go stiff
+        and underfired rather than glassier.
+
+        Pinned because a future recalibration that quietly restored
+        monotonicity would mean the fit had been over-smoothed.
+        """
+        band_9_11 = StullPoint(sio2=4.0, al2o3=0.4).prediction   # Si:Al 10.0
+        band_11_up = StullPoint(sio2=4.0, al2o3=0.3).prediction  # Si:Al 13.3
+
+        assert band_11_up.probabilities["glossy"] < band_9_11.probabilities["glossy"]
+        assert band_11_up.probabilities["matte"] > band_9_11.probabilities["matte"]
+
+    def test_moderate_ratio_is_reported_as_a_weak_call(self):
+        """Si:Al 5-7 is genuinely ambiguous - 44% glossy, 28% satin, 28%
+        matte across 1,765 community recipes. The old thresholds returned
+        a flat "matte" here with no hint of that. The model must report
+        the uncertainty rather than pick a side confidently.
+
+        This is where the calibration openly disagrees with the textbook
+        expectation that high alumina implies matte: restricted to Si:Al
+        5-7 with Al2O3 above 0.45, the corpus is 49% glossy and only 23%
+        matte (n=643). Adding an Al2O3 override to force matte here would
+        be overriding measurement with belief, and it also measures worse
+        (64.9% vs 65.3%).
+        """
+        prediction = StullPoint(sio2=2.5, al2o3=0.5).prediction  # Si:Al 5.0
+        assert not prediction.is_confident
+        assert prediction.caveat
+        assert prediction.probabilities["matte"] > 0.2
+
+    def test_probabilities_form_a_distribution(self):
+        prediction = StullPoint(sio2=3.2, al2o3=0.4).prediction
+        assert set(prediction.probabilities) == {"glossy", "satin", "matte"}
+        assert sum(prediction.probabilities.values()) == pytest.approx(1.0, abs=0.01)
+        assert prediction.confidence == prediction.probabilities[prediction.label]
+
+    def test_stability_is_separate_from_gloss(self):
+        """A glaze can be glossy AND running off the pot. The old labels
+        ("glossy_runny", "matte_dry", "underfired_runny") fused the two
+        axes so callers could not distinguish them."""
+        runny = StullPoint(sio2=5.0, al2o3=0.3).prediction  # Si:Al 16.7
+        assert "runny" in runny.stability
+        assert runny.label in ("glossy", "satin", "matte")
+
+        underfired = StullPoint(sio2=1.0, al2o3=0.1).prediction
+        assert "underfired" in underfired.stability
+
+    def test_to_dict_exposes_distribution(self):
+        data = StullPoint(sio2=4.0, al2o3=0.3).to_dict()
+        assert data["surface_prediction"] == "glossy"
+        assert "surface_probabilities" in data
+        assert "stability" in data
 
 
 class TestUMFRanges:

@@ -3095,6 +3095,41 @@
         let stullLimitOverlays = []; // loaded from API
         let showLimitOverlays = false;
 
+        // Surface bands from the calibrated model, fetched once. These
+        // replace three separate sets of thresholds that used to be
+        // hardcoded in this file and disagreed both with each other and
+        // with the backend. Never guess a boundary here - ask the API.
+        let surfaceBands = [];
+
+        async function loadSurfaceBands() {
+            if (surfaceBands.length) return surfaceBands;
+            try {
+                const response = await fetch(`${API_BASE}/api/visualization/stull-chart`);
+                const data = await response.json();
+                surfaceBands = data.regions || [];
+            } catch (e) {
+                console.error('Failed to load surface bands:', e);
+            }
+            return surfaceBands;
+        }
+
+        /** Most likely surface for a Si:Al ratio, with its probability. */
+        function surfaceForRatio(ratio) {
+            for (const band of surfaceBands) {
+                const aboveMin = band.si_al_min === null || ratio >= band.si_al_min;
+                const belowMax = band.si_al_max === null || ratio < band.si_al_max;
+                if (aboveMin && belowMax) {
+                    return {
+                        surface: band.name,
+                        probability: band.probability ?? (band.probabilities || {})[band.name],
+                        n: band.n,
+                        label: band.label,
+                    };
+                }
+            }
+            return { surface: 'unknown', probability: null, n: 0, label: '' };
+        }
+
         async function loadStullLimits() {
             try {
                 const response = await fetch(`${API_BASE}/api/reference/umf-limits-for-cone/${targetCone}`);
@@ -3119,160 +3154,6 @@
             }
         }
 
-        function renderStullChart(data) {
-            const al2o3 = data.Al2O3 || 0;
-            const sio2 = data.SiO2 || 0;
-
-            const traces = [{
-                x: [sio2],
-                y: [al2o3],
-                mode: 'markers',
-                type: 'scatter',
-                marker: {
-                    size: 20,
-                    color: '#7c3aed',
-                    symbol: 'diamond',
-                    line: { width: 2, color: '#fff' }
-                },
-                name: 'Your Recipe',
-                hovertemplate: `SiO₂: ${sio2.toFixed(2)}<br>Al₂O₃: ${al2o3.toFixed(3)}<extra></extra>`
-            }];
-
-            // Add target marker if set
-            if (stullTarget) {
-                traces.push({
-                    x: [stullTarget.x],
-                    y: [stullTarget.y],
-                    mode: 'markers+text',
-                    type: 'scatter',
-                    marker: {
-                        size: 18,
-                        color: '#ef4444',
-                        symbol: 'cross',
-                        line: { width: 2, color: '#fff' }
-                    },
-                    name: 'Target',
-                    text: ['TARGET'],
-                    textposition: 'top center',
-                    textfont: { color: '#ef4444', size: 10 },
-                    hovertemplate: `Target<br>SiO₂: ${stullTarget.x.toFixed(2)}<br>Al₂O₃: ${stullTarget.y.toFixed(3)}<extra></extra>`
-                });
-            }
-
-            const layout = {
-                paper_bgcolor: '#1a1a2e',
-                plot_bgcolor: '#0f0f1a',
-                xaxis: {
-                    title: { text: 'SiO₂', font: { color: '#94a3b8' } },
-                    range: [0, 6],
-                    gridcolor: '#334155',
-                    color: '#94a3b8',
-                    tickfont: { color: '#94a3b8' }
-                },
-                yaxis: {
-                    title: { text: 'Al₂O₃', font: { color: '#94a3b8' } },
-                    range: [0, 1],
-                    gridcolor: '#334155',
-                    color: '#94a3b8',
-                    tickfont: { color: '#94a3b8' }
-                },
-                margin: { t: 20, r: 20, b: 50, l: 60 },
-                showlegend: true,
-                legend: { font: { color: '#94a3b8' }, bgcolor: 'rgba(0,0,0,0)' },
-                shapes: [
-                    { type: 'rect', x0: 2.5, x1: 5, y0: 0.15, y1: 0.4,
-                      fillcolor: 'rgba(16, 185, 129, 0.15)', line: { color: '#10b981', width: 1 } },
-                    { type: 'rect', x0: 1.5, x1: 3.5, y0: 0.4, y1: 0.7,
-                      fillcolor: 'rgba(245, 158, 11, 0.15)', line: { color: '#f59e0b', width: 1 } },
-                    // Add limit overlays as dashed rectangles
-                    ...(showLimitOverlays ? stullLimitOverlays.map(lim => ({
-                        type: 'rect',
-                        x0: lim.sio2_min, x1: lim.sio2_max,
-                        y0: lim.al2o3_min, y1: lim.al2o3_max,
-                        fillcolor: 'rgba(0,0,0,0)',
-                        line: { color: lim.color, width: 2, dash: 'dash' },
-                    })) : []),
-                ],
-                annotations: [
-                    { x: 3.75, y: 0.27, text: 'GLOSSY', showarrow: false, font: { color: '#10b981', size: 11 } },
-                    { x: 2.5, y: 0.55, text: 'MATTE', showarrow: false, font: { color: '#f59e0b', size: 11 } },
-                    // Add limit labels
-                    ...(showLimitOverlays ? stullLimitOverlays.map(lim => ({
-                        x: lim.sio2_max, y: lim.al2o3_max,
-                        text: lim.label, showarrow: false,
-                        font: { color: lim.color, size: 9 },
-                        xanchor: 'right',
-                    })) : []),
-                ],
-                dragmode: 'pan',
-            };
-
-            Plotly.newPlot('stull-chart', traces, layout, {
-                responsive: true,
-                displayModeBar: true,
-                modeBarButtonsToRemove: ['lasso2d', 'select2d', 'autoScale2d', 'hoverClosestCartesian', 'hoverCompareCartesian', 'toggleSpikelines'],
-                displaylogo: false,
-            });
-
-            // Click to set target
-            const chartEl = document.getElementById('stull-chart');
-            chartEl.on('plotly_click', function(eventData) {
-                if (eventData.points && eventData.points.length > 0) {
-                    // Clicked on an existing point - ignore
-                    return;
-                }
-            });
-            chartEl.on('plotly_doubleclick', function() {
-                // Reset zoom on double-click is default, keep it
-            });
-
-            // Use plotly_click on the plot area (not on points) to set target
-            chartEl.removeAllListeners('plotly_click');
-            chartEl.on('plotly_click', function(eventData) {
-                const xaxis = chartEl._fullLayout.xaxis;
-                const yaxis = chartEl._fullLayout.yaxis;
-
-                if (eventData.points && eventData.points.length > 0) {
-                    // Clicked on a marker - do nothing
-                    return;
-                }
-
-                // Get click coordinates from event
-                const point = eventData.points?.[0];
-                if (!point) {
-                    // No point clicked - use event coordinates
-                    const evt = eventData.event;
-                    const bb = chartEl.querySelector('.plotly .nsewdrag')?.getBoundingClientRect();
-                    if (!bb || !evt) return;
-                    const xFrac = (evt.clientX - bb.left) / bb.width;
-                    const yFrac = (evt.clientY - bb.top) / bb.height;
-                    const xVal = xaxis.range[0] + xFrac * (xaxis.range[1] - xaxis.range[0]);
-                    const yVal = yaxis.range[1] - yFrac * (yaxis.range[1] - yaxis.range[0]);
-                    setStullTarget(xVal, yVal);
-                }
-            });
-
-            // Also handle click on the drag layer for empty-area clicks
-            setTimeout(() => {
-                const dragLayer = chartEl.querySelector('.nsewdrag');
-                if (dragLayer) {
-                    dragLayer.style.cursor = 'crosshair';
-                    dragLayer.addEventListener('click', function(evt) {
-                        const bb = dragLayer.getBoundingClientRect();
-                        const xaxis = chartEl._fullLayout.xaxis;
-                        const yaxis = chartEl._fullLayout.yaxis;
-                        const xFrac = (evt.clientX - bb.left) / bb.width;
-                        const yFrac = (evt.clientY - bb.top) / bb.height;
-                        const xVal = xaxis.range[0] + xFrac * (xaxis.range[1] - xaxis.range[0]);
-                        const yVal = yaxis.range[1] - yFrac * (yaxis.range[1] - yaxis.range[0]);
-                        if (xVal >= 0 && xVal <= 8 && yVal >= 0 && yVal <= 1.5) {
-                            setStullTarget(xVal, yVal);
-                        }
-                    });
-                }
-            }, 100);
-        }
-
         async function setStullTarget(sio2, al2o3) {
             stullTarget = { x: parseFloat(sio2.toFixed(2)), y: parseFloat(al2o3.toFixed(3)) };
             // Re-render chart with target
@@ -3289,11 +3170,15 @@
                 chartContainer.appendChild(panel);
             }
 
-            const ratio = stullTarget.y > 0 ? (stullTarget.x / stullTarget.y).toFixed(1) : 'N/A';
-            let surface = 'Unknown';
-            if (stullTarget.y < 0.35 && stullTarget.x > 3) surface = 'Glossy';
-            else if (stullTarget.y > 0.4 || stullTarget.x < 3) surface = 'Matte';
-            else surface = 'Satin';
+            const rawRatio = stullTarget.y > 0 ? stullTarget.x / stullTarget.y : 0;
+            const ratio = stullTarget.y > 0 ? rawRatio.toFixed(1) : 'N/A';
+            const band = surfaceForRatio(rawRatio);
+            let surface = band.surface === 'unknown'
+                ? 'Unknown'
+                : band.surface.charAt(0).toUpperCase() + band.surface.slice(1);
+            if (band.probability != null) {
+                surface += ` (${Math.round(band.probability * 100)}% of ${band.n.toLocaleString()} similar)`;
+            }
 
             panel.innerHTML = `
                 <div class="card-header">
@@ -3340,9 +3225,9 @@
             const resultEl = document.getElementById('stull-formulation-result');
             resultEl.innerHTML = '<div class="loading active"><div class="spinner"></div>Generating formula...</div>';
 
-            let surface = 'glossy';
-            if (stullTarget.y > 0.4 || stullTarget.x < 3) surface = 'matte';
-            else if (stullTarget.y >= 0.3 && stullTarget.x <= 4) surface = 'satin';
+            const targetRatio = stullTarget.y > 0 ? stullTarget.x / stullTarget.y : 0;
+            const targetBand = surfaceForRatio(targetRatio);
+            const surface = targetBand.surface === 'unknown' ? 'glossy' : targetBand.surface;
 
             try {
                 const response = await fetch(`${API_BASE}/api/recipes/formulate`, {
@@ -4044,15 +3929,44 @@
         function renderPrediction(data) {
             const prediction = data.prediction || data;
             const defects = prediction.defect_risks || {};
+            const probs = prediction.surface_probabilities || {};
+            const confidence = prediction.confidence || 0;
+
+            // Show the whole distribution, not just the winner. Chemistry
+            // alone only reaches ~67% accuracy on surface, so the spread
+            // between the classes is as informative as the top pick - and
+            // this number used to be a hardcoded 95% for every recipe.
+            const barColors = { glossy: '#10b981', satin: '#f59e0b', matte: '#a855f7' };
+            const strip = Object.keys(probs).length ? `
+                <div style="margin-top:0.6rem;">
+                    ${['glossy','satin','matte'].filter(k => k in probs).map(k => `
+                        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.2rem;">
+                            <span style="width:3.4rem;font-size:0.72rem;color:#94a3b8;">${escapeHtml(k)}</span>
+                            <div style="flex:1;height:6px;background:rgba(148,163,184,0.15);border-radius:3px;overflow:hidden;">
+                                <div style="width:${(probs[k]*100).toFixed(0)}%;height:100%;background:${barColors[k] || '#64748b'};"></div>
+                            </div>
+                            <span style="width:2.4rem;text-align:right;font-size:0.72rem;color:#94a3b8;">${(probs[k]*100).toFixed(0)}%</span>
+                        </div>`).join('')}
+                </div>` : '';
+            const caveat = prediction.surface_caveat
+                ? `<div style="margin-top:0.5rem;font-size:0.72rem;color:#f59e0b;">${escapeHtml(prediction.surface_caveat)}</div>`
+                : '';
+            const stability = (prediction.stability_flags || []).length
+                ? `<div style="margin-top:0.4rem;">${prediction.stability_flags.map(f =>
+                     `<span class="badge badge-warning" style="margin-right:0.25rem;">${escapeHtml(f)}</span>`).join('')}</div>`
+                : '';
 
             document.getElementById('prediction-results').innerHTML = `
                 <div class="grid grid-2 mb-1">
                     <div class="prediction-card">
                         <div class="prediction-header">
                             <span class="prediction-title">Predicted Surface</span>
-                            <span class="badge badge-primary">${((prediction.confidence || 0) * 100).toFixed(0)}%</span>
+                            <span class="badge ${confidence >= 0.6 ? 'badge-primary' : 'badge-warning'}">${(confidence * 100).toFixed(0)}%</span>
                         </div>
-                        <div class="prediction-value">${prediction.predicted_surface || 'Unknown'}</div>
+                        <div class="prediction-value">${escapeHtml(prediction.predicted_surface || 'Unknown')}</div>
+                        ${strip}
+                        ${stability}
+                        ${caveat}
                     </div>
                     <div class="prediction-card">
                         <div class="prediction-title">Predicted Color</div>
@@ -5078,13 +4992,16 @@
             }
         }
 
-        // Override renderStullChart to include community data overlay
-        const _originalRenderStullChart = renderStullChart;
-        renderStullChart = async function(data) {
+        // Sole entry point for the Stull chart. This used to monkey-patch
+        // over an earlier renderStullChart defined above, which was then
+        // never called - so that function's copy of the Stull thresholds
+        // was dead code that still looked authoritative. It has been
+        // removed; edit the thresholds in surface_model.json, not here.
+        async function renderStullChart(data) {
             lastUMFData = data;
-            await loadStullOverlay();
+            await Promise.all([loadStullOverlay(), loadSurfaceBands()]);
             _renderStullChartWithOverlay(data);
-        };
+        }
 
         function _renderStullChartWithOverlay(data) {
             const al2o3 = data.Al2O3 || 0;
@@ -5177,10 +5094,17 @@
                 showlegend: true,
                 legend: { font: { color: '#94a3b8' }, bgcolor: 'rgba(0,0,0,0)' },
                 shapes: [
-                    { type: 'rect', x0: 2.5, x1: 5, y0: 0.15, y1: 0.4,
-                      fillcolor: 'rgba(16, 185, 129, 0.15)', line: { color: '#10b981', width: 1 } },
-                    { type: 'rect', x0: 1.5, x1: 3.5, y0: 0.4, y1: 0.7,
-                      fillcolor: 'rgba(245, 158, 11, 0.15)', line: { color: '#f59e0b', width: 1 } },
+                    // Si:Al band edges from the calibrated model. A constant
+                    // Si:Al ratio is a straight line through the origin, not
+                    // a box - the two rectangles that used to sit here were a
+                    // third geometry, agreeing with neither the backend's
+                    // ratio wedges nor the click handler's cuts.
+                    ...surfaceBands.filter(b => b.si_al_max).map(band => ({
+                        type: 'line',
+                        x0: 0, y0: 0,
+                        x1: 6, y1: 6 / band.si_al_max,
+                        line: { color: 'rgba(148,163,184,0.45)', width: 1, dash: 'dot' },
+                    })),
                     ...(showLimitOverlays ? stullLimitOverlays.map(lim => ({
                         type: 'rect',
                         x0: lim.sio2_min, x1: lim.sio2_max,
@@ -5190,8 +5114,20 @@
                     })) : []),
                 ],
                 annotations: [
-                    { x: 3.75, y: 0.27, text: 'GLOSSY', showarrow: false, font: { color: '#10b981', size: 11 } },
-                    { x: 2.5, y: 0.55, text: 'MATTE', showarrow: false, font: { color: '#f59e0b', size: 11 } },
+                    // Label each band with the measured probability and
+                    // sample size rather than asserting a region name.
+                    ...surfaceBands.map(band => {
+                        const lo = band.si_al_min ?? 2;
+                        const hi = band.si_al_max ?? 20;
+                        const mid = (lo + Math.min(hi, 16)) / 2;
+                        return {
+                            x: 5.7, y: 5.7 / mid,
+                            text: `${band.name} ${Math.round((band.probability ?? 0) * 100)}%`,
+                            showarrow: false,
+                            font: { color: '#94a3b8', size: 9 },
+                            xanchor: 'right',
+                        };
+                    }),
                     ...(showLimitOverlays ? stullLimitOverlays.map(lim => ({
                         x: lim.sio2_max, y: lim.al2o3_max,
                         text: lim.label, showarrow: false,

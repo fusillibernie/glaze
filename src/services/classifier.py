@@ -6,6 +6,7 @@ from typing import Optional
 
 from ..models.glaze import GlazeRecipe, GlazeSurface, ConeTemperature, AtmosphereType
 from ..models.umf import UMF
+from . import surface_model
 
 
 class StullRegion(Enum):
@@ -112,17 +113,10 @@ class GlazeClassification:
 class GlazeClassifier:
     """Classify and search glazes based on composition."""
 
-    # Stull Chart boundary definitions (for cone 6-10)
-    STULL_BOUNDARIES = {
-        "al2o3_min_stable": 0.15,
-        "al2o3_max_stable": 0.65,
-        "al2o3_matte_threshold": 0.45,
-        "si_al_glossy_min": 8.0,
-        "si_al_glossy_max": 12.0,
-        "si_al_satin_min": 6.0,
-        "si_al_satin_max": 8.0,
-        "si_al_matte_max": 6.0,
-    }
+    # Alumina above this reads as a stiff, dry melt regardless of what the
+    # gloss model says. This is a melt-viscosity fact rather than a fitted
+    # boundary, so it stays here rather than in surface_model.json.
+    DRY_MATTE_AL2O3 = 0.45
 
     def __init__(self):
         """Initialize classifier."""
@@ -219,23 +213,34 @@ class GlazeClassifier:
         return classification
 
     def _get_stull_coordinates(self, umf: UMF) -> StullCoordinates:
-        """Get Stull chart coordinates and region."""
+        """Get Stull chart coordinates and region.
+
+        Regions come from the calibrated surface model rather than the
+        hardcoded ratio cuts this class used to carry, which disagreed
+        with the three other copies elsewhere in the codebase and scored
+        52.2% against 7,575 labelled community recipes - worse than
+        always answering "glossy". Stability (underfired / stiff / runny)
+        is checked first because it is a different axis from gloss: a
+        glaze can be both glossy and running off the pot.
+        """
         al2o3 = umf.Al2O3
         sio2 = umf.SiO2
         ratio = sio2 / al2o3 if al2o3 > 0 else float('inf')
 
-        # Determine region
-        if al2o3 < self.STULL_BOUNDARIES["al2o3_min_stable"]:
+        prediction = surface_model.predict_surface(umf)
+        stability = set(prediction.stability)
+
+        if "underfired" in stability:
             region = StullRegion.UNDERFIRED
-        elif al2o3 > self.STULL_BOUNDARIES["al2o3_max_stable"]:
+        elif "stiff" in stability:
             region = StullRegion.STIFF
-        elif ratio > 12:
+        elif "runny" in stability:
             region = StullRegion.RUNNY
-        elif ratio >= self.STULL_BOUNDARIES["si_al_glossy_min"]:
+        elif prediction.label == "glossy":
             region = StullRegion.GLOSSY
-        elif ratio >= self.STULL_BOUNDARIES["si_al_satin_min"]:
+        elif prediction.label == "satin":
             region = StullRegion.SATIN
-        elif al2o3 > self.STULL_BOUNDARIES["al2o3_matte_threshold"]:
+        elif al2o3 > self.DRY_MATTE_AL2O3:
             region = StullRegion.DRY_MATTE
         else:
             region = StullRegion.MATTE

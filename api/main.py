@@ -44,6 +44,7 @@ from src.services.glazy_bulk import CommunityRecipeService
 from src.services.recipe_db import RecipeDatabase
 from src.services.clay_body_db import ClayBodyDatabase
 from src.services.recipe_storage import RecipeStorage
+from src.services import surface_model
 from src.services.safety_assessor import SafetyAssessor
 from src.services import exporter
 
@@ -290,6 +291,13 @@ class PredictionResponse(BaseModel):
     defect_risks: dict[str, float]
     application_recommendations: list[str]
     firing_recommendations: list[str]
+    # Full distribution behind `predicted_surface`. `confidence` is the
+    # probability of the winning class; chemistry alone reaches about 67%
+    # on this task, so the spread matters as much as the argmax.
+    surface_probabilities: dict[str, float] = {}
+    surface_basis: Optional[str] = None
+    surface_caveat: str = ""
+    stability_flags: list[str] = []
 
 
 # ============== Materials Endpoints ==============
@@ -746,6 +754,12 @@ async def predict_outcome(
         defect_risks={k: round(v, 2) for k, v in prediction.defect_risks.items()},
         application_recommendations=prediction.application_recommendations,
         firing_recommendations=prediction.firing_recommendations,
+        surface_probabilities={
+            k: round(v, 3) for k, v in prediction.surface_probabilities.items()
+        },
+        surface_basis=prediction.surface_basis,
+        surface_caveat=prediction.surface_caveat,
+        stability_flags=prediction.stability_flags,
     )
 
 
@@ -1796,38 +1810,36 @@ async def get_stull_chart_data():
 
     Includes Stull region boundaries and all indexed glazes.
     """
-    # Stull region boundary lines (Al2O3 on x, SiO2 on y)
-    # Regions defined by Si:Al ratio = SiO2 / Al2O3
-    regions = [
-        {
-            "name": "runny",
-            "label": "Runny (Si:Al > 12)",
-            "color": "rgba(239,68,68,0.15)",
-            "si_al_min": 12,
-            "si_al_max": None,
-        },
-        {
-            "name": "glossy",
-            "label": "Glossy (Si:Al 8–12)",
-            "color": "rgba(34,197,94,0.15)",
-            "si_al_min": 8,
-            "si_al_max": 12,
-        },
-        {
-            "name": "satin",
-            "label": "Satin (Si:Al 6–8)",
-            "color": "rgba(234,179,8,0.15)",
-            "si_al_min": 6,
-            "si_al_max": 8,
-        },
-        {
-            "name": "matte",
-            "label": "Matte (Si:Al < 6)",
-            "color": "rgba(168,85,247,0.15)",
-            "si_al_min": None,
-            "si_al_max": 6,
-        },
-    ]
+    # Bands come from the calibrated model rather than the hardcoded
+    # 6/8/12 cuts this endpoint used to carry - a fourth set of Stull
+    # boundaries that disagreed with the three elsewhere. Each band now
+    # states the measured probability and sample size behind it, so the
+    # chart shows "Si:Al 9-11 - 79% glossy (n=1,633)" instead of implying
+    # a hard boundary the data does not support.
+    _BAND_COLORS = {
+        "glossy": "rgba(34,197,94,0.15)",
+        "satin": "rgba(234,179,8,0.15)",
+        "matte": "rgba(168,85,247,0.15)",
+    }
+    regions = []
+    for band in surface_model.region_bands():
+        rng = band["si_al_range"]
+        if rng.startswith("<"):
+            lo, hi = None, float(rng[1:])
+        elif rng.startswith(">="):
+            lo, hi = float(rng[2:]), None
+        else:
+            lo, hi = (float(x) for x in rng.split("-"))
+        regions.append({
+            "name": band["dominant"],
+            "label": f"Si:Al {rng} — {band['probability']:.0%} {band['dominant']} (n={band['n']:,})",
+            "color": _BAND_COLORS.get(band["dominant"], "rgba(148,163,184,0.15)"),
+            "si_al_min": lo,
+            "si_al_max": hi,
+            "probability": band["probability"],
+            "probabilities": band["probabilities"],
+            "n": band["n"],
+        })
 
     # Build glaze points from classifier index
     glazes = []
@@ -1878,11 +1890,14 @@ async def get_stull_chart_data():
             "x": {"label": "Al₂O₃", "min": 0.1, "max": 0.7},
             "y": {"label": "SiO₂", "min": 1.0, "max": 6.0},
         },
+        # Bin edges from the fitted model, not hand-picked boundaries.
+        # These are where the measured probabilities change, and are
+        # labelled as transitions rather than as hard rules.
         "reference_lines": [
-            {"si_al": 6, "label": "Matte boundary"},
-            {"si_al": 8, "label": "Satin boundary"},
-            {"si_al": 12, "label": "Runny boundary"},
+            {"si_al": edge, "label": f"Si:Al {edge:g}"}
+            for edge in surface_model.model_features()["si_al_bins"]
         ],
+        "model_accuracy": surface_model.model_accuracy(),
     }
 
 

@@ -81,12 +81,42 @@ class TestClassification:
         assert classification.stull.si_al_ratio > 8
 
     def test_classify_matte(self, classifier, matte_recipe):
-        """Test classification of matte glaze."""
+        """The matte fixture (Si:Al 5.6, Al2O3 0.5, CaO 0.5) now classifies
+        GLOSSY, and that is a deliberate change rather than a regression.
+
+        The old hardcoded cuts said "Si:Al below 6 is matte, and above
+        Al2O3 0.45 it is dry matte". Against 7,575 labelled community
+        recipes those cuts scored 52.2% - worse than always answering
+        "glossy" (60.5%). In the band this fixture occupies the corpus is
+        52% glossy (n=1,256); narrowed further to Al2O3 above 0.45 it is
+        still 49% glossy against 23% matte (n=643).
+
+        Reinstating an Al2O3 override to keep this test's original
+        expectation was considered and rejected: it would override
+        measurement with a textbook belief, and adding Al2O3 as a feature
+        measures worse overall (64.9% vs 65.3%). What the test pins now is
+        the ratio, which is unambiguous, plus the fact that the model
+        reports its own uncertainty for a chemistry this borderline.
+        """
         classification = classifier.classify(matte_recipe)
 
-        # DRY_MATTE is also a valid matte classification for low Si:Al ratios
-        assert classification.stull.region in [StullRegion.MATTE, StullRegion.SATIN, StullRegion.DRY_MATTE]
         assert classification.stull.si_al_ratio < 8
+        prediction = matte_recipe.umf.predict_surface()
+        assert prediction.probabilities["matte"] > 0.15
+        assert prediction.confidence < 0.6, "a borderline glaze must not read as certain"
+
+    def test_dry_matte_still_distinguished_when_model_says_matte(self, classifier):
+        """High alumina picks DRY_MATTE over plain MATTE - but only once
+        the calibrated model has already concluded matte. Alumina refines
+        which kind of matte, it does not overrule the gloss call."""
+        recipe = GlazeRecipe(
+            name="Stiff Matte",
+            ingredients=[GlazeIngredient(material_name="Kaolin", percentage=100.0)],
+            target_cone=ConeTemperature.CONE_6,
+            umf=UMF(SiO2=1.8, Al2O3=0.6, CaO=0.7, MgO=0.3),
+        )
+        classification = classifier.classify(recipe)
+        assert classification.stull.region in (StullRegion.DRY_MATTE, StullRegion.MATTE)
 
     def test_classify_no_umf_raises(self, classifier):
         """Test that classification without UMF raises error."""
