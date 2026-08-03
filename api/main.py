@@ -104,6 +104,63 @@ def _index_key(record: dict) -> str:
     return f"name:{(record.get('name') or 'unnamed').strip().lower()}"
 
 
+# Below this share of the batch resolving, a batch-derived UMF is not
+# merely imprecise but wrong: the formulator normalizes over whatever
+# resolved, so a missing 34% frit reappears as inflated alumina and
+# silica. Plotting that on the Stull chart is worse than plotting nothing.
+_MIN_RESOLVED_PCT = 90.0
+
+
+def _batch_chemistry(record: dict):
+    """UMF from a curated recipe's ingredient list, with provenance.
+
+    Returns (umf, provenance) or (None, provenance) when too little of the
+    batch resolves. `resolved_pct` is by batch WEIGHT, not ingredient
+    count - a recipe missing one ingredient that is 60% of the batch is
+    not 80% resolved.
+    """
+    ingredients = [
+        i for i in (record.get("ingredients") or [])
+        if isinstance(i, dict) and i.get("material") and (i.get("percentage") or 0) > 0
+    ]
+    if not ingredients:
+        return None, None
+
+    total = sum(i["percentage"] for i in ingredients)
+    resolved_weight = 0.0
+    unresolved: list[str] = []
+    for item in ingredients:
+        if materials_db.get(item["material"]):
+            resolved_weight += item["percentage"]
+        elif item["material"] not in unresolved:
+            unresolved.append(item["material"])
+
+    resolved_pct = round(resolved_weight / total * 100, 1) if total else 0.0
+    quality = (
+        "complete" if not unresolved
+        else "partial" if resolved_pct >= _MIN_RESOLVED_PCT
+        else "insufficient"
+    )
+    provenance = {
+        "basis": "batch_derived",
+        "resolved_pct": resolved_pct,
+        "unresolved": unresolved,
+        "quality": quality,
+    }
+    if quality == "insufficient":
+        return None, provenance
+
+    recipe = GlazeRecipe(name=record.get("name") or "Unnamed", ingredients=[
+        GlazeIngredient(material_name=i["material"], percentage=i["percentage"])
+        for i in ingredients
+    ])
+    try:
+        umf = formulator.calculate_umf(recipe)
+    except Exception:
+        return None, provenance
+    return (umf, provenance) if umf.flux_total > 0 else (None, provenance)
+
+
 def _seed_classifier_index() -> None:
     """Pre-populate the classifier's search index from the recipe corpus.
 
@@ -111,28 +168,81 @@ def _seed_classifier_index() -> None:
     only caller was POST /api/classify - so /api/search/by-region,
     /api/search/by-category, /api/search/similar and the Stull chart's
     glaze overlay all returned empty on every fresh boot until a client
-    happened to classify something first. Bulk records already carry a
-    computed oxide analysis, so this converts each straight to a UMF
-    without touching materials_db or ingredient resolution at all.
+    happened to classify something first.
+
+    Three sources of chemistry, in descending order of trust:
+
+      measured      Wood publishes a fired oxide analysis alongside each
+                    of his recipes - an instrument reading, not a
+                    calculation. Keyed under `fired_oxide_analysis`, which
+                    this loop previously did not look for, so all nine
+                    were skipped.
+      published     The Glazy bulk corpus ships a computed analysis.
+      batch_derived Curated book recipes carry only an ingredient list.
+                    None of the 255 had chemistry anywhere in the system,
+                    so every recipe from Britt, Zakin, Wood and Bloomfield
+                    was absent from the chart and from chemistry search.
+
+    Resolving 255 curated recipes emits over a hundred per-ingredient
+    warnings from the formulator, which is noise at boot; they are
+    suppressed here and reported as one aggregate line instead.
     """
-    indexed, skipped = 0, 0
-    for record in recipe_db.get_all():
-        analysis_dict = record.get("analysis")
-        if not analysis_dict:
-            skipped += 1
-            continue
-        try:
-            oxide_analysis = OxideAnalysis.from_dict(analysis_dict)
-            umf = UMF.from_oxide_analysis(oxide_analysis)
-            if umf.flux_total <= 0:
+    counts = {"measured": 0, "published": 0, "batch_derived": 0}
+    quality_counts: dict[str, int] = {}
+    unresolved_names: set[str] = set()
+    skipped = 0
+
+    formulator_logger = logging.getLogger("src.services.formulator")
+    previous_level = formulator_logger.level
+    formulator_logger.setLevel(logging.ERROR)
+    try:
+        for record in recipe_db.get_all():
+            umf, provenance = None, None
+            try:
+                if record.get("fired_oxide_analysis"):
+                    umf = UMF.from_oxide_analysis(
+                        OxideAnalysis.from_dict(record["fired_oxide_analysis"]))
+                    provenance = {"basis": "measured", "resolved_pct": 100.0,
+                                  "unresolved": [], "quality": "complete"}
+                elif record.get("analysis"):
+                    umf = UMF.from_oxide_analysis(OxideAnalysis.from_dict(record["analysis"]))
+                    provenance = {"basis": "published", "resolved_pct": 100.0,
+                                  "unresolved": [], "quality": "complete"}
+                elif record.get("ingredients"):
+                    umf, provenance = _batch_chemistry(record)
+            except Exception:
+                umf, provenance = None, provenance
+
+            if provenance:
+                record["chemistry"] = provenance
+                if provenance["basis"] == "batch_derived":
+                    quality_counts[provenance["quality"]] = (
+                        quality_counts.get(provenance["quality"], 0) + 1)
+                    unresolved_names.update(provenance["unresolved"])
+
+            if umf is None or umf.flux_total <= 0:
                 skipped += 1
                 continue
+
             name = record.get("name") or record.get("result_id") or "Unnamed"
             classifier.classify(GlazeRecipe(name=name, umf=umf), index_key=_index_key(record))
-            indexed += 1
-        except Exception:
-            skipped += 1
-    logger.info("Classifier index seeded: %d indexed, %d skipped", indexed, skipped)
+            counts[provenance["basis"]] += 1
+            record["chemistry"]["umf"] = umf.to_dict()
+    finally:
+        formulator_logger.setLevel(previous_level)
+
+    logger.info(
+        "Classifier index seeded: %d indexed (%d published, %d batch-derived, "
+        "%d measured), %d skipped",
+        sum(counts.values()), counts["published"], counts["batch_derived"],
+        counts["measured"], skipped,
+    )
+    if quality_counts:
+        logger.info(
+            "Curated chemistry: %s; %d distinct unresolved materials",
+            ", ".join(f"{v} {k}" for k, v in sorted(quality_counts.items())),
+            len(unresolved_names),
+        )
 
 
 _seed_classifier_index()
@@ -1064,6 +1174,53 @@ async def browse_recipes(
         limit=limit,
         offset=offset,
     )
+
+
+@app.get("/api/recipes/chemistry-coverage")
+async def recipe_chemistry_coverage():
+    """How much of the curated corpus has usable chemistry, and why not.
+
+    Curated book recipes carry an ingredient list but no oxide analysis,
+    so their chemistry is derived by resolving ingredients against the
+    materials database. Where too little of the batch resolves the recipe
+    is excluded rather than plotted, because the formulator normalizes
+    over whatever it did resolve - the result is wrong, not merely
+    approximate. The unresolved names are returned so the gap is visible
+    and actionable rather than silent.
+    """
+    by_quality: dict[str, int] = {}
+    by_basis: dict[str, int] = {}
+    unresolved: dict[str, int] = {}
+    excluded: list[dict] = []
+
+    for record in recipe_db.get_all():
+        chemistry = record.get("chemistry")
+        if not chemistry:
+            continue
+        by_basis[chemistry["basis"]] = by_basis.get(chemistry["basis"], 0) + 1
+        if chemistry["basis"] != "batch_derived":
+            continue
+        by_quality[chemistry["quality"]] = by_quality.get(chemistry["quality"], 0) + 1
+        for name in chemistry["unresolved"]:
+            unresolved[name] = unresolved.get(name, 0) + 1
+        if chemistry["quality"] == "insufficient":
+            excluded.append({
+                "name": record.get("name"),
+                "source": record.get("source"),
+                "resolved_pct": chemistry["resolved_pct"],
+                "unresolved": chemistry["unresolved"],
+            })
+
+    return {
+        "by_basis": by_basis,
+        "by_quality": by_quality,
+        "min_resolved_pct": _MIN_RESOLVED_PCT,
+        "unresolved_materials": [
+            {"material": k, "recipes_blocked": v}
+            for k, v in sorted(unresolved.items(), key=lambda kv: -kv[1])
+        ],
+        "excluded_recipes": excluded,
+    }
 
 
 @app.get("/api/recipes/statistics")
