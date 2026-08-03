@@ -75,3 +75,35 @@ class ClayBodyDatabase:
         """
         matches = [b["coe"] for b in self.get_by_type(clay_body_type) if b.get("coe")]
         return round(sum(matches) / len(matches), 2) if matches else None
+
+    def get_representative(self, clay_body_type: str) -> Optional[dict]:
+        """A stand-in record averaging the named bodies of a type.
+
+        Same situation as get_default_coe: the prediction endpoint takes a
+        broad ClayBody enum ("stoneware"), while this database is keyed by
+        product name ("Standard Stoneware"), so a direct lookup always
+        misses. Defect rules that depend on body chemistry - bloating keys
+        off iron content - need *some* analysis to evaluate against.
+
+        Marked `is_representative` so callers can say the figure is a type
+        average rather than a specific body the user selected.
+        """
+        bodies = self.get_by_type(clay_body_type)
+        if not bodies:
+            return None
+
+        analyses = [b["analysis"] for b in bodies if b.get("analysis")]
+        averaged: dict[str, float] = {}
+        if analyses:
+            for oxide in {k for a in analyses for k in a}:
+                values = [a[oxide] for a in analyses if oxide in a]
+                averaged[oxide] = round(sum(values) / len(values), 3)
+
+        return {
+            "name": f"{clay_body_type} (type average)",
+            "type": clay_body_type,
+            "analysis": averaged,
+            "coe": self.get_default_coe(clay_body_type),
+            "is_representative": True,
+            "averaged_over": [b["name"] for b in bodies],
+        }

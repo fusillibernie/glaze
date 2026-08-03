@@ -3931,6 +3931,8 @@
             const defects = prediction.defect_risks || {};
             const probs = prediction.surface_probabilities || {};
             const confidence = prediction.confidence || 0;
+            const detailsByDefect = Object.fromEntries(
+                (prediction.defect_details || []).map(d => [d.defect, d]));
 
             // Show the whole distribution, not just the winner. Chemistry
             // alone only reaches ~67% accuracy on surface, so the spread
@@ -3976,10 +3978,18 @@
 
                 <h4 style="margin-bottom: 0.75rem;">Defect Risks</h4>
                 <div class="grid grid-2">
-                    ${Object.entries(defects).map(([defect, risk]) => `
+                    ${Object.entries(defects).map(([defect, risk]) => {
+                        // Attach the explanation and its provenance. An
+                        // "uncalibrated" marker matters more here than any
+                        // single threshold: some of these numbers come from
+                        // a cited book and some are long-standing guesses,
+                        // and until now they looked identical.
+                        const detail = detailsByDefect[defect];
+                        const sourced = detail && detail.evidence === 'book_quantified';
+                        return `
                         <div class="prediction-card">
                             <div class="prediction-header">
-                                <span class="prediction-title">${defect.replace(/_/g, ' ')}</span>
+                                <span class="prediction-title">${escapeHtml(defect.replace(/_/g, ' '))}</span>
                                 <span class="${risk > 0.5 ? 'text-danger' : risk > 0.3 ? 'text-warning' : 'text-success'}">
                                     ${(risk * 100).toFixed(0)}%
                                 </span>
@@ -3988,8 +3998,25 @@
                                 <div class="risk-fill ${risk > 0.5 ? 'risk-high' : risk > 0.3 ? 'risk-medium' : 'risk-low'}"
                                      style="width: ${Math.max(5, risk * 100)}%"></div>
                             </div>
-                        </div>
-                    `).join('')}
+                            ${detail ? `
+                                <div style="margin-top:0.45rem;font-size:0.72rem;color:#94a3b8;line-height:1.4;">
+                                    ${escapeHtml(detail.message)}
+                                </div>
+                                <div style="margin-top:0.3rem;font-size:0.68rem;">
+                                    ${sourced
+                                        ? `<span style="color:#10b981;">📖 ${escapeHtml(detail.source)}</span>`
+                                        : `<span style="color:#f59e0b;" title="General ceramic principle, not calibrated against firing data">⚠ heuristic, not calibrated</span>`}
+                                </div>
+                                ${detail.remedies && detail.remedies.length ? `
+                                    <details style="margin-top:0.35rem;">
+                                        <summary style="font-size:0.7rem;color:#7c3aed;cursor:pointer;">remedies</summary>
+                                        <ul style="margin:0.3rem 0 0 1rem;font-size:0.7rem;color:#94a3b8;line-height:1.5;">
+                                            ${detail.remedies.slice(0,4).map(x => `<li>${escapeHtml(x)}</li>`).join('')}
+                                        </ul>
+                                    </details>` : ''}
+                            ` : ''}
+                        </div>`;
+                    }).join('')}
                 </div>
             `;
         }

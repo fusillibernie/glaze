@@ -22,7 +22,41 @@
       "cross_reference": {
         "source": "bloomfield-special-effect-glazes-2020",
         "note": "Corroborates the Digitalfire remedies (add silica/talc). Also notes crazing can be deliberately induced for a controlled test: replace potash feldspar with soda feldspar or nepheline syenite, or reduce silica in 5% increments."
-      }
+      },
+      "risk_key": "crazing",
+      "baseline_risk": 0.1,
+      "triggers": [
+        {
+          "id": "alkali_dominant_flux",
+          "risk": 0.5,
+          "when": [
+            {
+              "kind": "umf_ratio",
+              "ratio": "alkali_ratio",
+              "op": ">",
+              "value": 0.4
+            }
+          ],
+          "message": "Alkalis are {ratio_value:.0%} of the flux. Na2O and K2O have the highest thermal expansion of the common fluxes, so the glaze contracts more than the body on cooling.",
+          "source": "legacy-predictor-heuristic",
+          "evidence": "uncalibrated_heuristic"
+        },
+        {
+          "id": "alkali_elevated_flux",
+          "risk": 0.2,
+          "when": [
+            {
+              "kind": "umf_ratio",
+              "ratio": "alkali_ratio",
+              "op": ">",
+              "value": 0.3
+            }
+          ],
+          "message": "Alkalis are {ratio_value:.0%} of the flux - moderately expansion-prone.",
+          "source": "legacy-predictor-heuristic",
+          "evidence": "uncalibrated_heuristic"
+        }
+      ]
     },
     "shivering": {
       "category": "glaze_fit",
@@ -61,7 +95,26 @@
       "cross_reference": {
         "source": "bloomfield-special-effect-glazes-2020",
         "note": "To deliberately induce (for testing): replace dolomite with light magnesium carbonate and apply the glaze more thickly. To prevent: apply more thinly, reduce clay content, or sponge the bisque clean before glazing."
-      }
+      },
+      "risk_key": "crawling",
+      "baseline_risk": 0.1,
+      "triggers": [
+        {
+          "id": "high_alumina_stiff_raw_layer",
+          "risk": 0.3,
+          "when": [
+            {
+              "kind": "umf",
+              "oxide": "Al2O3",
+              "op": ">",
+              "value": 0.5
+            }
+          ],
+          "message": "Al2O3 {oxide_value:.2f} molar. A stiff, high-alumina raw layer shrinks more on drying and is likelier to lift from the body.",
+          "source": "legacy-predictor-heuristic",
+          "evidence": "uncalibrated_heuristic"
+        }
+      ]
     },
     "pinholing_pitting": {
       "category": "surface",
@@ -110,7 +163,41 @@
       "cross_reference": {
         "source": "bloomfield-special-effect-glazes-2020",
         "note": "To deliberately induce (for testing): dampen the bisque ware before applying glaze. To fix: soak (hold at peak temperature) for 15-30 minutes at the end of firing."
-      }
+      },
+      "risk_key": "pinholing",
+      "baseline_risk": 0.15,
+      "triggers": [
+        {
+          "id": "crash_cooling",
+          "risk": 0.4,
+          "when": [
+            {
+              "kind": "firing",
+              "field": "cooling_rate",
+              "op": "==",
+              "value": "crash"
+            }
+          ],
+          "message": "Crash cooling gives the melt no time to heal bubbles that surfaced late in the firing.",
+          "source": "legacy-predictor-heuristic",
+          "evidence": "uncalibrated_heuristic"
+        },
+        {
+          "id": "high_boron_offgassing",
+          "risk": 0.3,
+          "when": [
+            {
+              "kind": "umf",
+              "oxide": "B2O3",
+              "op": ">",
+              "value": 0.3
+            }
+          ],
+          "message": "B2O3 {oxide_value:.2f} molar. Boron-rich melts are still releasing gas as they stiffen.",
+          "source": "legacy-predictor-heuristic",
+          "evidence": "uncalibrated_heuristic"
+        }
+      ]
     },
     "blistering": {
       "category": "surface",
@@ -135,7 +222,31 @@
       "cross_reference": {
         "source": "bloomfield-special-effect-glazes-2020",
         "note": "To deliberately induce (for testing): add 2% silicon carbide and 5% titanium dioxide to a matte glaze or underlying slip. To avoid: fire to a lower temperature, or apply the glaze more thinly."
-      }
+      },
+      "risk_key": "blistering",
+      "baseline_risk": 0.05,
+      "triggers": [
+        {
+          "id": "boron_phase_separation",
+          "risk": 0.45,
+          "when": [
+            {
+              "kind": "umf",
+              "oxide": "B2O3",
+              "op": ">=",
+              "value": 0.7
+            },
+            {
+              "kind": "cone",
+              "op": "<=",
+              "value": 6
+            }
+          ],
+          "message": "B2O3 {oxide_value:.2f} molar at cone {cone}. Above about 0.7 boron the glass separates into regions of differing surface tension, which blister - and blister worse on a refire.",
+          "source": "digitalfire",
+          "evidence": "book_quantified"
+        }
+      ]
     },
     "dunting_cracking": {
       "category": "body",
@@ -198,7 +309,32 @@
       "cross_reference": {
         "source": "fraser-ceramic-faults-2005",
         "note": "Electric kilns bloat more readily than gas due to poorer ventilation during the carbon-burnout stage."
-      }
+      },
+      "risk_key": "bloating",
+      "baseline_risk": 0.0,
+      "triggers": [
+        {
+          "id": "iron_body_in_reduction",
+          "risk": 0.3,
+          "when": [
+            {
+              "kind": "firing",
+              "field": "atmosphere",
+              "op": "==",
+              "value": "reduction"
+            },
+            {
+              "kind": "clay_body",
+              "field": "analysis.Fe2O3",
+              "op": ">",
+              "value": 1.5
+            }
+          ],
+          "message": "Reduction firing on a body carrying {clay_body_value:.1f}% Fe2O3. Reduction between 650 and 1000C converts Fe2O3 to FeO, a far more vigorous flux, which can seal the surface before carbon has finished burning out. Note this also depends on your heating rate through that range, which this app does not model.",
+          "source": "fraser-ceramic-faults-2005",
+          "evidence": "book_quantified"
+        }
+      ]
     },
     "blow_out": {
       "category": "body",
@@ -235,7 +371,115 @@
       "cross_reference": {
         "source": "fraser-ceramic-faults-2005",
         "note": "Gerstley Borate behaves similarly - it's an ore containing colemanite plus ulexite (sodium calcium borate)."
-      }
+      },
+      "risk_key": "colemanite_splutter",
+      "baseline_risk": 0.0,
+      "triggers": [
+        {
+          "id": "colemanite_batch_high",
+          "risk": 0.55,
+          "when": [
+            {
+              "kind": "batch_pct",
+              "materials": [
+                "Colemanite",
+                "Gerstley Borate"
+              ],
+              "op": ">",
+              "value": 10
+            }
+          ],
+          "message": "{batch_pct:.0f}% colemanite or Gerstley Borate in the batch. Colemanite is roughly 27% water of crystallisation by weight, released between 400 and 800C; above about 7-10% it ejects glaze off the ware. Calcium borate frit is the same chemistry with the water already driven off.",
+          "source": "fraser-ceramic-faults-2005",
+          "evidence": "book_quantified"
+        },
+        {
+          "id": "colemanite_batch_caution",
+          "risk": 0.25,
+          "when": [
+            {
+              "kind": "batch_pct",
+              "materials": [
+                "Colemanite",
+                "Gerstley Borate"
+              ],
+              "op": ">",
+              "value": 7
+            }
+          ],
+          "message": "{batch_pct:.0f}% colemanite or Gerstley Borate. European (Turkish) colemanite splutters at lower percentages than American; fire slowly to 800C and keep the glaze thin.",
+          "source": "fraser-ceramic-faults-2005",
+          "evidence": "book_quantified"
+        }
+      ]
+    },
+    "running": {
+      "category": "glaze_fit",
+      "summary": "Glaze flows down the ware during firing, thinning at the rim and pooling at the foot - at worst welding the pot to the shelf.",
+      "causes": [
+        "Insufficient alumina to hold melt viscosity",
+        "Overfiring, or too long a soak at peak temperature",
+        "Glaze applied too thickly"
+      ],
+      "remedies": [
+        "Raise Al2O3, typically by substituting kaolin for part of the feldspar",
+        "Apply more thinly and keep the glaze well clear of the foot",
+        "Fire to a lower temperature or shorten the soak",
+        "Use a shelf cookie under pieces glazed near the foot"
+      ],
+      "cross_reference": {
+        "source": "legacy-predictor-heuristic",
+        "note": "Entry added so the predictor's long-standing alumina rules have a documented home; the thresholds are uncalibrated heuristics, not book-sourced."
+      },
+      "risk_key": "running",
+      "baseline_risk": 0.1,
+      "triggers": [
+        {
+          "id": "very_low_alumina",
+          "risk": 0.5,
+          "when": [
+            {
+              "kind": "umf",
+              "oxide": "Al2O3",
+              "op": "<",
+              "value": 0.2
+            }
+          ],
+          "message": "Al2O3 {oxide_value:.2f} molar. Below about 0.2 there is little alumina holding the melt's viscosity up.",
+          "source": "legacy-predictor-heuristic",
+          "evidence": "uncalibrated_heuristic"
+        },
+        {
+          "id": "low_alumina",
+          "risk": 0.3,
+          "when": [
+            {
+              "kind": "umf",
+              "oxide": "Al2O3",
+              "op": "<",
+              "value": 0.3
+            }
+          ],
+          "message": "Al2O3 {oxide_value:.2f} molar - a fluid melt; keep the glaze off the foot.",
+          "source": "legacy-predictor-heuristic",
+          "evidence": "uncalibrated_heuristic"
+        }
+      ]
+    }
+  },
+  "trigger_schema": {
+    "description": "Executable conditions that turn each defect entry into a risk the predictor can raise against a specific recipe, with the source attached. Conditions inside one trigger's `when` are ANDed; triggers within a defect are ORed and combined by max, never summed, so the value stays in 0-1 and interpretable.",
+    "condition_kinds": {
+      "umf": "oxide/op/value against the recipe UMF",
+      "umf_ratio": "ratio/op/value against a computed UMF ratio (e.g. alkali_ratio)",
+      "batch_pct": "materials[]/op/value against summed raw batch percentage - needed where the fired UMF cannot see the problem, as with colemanite's water of crystallisation",
+      "cone": "op/value against the firing cone number",
+      "firing": "field/op/value against the firing schedule",
+      "clay_body": "field/op/value against the clay body record (dotted paths allowed)"
+    },
+    "evidence_levels": {
+      "book_quantified": "Threshold stated quantitatively in a cited published source.",
+      "uncalibrated_heuristic": "Inherited from the predictor's original hardcoded thresholds. General ceramic principle, not calibrated against firing data."
     }
   }
 }

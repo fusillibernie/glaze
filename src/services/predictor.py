@@ -1,11 +1,14 @@
 """Outcome prediction based on glaze data and firing results."""
 
 import json
+import logging
 import os
 import tempfile
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
+
+logger = logging.getLogger(__name__)
 
 from ..models.glaze import (
     GlazeRecipe,
@@ -53,6 +56,11 @@ class OutcomePrediction:
     surface_caveat: str = ""
     stability_flags: list[str] = None
 
+    # Triggered defect risks with their citations. `defect_risks` above
+    # keeps its original shape (defect -> probability) for existing
+    # callers; this carries the why and the source alongside.
+    defect_findings: list = None
+
     def __post_init__(self):
         if self.defect_risks is None:
             self.defect_risks = {}
@@ -66,9 +74,61 @@ class OutcomePrediction:
             self.surface_probabilities = {}
         if self.stability_flags is None:
             self.stability_flags = []
+        if self.defect_findings is None:
+            self.defect_findings = []
 
 
 _DEFAULT_RESULTS_PATH = Path(__file__).parent.parent.parent / "data" / "results" / "firing_results.json"
+_DEFECT_GUIDE_PATH = Path(__file__).parent.parent.parent / "data" / "reference" / "defect_guide.json"
+
+
+@dataclass(frozen=True)
+class DefectRisk:
+    """One triggered defect risk, with the evidence behind it.
+
+    `evidence` distinguishes a threshold quoted from a published source
+    from one inherited from the predictor's original hardcoded guesses.
+    Both used to be presented identically, so a user had no way to tell
+    which numbers to trust.
+    """
+
+    defect: str
+    risk: float
+    message: str
+    source: str
+    evidence: str
+    trigger_id: str
+    remedies: list[str] = field(default_factory=list)
+
+    def to_dict(self) -> dict:
+        return {
+            "defect": self.defect,
+            "risk": round(self.risk, 3),
+            "message": self.message,
+            "source": self.source,
+            "evidence": self.evidence,
+            "trigger_id": self.trigger_id,
+            "remedies": list(self.remedies),
+        }
+
+
+_OPS = {
+    ">": lambda a, b: a > b,
+    ">=": lambda a, b: a >= b,
+    "<": lambda a, b: a < b,
+    "<=": lambda a, b: a <= b,
+    "==": lambda a, b: a == b,
+    "!=": lambda a, b: a != b,
+}
+
+
+def _load_defect_guide() -> dict:
+    try:
+        with open(_DEFECT_GUIDE_PATH, encoding="utf-8") as f:
+            return json.load(f).get("defects", {})
+    except (OSError, json.JSONDecodeError):
+        logger.warning("Could not load defect guide; defect risks will be empty")
+        return {}
 
 
 class OutcomePredictor:
@@ -78,15 +138,24 @@ class OutcomePredictor:
         self,
         results_database: Optional[list[FiringResult]] = None,
         results_path: Optional[Path] = None,
+        materials_db=None,
+        defect_guide: Optional[dict] = None,
     ):
         """Initialize the predictor.
 
         Args:
             results_database: Historical firing results for prediction.
             results_path: Path to JSON file for persisting results.
+            materials_db: Needed to evaluate raw-batch conditions. Without
+                it those conditions are skipped and reported as skipped -
+                never silently treated as false.
+            defect_guide: Defect definitions; defaults to the shipped
+                data/reference/defect_guide.json.
         """
         self.results_path = results_path or _DEFAULT_RESULTS_PATH
         self.results = results_database or self._load_results()
+        self.materials_db = materials_db
+        self.defect_guide = defect_guide if defect_guide is not None else _load_defect_guide()
 
     def _load_results(self) -> list[FiringResult]:
         """Load persisted results from disk, deduplicated by result_id.
@@ -156,6 +225,7 @@ class OutcomePredictor:
         recipe: GlazeRecipe,
         firing: FiringSchedule,
         clay_body: ClayBody,
+        clay_body_record: Optional[dict] = None,
     ) -> OutcomePrediction:
         """Predict outcome for a glaze firing.
 
@@ -163,6 +233,10 @@ class OutcomePredictor:
             recipe: Glaze recipe to fire.
             firing: Firing schedule.
             clay_body: Clay body type.
+            clay_body_record: Full clay-body record from ClayBodyDatabase.
+                Needed for defect conditions that depend on body chemistry
+                (bloating keys off the body's iron content). Omitted means
+                those conditions are skipped, not evaluated as false.
 
         Returns:
             OutcomePrediction with predicted results.
@@ -188,8 +262,10 @@ class OutcomePredictor:
         # Predict color
         color_family, color_notes = self._predict_color(recipe, firing)
 
-        # Calculate defect risks
-        defect_risks = self._calculate_defect_risks(recipe, firing, clay_body)
+        # Calculate defect risks from the defect guide's triggers
+        defect_risks, defect_findings = self._calculate_defect_risks(
+            recipe, firing, clay_body, clay_body_record
+        )
 
         # Generate recommendations
         app_recs = self._application_recommendations(recipe, firing)
@@ -208,6 +284,7 @@ class OutcomePredictor:
             surface_basis=surface.basis,
             surface_caveat=surface.caveat,
             stability_flags=list(surface.stability),
+            defect_findings=defect_findings,
         )
 
     def _predict_surface(
@@ -289,55 +366,174 @@ class OutcomePredictor:
 
         return color_family, "; ".join(color_notes) if color_notes else None
 
+    # Keys the UI has always rendered as a fixed grid. They are emitted
+    # even at baseline so the layout does not jump; everything else in the
+    # guide appears only when something actually triggers it.
+    _ALWAYS_REPORTED = ("crawling", "crazing", "running", "pinholing")
+
+    def _batch_percentage(self, recipe: GlazeRecipe, names: list[str]) -> Optional[float]:
+        """Summed batch % of ingredients resolving to any of `names`.
+
+        Returns None when there is no materials database to resolve
+        against, so the caller can skip the condition rather than treat an
+        unanswerable question as False.
+        """
+        if self.materials_db is None:
+            return None
+        wanted = {n.strip().lower() for n in names}
+        total = 0.0
+        for ingredient in recipe.ingredients:
+            if ingredient.percentage <= 0:
+                continue
+            material = self.materials_db.get(ingredient.material_name)
+            if material and material.name.strip().lower() in wanted:
+                total += ingredient.percentage
+        return total
+
+    @staticmethod
+    def _cone_number(firing) -> Optional[int]:
+        """Firing cone as a signed integer, or None if unavailable.
+
+        The leading-zero cones are the low-fire series and run the other
+        way: 06 is much cooler than 6, not the same. They map to negative
+        numbers so that ordering comparisons ("cone <= 6") behave. Note
+        firing.cone is an enum, so its .value is what carries the digits.
+        """
+        raw = getattr(firing, "cone", None) if firing else None
+        raw = getattr(raw, "value", raw)
+        if raw is None:
+            return None
+        text = str(raw).strip()
+        try:
+            # "06", "04", "02" -> -6, -4, -2; "6", "10" -> 6, 10
+            return -int(text[1:]) if len(text) > 1 and text.startswith("0") else int(text)
+        except ValueError:
+            return None
+
+    @staticmethod
+    def _dotted(record, path: str):
+        for part in path.split("."):
+            if record is None:
+                return None
+            record = record.get(part) if isinstance(record, dict) else getattr(record, part, None)
+        return record
+
+    def _evaluate_condition(self, condition, recipe, firing, clay_body_record):
+        """Return (matched, bindings) — or (None, {}) if unanswerable."""
+        kind = condition.get("kind")
+        op = _OPS.get(condition.get("op"))
+        if op is None:
+            return None, {}
+        value = condition.get("value")
+
+        if kind == "umf":
+            actual = getattr(recipe.umf, condition["oxide"], None)
+            if actual is None:
+                return None, {}
+            return op(actual, value), {"oxide_value": actual}
+
+        if kind == "umf_ratio":
+            actual = getattr(recipe.umf, condition["ratio"], None)
+            if actual is None:
+                return None, {}
+            return op(actual, value), {"ratio_value": actual}
+
+        if kind == "batch_pct":
+            actual = self._batch_percentage(recipe, condition.get("materials", []))
+            if actual is None:
+                return None, {}
+            return op(actual, value), {"batch_pct": actual}
+
+        if kind == "cone":
+            cone = self._cone_number(firing)
+            if cone is None:
+                return None, {}
+            return op(cone, value), {"cone": cone}
+
+        if kind == "firing":
+            actual = getattr(firing, condition["field"], None) if firing else None
+            if actual is None:
+                return None, {}
+            actual = getattr(actual, "value", actual)  # unwrap enums
+            return op(str(actual).lower(), str(value).lower()), {"firing_value": actual}
+
+        if kind == "clay_body":
+            actual = self._dotted(clay_body_record, condition["field"])
+            if actual is None:
+                return None, {}
+            return op(actual, value), {"clay_body_value": actual}
+
+        return None, {}
+
     def _calculate_defect_risks(
         self,
         recipe: GlazeRecipe,
         firing: FiringSchedule,
         clay_body: ClayBody,
-    ) -> dict[str, float]:
-        """Calculate risk of various defects.
+        clay_body_record: Optional[dict] = None,
+    ) -> tuple[dict[str, float], list[DefectRisk]]:
+        """Evaluate the defect guide's triggers against this recipe.
 
-        NOTE: These thresholds are heuristic estimates based on general ceramic
-        principles, not calibrated against firing data. Treat as rough guidance.
-        Ref: Hamer & Hamer "The Potter's Dictionary", Rhodes "Clay and Glazes".
+        Replaces four hardcoded rules whose own docstring conceded they
+        were "heuristic estimates ... not calibrated against firing data".
+        Those four are preserved verbatim as triggers, but now tagged as
+        uncalibrated so they are distinguishable from thresholds quoted
+        from a book - and the guide's other defects, including all four
+        from Fraser that no code path could previously reach, can fire.
+
+        Triggers within a defect combine by max, never by sum: risks stay
+        in 0-1 and a defect with several conditions does not inflate past
+        one with a single strong one.
         """
-        risks = {}
-        umf = recipe.umf
+        risks: dict[str, float] = {}
+        findings: list[DefectRisk] = []
 
-        # Crawling risk — high alumina increases raw glaze stiffness
-        # Al2O3 > 0.5 UMF is high for most glazes (typical range 0.2-0.5)
-        if umf.Al2O3 > 0.5:
-            risks["crawling"] = 0.3
-        else:
-            risks["crawling"] = 0.1
+        for defect_name, entry in self.defect_guide.items():
+            triggers = entry.get("triggers")
+            if not triggers:
+                continue
 
-        # Crazing risk — high alkali (Na2O+K2O) raises thermal expansion
-        # Alkali ratio > 0.4 of total flux is considered high expansion risk
-        if umf.alkali_ratio > 0.4:
-            risks["crazing"] = 0.5
-        elif umf.alkali_ratio > 0.3:
-            risks["crazing"] = 0.2
-        else:
-            risks["crazing"] = 0.1
+            key = entry.get("risk_key", defect_name)
+            baseline = entry.get("baseline_risk", 0.0)
+            best: Optional[tuple[float, dict, dict]] = None
 
-        # Running risk — low alumina reduces melt viscosity
-        # Al2O3 < 0.2 is very low (crystalline glaze territory)
-        if umf.Al2O3 < 0.2:
-            risks["running"] = 0.5
-        elif umf.Al2O3 < 0.3:
-            risks["running"] = 0.3
-        else:
-            risks["running"] = 0.1
+            for trigger in triggers:
+                bindings: dict = {}
+                matched = True
+                for condition in trigger.get("when", []):
+                    result, bound = self._evaluate_condition(
+                        condition, recipe, firing, clay_body_record
+                    )
+                    if result is not True:
+                        matched = False
+                        break
+                    bindings.update(bound)
+                if matched and (best is None or trigger["risk"] > best[0]):
+                    best = (trigger["risk"], trigger, bindings)
 
-        # Pinholing risk — fast cooling traps gas bubbles; high boron off-gases
-        if firing.cooling_rate == "crash":
-            risks["pinholing"] = 0.4
-        elif umf.B2O3 > 0.3:
-            risks["pinholing"] = 0.3
-        else:
-            risks["pinholing"] = 0.15
+            if best is None:
+                if key in self._ALWAYS_REPORTED:
+                    risks[key] = baseline
+                continue
 
-        return risks
+            risk, trigger, bindings = best
+            risks[key] = risk
+            try:
+                message = trigger["message"].format(**bindings)
+            except (KeyError, IndexError, ValueError):
+                message = trigger["message"]
+            findings.append(DefectRisk(
+                defect=key,
+                risk=risk,
+                message=message,
+                source=trigger.get("source", "unknown"),
+                evidence=trigger.get("evidence", "uncalibrated_heuristic"),
+                trigger_id=trigger.get("id", ""),
+                remedies=entry.get("chemistry_remedies") or entry.get("remedies") or [],
+            ))
+
+        findings.sort(key=lambda f: f.risk, reverse=True)
+        return risks, findings
 
     def _application_recommendations(
         self,

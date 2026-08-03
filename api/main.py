@@ -76,7 +76,7 @@ materials_db = MaterialsDatabase(DATA_DIR / "materials")
 substitution_service = SubstitutionService(DATA_DIR / "materials" / "substitutions.json")
 formulator = GlazeFormulator(materials_db, substitution_service=substitution_service)
 analyzer = GlazeAnalyzer()
-predictor = OutcomePredictor()
+predictor = OutcomePredictor(materials_db=materials_db)
 classifier = GlazeClassifier()
 glazy_client = GlazyClient(cache_dir=DATA_DIR / "glazy_cache")
 community_recipes = CommunityRecipeService(DATA_DIR / "glazy_bulk" / "glazy_recipes.json")
@@ -298,6 +298,11 @@ class PredictionResponse(BaseModel):
     surface_basis: Optional[str] = None
     surface_caveat: str = ""
     stability_flags: list[str] = []
+    # Why each risk fired and where the threshold came from. `evidence`
+    # separates a figure quoted from a book ("book_quantified") from one
+    # inherited from the predictor's original guesses
+    # ("uncalibrated_heuristic") - previously indistinguishable.
+    defect_details: list[dict] = []
 
 
 # ============== Materials Endpoints ==============
@@ -744,7 +749,17 @@ async def predict_outcome(
 
     clay = _enum_from_value(ClayBody, clay_body, "clay_body")
 
-    prediction = predictor.predict_outcome(glaze_recipe, firing_schedule, clay)
+    # Body chemistry lets defect conditions that depend on it fire -
+    # bloating keys off iron content. This endpoint only receives the
+    # broad ClayBody enum ("stoneware"), not a specific product, so use
+    # the type average; the record is flagged as representative. Passing
+    # None only means those conditions are skipped, never that they
+    # evaluate false.
+    clay_body_record = clay_body_db.get_representative(clay.value) if clay else None
+
+    prediction = predictor.predict_outcome(
+        glaze_recipe, firing_schedule, clay, clay_body_record=clay_body_record
+    )
 
     return PredictionResponse(
         predicted_surface=prediction.predicted_surface.value,
@@ -760,6 +775,7 @@ async def predict_outcome(
         surface_basis=prediction.surface_basis,
         surface_caveat=prediction.surface_caveat,
         stability_flags=prediction.stability_flags,
+        defect_details=[f.to_dict() for f in prediction.defect_findings],
     )
 
 
