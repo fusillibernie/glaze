@@ -1,7 +1,7 @@
 """Glaze formulation engine."""
 
 import logging
-from dataclasses import dataclass, field, fields as dataclass_fields
+from dataclasses import dataclass, field, fields as dataclass_fields, replace
 from typing import Optional
 
 from ..models.materials import Material, MaterialType, OxideAnalysis, OXIDE_MOLECULAR_WEIGHTS
@@ -585,10 +585,15 @@ class GlazeFormulator:
         Returns:
             Adjusted recipe.
         """
+        # Copy the ingredient objects, not just the list. list() gives a
+        # new list holding the SAME GlazeIngredient instances, so the
+        # mutations below (`ing.percentage += amount`, then the
+        # renormalize loop) rewrote the caller's recipe in place - a
+        # 40/30/30 recipe came back from adjust_recipe as 36.4/36.4/27.3.
         new_recipe = GlazeRecipe(
             name=f"{recipe.name} (adjusted)",
-            ingredients=list(recipe.ingredients),
-            colorants=list(recipe.colorants),
+            ingredients=[replace(i) for i in recipe.ingredients],
+            colorants=[replace(c) for c in recipe.colorants],
             target_cone=recipe.target_cone,
             suitable_atmospheres=list(recipe.suitable_atmospheres),
             suitable_clay_bodies=list(recipe.suitable_clay_bodies),
@@ -653,10 +658,13 @@ class GlazeFormulator:
         Returns:
             New recipe with colorant added.
         """
+        # Copied for the same reason as adjust_recipe: sharing the objects
+        # only stays safe while nothing downstream mutates them, which is
+        # not a property worth relying on.
         new_recipe = GlazeRecipe(
             name=f"{recipe.name} + {colorant_name}",
-            ingredients=list(recipe.ingredients),
-            colorants=list(recipe.colorants),
+            ingredients=[replace(i) for i in recipe.ingredients],
+            colorants=[replace(c) for c in recipe.colorants],
             target_cone=recipe.target_cone,
             suitable_atmospheres=list(recipe.suitable_atmospheres),
             suitable_clay_bodies=list(recipe.suitable_clay_bodies),
