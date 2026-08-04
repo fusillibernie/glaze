@@ -5,6 +5,8 @@ import logging
 from pathlib import Path
 from typing import Optional
 
+from .surface_model import normalize_surface
+
 
 logger = logging.getLogger(__name__)
 
@@ -164,11 +166,26 @@ class RecipeDatabase:
             ]
 
         if surface:
+            # A canonical class matches on the normalized label; anything
+            # else falls back to substring so freeform terms ("carbon
+            # trap", "crystalline") still work.
+            #
+            # Substring alone was wrong in both directions, because the
+            # corpus vocabulary overlaps: "matte" returned 2,452 recipes
+            # of which 1,092 were Satin-matte or Semi-matte, and "satin"
+            # missed 451 genuine satins labelled Semi-matte.
+            canonical = normalize_surface(surface)
             surf_lower = surface.lower()
-            results = [
-                r for r in results
-                if surf_lower in (r.get("surface", "") or "").lower()
-            ]
+            if canonical:
+                results = [
+                    r for r in results
+                    if normalize_surface(r.get("surface")) == canonical
+                ]
+            else:
+                results = [
+                    r for r in results
+                    if surf_lower in (r.get("surface", "") or "").lower()
+                ]
 
         if query:
             q = query.lower()
@@ -269,6 +286,12 @@ class RecipeDatabase:
             "by_source": {k: len(v) for k, v in self._by_source.items()},
             "by_cone": {},
             "by_surface": {},
+            # Raw labels collapsed to glossy/satin/matte. The raw counts
+            # stay because "satin_carbon_trap" and "glossy_to_satin" carry
+            # information a three-class label throws away; this is the
+            # view you want for totals, which the raw one cannot give
+            # across 40-odd overlapping spellings.
+            "by_surface_normalized": {},
             "by_atmosphere": {},
         }
 
@@ -281,8 +304,13 @@ class RecipeDatabase:
             stats["by_surface"][surface] = stats["by_surface"].get(surface, 0) + 1
             stats["by_atmosphere"][atm] = stats["by_atmosphere"].get(atm, 0) + 1
 
+            canonical = normalize_surface(r.get("surface")) or "unclassified"
+            stats["by_surface_normalized"][canonical] = (
+                stats["by_surface_normalized"].get(canonical, 0) + 1
+            )
+
         # Sort by count descending
-        for key in ["by_cone", "by_surface", "by_atmosphere"]:
+        for key in ["by_cone", "by_surface", "by_surface_normalized", "by_atmosphere"]:
             stats[key] = dict(sorted(stats[key].items(), key=lambda x: -x[1]))
 
         return stats

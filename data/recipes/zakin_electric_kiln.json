@@ -1,5 +1,5 @@
 {
-  "_source_note": "60 glaze recipes from Chapter 11 of Richard Zakin's 'Electric Kiln Ceramics: A Guide to Clays and Glazes' (3rd ed, Krause/F+W Media, 2004) - ingredient/percentage data and Zakin's own surface/color descriptions, condensed rather than quoted verbatim. All recipes in this chapter are written for oxidation firing in an electric kiln, which is why the book exists. Generic material terms (boron frit, soda frit, potash feldspar, red clay, stoneware clay) are Zakin's own category names, not specific branded products - most are left unresolved rather than guessed at, except where this database already defaults a generic term to a standard equivalent (Potash Feldspar -> Custer Feldspar, Soda Feldspar -> Minspar 200, Iron/Iron Oxide -> Red Iron Oxide, Zirconium/Zirconium Opacifier -> Zircopax). Two recipes (Dewitt Mills, Franklin R 92) sum to 88% and 80% respectively as printed in the book - confirmed against the source text, not a transcription gap; kept faithful to the original rather than padded to 100. The Estacada recipe (cone 3) uses 'potash' and 'spodium' in the original where every neighboring recipe spells out 'potash feldspar' and 'spodumene' - treated as the book's own abbreviation/typo and resolved accordingly, noted per-recipe.",
+  "_source_note": "60 glaze recipes from Chapter 11 of Richard Zakin's 'Electric Kiln Ceramics: A Guide to Clays and Glazes' (3rd ed, Krause/F+W Media, 2004) - ingredient/percentage data and Zakin's own surface/color descriptions, condensed rather than quoted verbatim. All recipes in this chapter are written for oxidation firing in an electric kiln, which is why the book exists. Generic material terms (boron frit, soda frit, potash feldspar, red clay, stoneware clay) are Zakin's own category names, not specific branded products - most are left unresolved rather than guessed at, except where this database already defaults a generic term to a standard equivalent (Potash Feldspar -> Custer Feldspar, Soda Feldspar -> Minspar 200, Iron/Iron Oxide -> Red Iron Oxide, Zirconium/Zirconium Opacifier -> Zircopax). Two recipes (Dewitt Mills, Franklin R 92) sum to 88% and 80% respectively as printed in the book - confirmed against the source text, not a transcription gap; kept faithful to the original rather than padded to 100. The Estacada recipe (cone 3) uses 'potash' and 'spodium' in the original where every neighboring recipe spells out 'potash feldspar' and 'spodumene' - treated as the book's own abbreviation/typo and resolved accordingly, noted per-recipe. Surface labels were inferred from Zakin's own prose descriptions and carry surface_source='description'; he states the fired surface for most glazes but not as a separate field. Five have no surface claim in the text and are deliberately left unlabelled rather than guessed.",
   "zakin_electric_kiln_glazes": [
     {
       "name": "Opaque 04 k2",
@@ -49,7 +49,9 @@
           "material": "Zinc Oxide",
           "percentage": 2.0
         }
-      ]
+      ],
+      "surface": "transparent",
+      "surface_source": "description"
     },
     {
       "name": "Robin's 1b Clear k2",
@@ -79,7 +81,9 @@
           "percentage": 2.0
         }
       ],
-      "notes": "'boron frit 3124' as printed -> resolved to Frit 3124"
+      "notes": "'boron frit 3124' as printed -> resolved to Frit 3124",
+      "surface": "transparent",
+      "surface_source": "description"
     },
     {
       "name": "Mohawk Green F k2",
@@ -141,7 +145,9 @@
           "material": "Titanium",
           "percentage": 2.0
         }
-      ]
+      ],
+      "surface": "shiny",
+      "surface_source": "description"
     },
     {
       "name": "Tottman",
@@ -174,7 +180,9 @@
           "material": "Tin Oxide",
           "percentage": 3.0
         }
-      ]
+      ],
+      "surface": "dry matte",
+      "surface_source": "description"
     },
     {
       "name": "Cobblestone Base",
@@ -207,7 +215,9 @@
           "material": "Tin Oxide",
           "percentage": 3.0
         }
-      ]
+      ],
+      "surface": "satin shiny",
+      "surface_source": "description"
     },
     {
       "name": "Lorraine Earth Yellow",
@@ -236,7 +246,9 @@
           "material": "Tin Oxide",
           "percentage": 3.0
         }
-      ]
+      ],
+      "surface": "satin shiny",
+      "surface_source": "description"
     },
     {
       "name": "Wardwell Brown",
@@ -269,7 +281,9 @@
           "material": "Tin Oxide",
           "percentage": 3.0
         }
-      ]
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
     },
     {
       "name": "Towle Gulf Yellow",
@@ -302,7 +316,9 @@
           "material": "Tin Oxide",
           "percentage": 3.0
         }
-      ]
+      ],
+      "surface": "matte",
+      "surface_source": "description"
     },
     {
       "name": "02 Millennium MetalBlack",
@@ -356,7 +372,9 @@
           "material": "Tin Oxide",
           "percentage": 3.0
         }
-      ]
+      ],
+      "surface": "matte",
+      "surface_source": "description"
     },
     {
       "name": "02 Dark Matte",
@@ -381,7 +399,9 @@
           "material": "Cobalt",
           "percentage": 1.5
         }
-      ]
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
     },
     {
       "name": "Tremaines Persimmon",
@@ -410,7 +430,9 @@
           "material": "Tin Oxide",
           "percentage": 3.0
         }
-      ]
+      ],
+      "surface": "shiny",
+      "surface_source": "description"
     },
     {
       "name": "Millbrook Opaque 2",
@@ -443,7 +465,9 @@
           "material": "Tin Oxide",
           "percentage": 3.0
         }
-      ]
+      ],
+      "surface": "shiny",
+      "surface_source": "description"
     },
     {
       "name": "Millbrook Opaque 3",
@@ -472,7 +496,9 @@
           "material": "Tin Oxide",
           "percentage": 3.0
         }
-      ]
+      ],
+      "surface": "shiny",
+      "surface_source": "description"
     },
     {
       "name": "Cadwells Base",
@@ -520,7 +546,9 @@
             }
           ]
         }
-      ]
+      ],
+      "surface": "dry matte",
+      "surface_source": "description"
     },
     {
       "name": "Dewitt Mills",
@@ -557,7 +585,9 @@
           "material": "Titanium",
           "percentage": 2.0
         }
-      ]
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
     },
     {
       "name": "Dewitt White 1",
@@ -594,7 +624,9 @@
           "material": "Zirconium Opacifier",
           "percentage": 12.0
         }
-      ]
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
     },
     {
       "name": "Fulton 4a Deep Blue",
@@ -642,7 +674,9 @@
             }
           ]
         }
-      ]
+      ],
+      "surface": "waxy matte",
+      "surface_source": "description"
     },
     {
       "name": "Oz Strontium IV",
@@ -686,7 +720,9 @@
             }
           ]
         }
-      ]
+      ],
+      "surface": "velvety matte",
+      "surface_source": "description"
     },
     {
       "name": "Richmond Mills",
@@ -719,7 +755,9 @@
           "material": "Zirconium Opacifier",
           "percentage": 8.0
         }
-      ]
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
     },
     {
       "name": "Snyders 2",
@@ -748,7 +786,9 @@
           "material": "Zirconium Opacifier",
           "percentage": 8.0
         }
-      ]
+      ],
+      "surface": "satin shiny",
+      "surface_source": "description"
     },
     {
       "name": "Sodus Point 2",
@@ -781,7 +821,9 @@
           "material": "Zirconium Opacifier",
           "percentage": 10.0
         }
-      ]
+      ],
+      "surface": "matte",
+      "surface_source": "description"
     },
     {
       "name": "Orwell Amber",
@@ -810,7 +852,9 @@
           "material": "Tin Oxide",
           "percentage": 4.0
         }
-      ]
+      ],
+      "surface": "satin",
+      "surface_source": "description"
     },
     {
       "name": "Wardwell Persimmon",
@@ -847,7 +891,9 @@
           "material": "Tin Oxide",
           "percentage": 3.0
         }
-      ]
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
     },
     {
       "name": "Dutcherville Barn Red",
@@ -876,7 +922,9 @@
           "material": "Tin Oxide",
           "percentage": 4.0
         }
-      ]
+      ],
+      "surface": "satin shiny",
+      "surface_source": "description"
     },
     {
       "name": "Minoa Amber",
@@ -905,7 +953,9 @@
           "material": "Tin Oxide",
           "percentage": 4.0
         }
-      ]
+      ],
+      "surface": "satin shiny",
+      "surface_source": "description"
     },
     {
       "name": "Fairdale Bridge",
@@ -942,7 +992,9 @@
           "material": "Tin Oxide",
           "percentage": 4.0
         }
-      ]
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
     },
     {
       "name": "Dewitt Dark Tan 3",
@@ -979,7 +1031,9 @@
           "material": "Zirconium Opacifier",
           "percentage": 8.0
         }
-      ]
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
     },
     {
       "name": "Stone Hill",
@@ -1012,7 +1066,9 @@
           "material": "Tin Oxide",
           "percentage": 4.0
         }
-      ]
+      ],
+      "surface": "satin",
+      "surface_source": "description"
     },
     {
       "name": "Checkered House Ocher",
@@ -1049,7 +1105,9 @@
           "material": "Tin Oxide",
           "percentage": 3.0
         }
-      ]
+      ],
+      "surface": "matte",
+      "surface_source": "description"
     },
     {
       "name": "Howardville",
@@ -1078,7 +1136,9 @@
           "material": "Zirconium Opacifier",
           "percentage": 10.0
         }
-      ]
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
     },
     {
       "name": "Bethel Gray",
@@ -1107,7 +1167,9 @@
           "material": "Zirconium Opacifier",
           "percentage": 8.0
         }
-      ]
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
     },
     {
       "name": "Canton Brown",
@@ -1148,7 +1210,9 @@
           ]
         }
       ],
-      "notes": "1.5% cobalt carbonate - ocher and brown; 2.5% cobalt - rich matte black"
+      "notes": "1.5% cobalt carbonate - ocher and brown; 2.5% cobalt - rich matte black",
+      "surface": "satin matte",
+      "surface_source": "description"
     },
     {
       "name": "Estacada",
@@ -1182,7 +1246,9 @@
           "percentage": 3.0
         }
       ],
-      "notes": "'potash' as printed -> resolved to Potash Feldspar; 'spodium' as printed -> resolved to Spodumene"
+      "notes": "'potash' as printed -> resolved to Potash Feldspar; 'spodium' as printed -> resolved to Spodumene",
+      "surface": "matte",
+      "surface_source": "description"
     },
     {
       "name": "C/3 Millennium MetalBlack",
@@ -1200,7 +1266,9 @@
           "percentage": 30.0
         }
       ],
-      "notes": "'boron frit (3124)' as printed -> resolved to Frit 3124"
+      "notes": "'boron frit (3124)' as printed -> resolved to Frit 3124",
+      "surface": "metallic",
+      "surface_source": "description"
     },
     {
       "name": "Denton",
@@ -1233,7 +1301,9 @@
           "material": "Copper Carbonate",
           "percentage": 2.5
         }
-      ]
+      ],
+      "surface": "satin shiny",
+      "surface_source": "description"
     },
     {
       "name": "Soft Tan Base",
@@ -1262,7 +1332,9 @@
           "material": "Zirconium Opacifier",
           "percentage": 22.0
         }
-      ]
+      ],
+      "surface": "matte",
+      "surface_source": "description"
     },
     {
       "name": "Satin White",
@@ -1295,7 +1367,9 @@
           "material": "Zirconium Opacifier",
           "percentage": 24.0
         }
-      ]
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
     },
     {
       "name": "Transparent Matte Glaze",
@@ -1320,7 +1394,9 @@
           "material": "Dolomite",
           "percentage": 5.0
         }
-      ]
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
     },
     {
       "name": "MetalBlack",
@@ -1341,7 +1417,9 @@
           "material": "Copper Carbonate",
           "percentage": 6.0
         }
-      ]
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
     },
     {
       "name": "Corinth Corners",
@@ -1367,7 +1445,9 @@
           "percentage": 10.0
         }
       ],
-      "notes": "melting power: moderate"
+      "notes": "melting power: moderate",
+      "surface": "shiny",
+      "surface_source": "description"
     },
     {
       "name": "Estacada 18",
@@ -1396,7 +1476,9 @@
           "material": "Tin Oxide",
           "percentage": 3.0
         }
-      ]
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
     },
     {
       "name": "Estacada Gray-Ocher",
@@ -1429,7 +1511,9 @@
           "material": "Tin Oxide",
           "percentage": 3.0
         }
-      ]
+      ],
+      "surface": "shiny",
+      "surface_source": "description"
     },
     {
       "name": "Estacada Orange-Ocher",
@@ -1462,7 +1546,9 @@
           "material": "Tin Oxide",
           "percentage": 3.0
         }
-      ]
+      ],
+      "surface": "shiny",
+      "surface_source": "description"
     },
     {
       "name": "Barnard Estacada",
@@ -1495,7 +1581,9 @@
           "material": "Tin Oxide",
           "percentage": 3.0
         }
-      ]
+      ],
+      "surface": "shiny",
+      "surface_source": "description"
     },
     {
       "name": "Maple View Cream-Orange",
@@ -1524,7 +1612,9 @@
           "material": "Tin Oxide",
           "percentage": 3.0
         }
-      ]
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
     },
     {
       "name": "Sayles Corners",
@@ -1553,7 +1643,9 @@
           "material": "Zirconium Opacifier",
           "percentage": 10.0
         }
-      ]
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
     },
     {
       "name": "Crawling Vitgobe",
@@ -1615,7 +1707,9 @@
           "material": "Titanium",
           "percentage": 2.0
         }
-      ]
+      ],
+      "surface": "eggshell matte",
+      "surface_source": "description"
     },
     {
       "name": "Vans White",
@@ -1648,7 +1742,9 @@
           "material": "Zirconium Opacifier",
           "percentage": 10.0
         }
-      ]
+      ],
+      "surface": "satin shiny",
+      "surface_source": "description"
     },
     {
       "name": "Ridgebury",
@@ -1677,7 +1773,9 @@
           "material": "Red Clay",
           "percentage": 30.0
         }
-      ]
+      ],
+      "surface": "satin shiny",
+      "surface_source": "description"
     },
     {
       "name": "Franklin R 92",
@@ -1706,7 +1804,9 @@
           "material": "Iron",
           "percentage": 8.0
         }
-      ]
+      ],
+      "surface": "satin",
+      "surface_source": "description"
     },
     {
       "name": "Gateville R 92",
@@ -1731,7 +1831,9 @@
           "material": "Spodumene",
           "percentage": 10.0
         }
-      ]
+      ],
+      "surface": "satin",
+      "surface_source": "description"
     },
     {
       "name": "H GK 92",
@@ -1761,7 +1863,9 @@
           "percentage": 14.0
         }
       ],
-      "notes": "'zirconium' as printed -> resolved to Zirconium Opacifier"
+      "notes": "'zirconium' as printed -> resolved to Zirconium Opacifier",
+      "surface": "stony matte",
+      "surface_source": "description"
     },
     {
       "name": "Harpersfield R 92",
@@ -1790,7 +1894,9 @@
           "material": "Iron",
           "percentage": 8.0
         }
-      ]
+      ],
+      "surface": "satin",
+      "surface_source": "description"
     },
     {
       "name": "Deerpark Base",
@@ -1819,7 +1925,9 @@
           "material": "Dolomite",
           "percentage": 34.0
         }
-      ]
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
     },
     {
       "name": "Pilgrim Vitreous Engobe 92",
@@ -1853,7 +1961,9 @@
           "percentage": 12.0
         }
       ],
-      "notes": "'zirconium' as printed -> resolved to Zirconium Opacifier"
+      "notes": "'zirconium' as printed -> resolved to Zirconium Opacifier",
+      "surface": "semi-vitreous",
+      "surface_source": "description"
     },
     {
       "name": "Woodbourne Base 92",
@@ -1878,7 +1988,9 @@
           "material": "Dolomite",
           "percentage": 28.0
         }
-      ]
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
     }
   ]
 }

@@ -106,3 +106,73 @@ class TestIntegrationWithRecipeDatabase:
         db.load()
         results = db.search(query="Ridgebury")
         assert any(r["name"] == "Ridgebury" for r in results)
+
+
+class TestSurfaceLabels:
+    """Zakin states the fired surface in prose for nearly every glaze
+    ("This glaze has a satin matte surface"), but the extraction kept it
+    only as description text, so all 60 recipes arrived with no surface
+    field - unfilterable and invisible to surface statistics.
+
+    Backfilled as a one-time data edit rather than a runtime regex: a
+    parser would re-derive the same answer on every boot, be fragile
+    against rewording, and leave no auditable record of what was inferred.
+    """
+
+    def test_most_recipes_are_labelled(self, recipes):
+        assert sum(1 for r in recipes if r.get("surface")) == 56
+
+    def test_labels_are_marked_as_inferred(self, recipes):
+        """These are read out of prose, not stated by the author as a
+        field. The distinction should survive in the data."""
+        for r in recipes:
+            if r.get("surface"):
+                assert r["surface_source"] == "description"
+
+    def test_satin_matte_is_not_filed_as_matte(self, recipes):
+        """The commonest label in this book. Matching "matte" first would
+        misfile 19 of 60 recipes."""
+        from src.services.surface_model import normalize_surface
+
+        r = next(x for x in recipes if x["name"] == "Cadwells Base")
+        assert r["surface"] == "dry matte"
+        satin_matte = [x for x in recipes if x.get("surface") == "satin matte"]
+        assert len(satin_matte) == 19
+        assert all(normalize_surface(x["surface"]) == "satin" for x in satin_matte)
+
+    def test_unlabelled_recipes_have_no_surface_claim(self, recipes):
+        """Four descriptions state colour or chemistry but never gloss.
+        Crawling Vitgobe describes bubbling and wrinkling - a texture, not
+        a gloss class - so it stays unlabelled rather than being forced
+        into one of three buckets."""
+        unlabelled = {r["name"] for r in recipes if not r.get("surface")}
+        assert unlabelled == {
+            "Opaque 04 k2", "Mohawk Green F k2",
+            "02 Millennium MetalBlack", "Crawling Vitgobe",
+        }
+
+    #: Zakin labels that describe something other than gloss. "metallic"
+    #: is reflectance and "semi-vitreous" is degree of vitrification;
+    #: neither is a point on the glossy/satin/matte axis, so the gloss
+    #: classifier correctly declines them rather than guessing.
+    NON_GLOSS_LABELS = {"metallic", "semi-vitreous"}
+
+    def test_gloss_labels_normalize(self, recipes):
+        from src.services.surface_model import normalize_surface
+
+        for r in recipes:
+            surface = r.get("surface")
+            if not surface or surface in self.NON_GLOSS_LABELS:
+                continue
+            assert normalize_surface(surface) in ("glossy", "satin", "matte"), surface
+
+    def test_non_gloss_labels_are_declined_not_guessed(self, recipes):
+        """Forcing "metallic" into one of three gloss buckets would put a
+        fabricated classification into search results. Returning None is
+        the honest answer, and the raw label is still there to filter on."""
+        from src.services.surface_model import normalize_surface
+
+        present = {r["surface"] for r in recipes if r.get("surface")}
+        assert self.NON_GLOSS_LABELS <= present
+        for label in self.NON_GLOSS_LABELS:
+            assert normalize_surface(label) is None

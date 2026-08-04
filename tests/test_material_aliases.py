@@ -206,3 +206,46 @@ class TestUnresolvedAPI:
         data = response.json()
         assert data["umf"]["unresolved_materials"] == ["Bogus Material"]
         assert "Bogus Material" in data["warnings"][0]
+
+
+class TestSurfaceSearchCanonicalization:
+    """Surface search matched on substring, which was wrong in both
+    directions because the corpus vocabulary overlaps: "matte" also
+    matched Satin-matte and Semi-matte (1,092 of 2,452 results were not
+    matte), while "satin" missed the 451 recipes labelled Semi-matte.
+    """
+
+    @pytest.fixture(scope="class")
+    def db(self):
+        from src.services.recipe_db import RecipeDatabase
+        database = RecipeDatabase()
+        database.load()
+        return database
+
+    def test_matte_excludes_satin_matte(self, db):
+        from src.services.surface_model import normalize_surface
+
+        results = db.search(surface="matte", limit=100000)
+        assert results
+        assert all(normalize_surface(r.get("surface")) == "matte" for r in results)
+
+    def test_satin_includes_semi_matte(self, db):
+        """Semi-matte is a satin. Substring matching could never find it."""
+        results = db.search(surface="satin", limit=100000)
+        assert any((r.get("surface") or "").lower() == "semi-matte" for r in results)
+
+    def test_freeform_terms_still_match_by_substring(self, db):
+        """Canonicalization must not break searching the long tail -
+        "carbon trap" is not a gloss class but is a real thing to look
+        for."""
+        results = db.search(surface="carbon", limit=100000)
+        assert results
+        assert all("carbon" in (r.get("surface") or "").lower() for r in results)
+
+    def test_statistics_report_both_raw_and_normalized(self, db):
+        stats = db.statistics()
+        assert "by_surface" in stats
+        assert "by_surface_normalized" in stats
+        normalized = stats["by_surface_normalized"]
+        assert set(normalized) <= {"glossy", "satin", "matte", "unclassified"}
+        assert sum(normalized.values()) == stats["total_recipes"]
