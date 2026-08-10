@@ -182,17 +182,45 @@ class MaterialsDatabase:
         return list(self._materials.values())
 
     def add(self, material: Material) -> None:
-        """Add a material to the database.
+        """Add or replace a material.
+
+        Mirrors what load() does, which it previously did not: aliases
+        were left unindexed, so a material added at runtime could not be
+        found by any of its alternate_names even though the same material
+        loaded from disk could. Re-adding also appended to the type index
+        unconditionally, so the material showed up twice in get_by_type()
+        while _materials held only one copy.
 
         Args:
-            material: Material to add.
+            material: Material to add. Replaces any existing entry of the
+                same name.
         """
         self._ensure_loaded()
-        self._materials[material.name.lower()] = material
+        key = material.name.lower()
 
-        if material.material_type not in self._by_type:
-            self._by_type[material.material_type] = []
-        self._by_type[material.material_type].append(material)
+        previous = self._materials.get(key)
+        if previous is not None:
+            bucket = self._by_type.get(previous.material_type)
+            if bucket and previous in bucket:
+                bucket.remove(previous)
+            for alias, owner in list(self._aliases.items()):
+                if owner is previous:
+                    del self._aliases[alias]
+
+        self._materials[key] = material
+
+        for alias in material.alternate_names:
+            alias_key = alias.lower()
+            existing = self._aliases.get(alias_key)
+            if existing is not None and existing is not material:
+                logger.warning(
+                    "Alias %r claimed by both %r and %r; keeping %r",
+                    alias, existing.name, material.name, existing.name,
+                )
+                continue
+            self._aliases[alias_key] = material
+
+        self._by_type.setdefault(material.material_type, []).append(material)
 
     def save(self, filepath: Path) -> None:
         """Save all materials to a JSON file.
@@ -200,6 +228,10 @@ class MaterialsDatabase:
         Args:
             filepath: Output file path.
         """
+        # Without this, saving from a database nobody had read yet wrote
+        # {"materials": []} - quietly emptying the target file rather
+        # than failing.
+        self._ensure_loaded()
         data = {
             "materials": [m.to_dict() for m in self._materials.values()]
         }
