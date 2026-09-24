@@ -344,6 +344,12 @@ class UMFResponse(BaseModel):
     # the oxide totals before normalization, so a non-empty list means the UMF
     # above is computed from only part of the batch.
     unresolved_materials: list[str] = Field(default_factory=list)
+    # Fired analysis as weight percent, INCLUDING colorant additions. The
+    # UMF above is molar, normalized to flux unity, and base-only - so a
+    # recipe carrying 1% red iron oxide as an addition shows Fe2O3 0.10
+    # there and 1.16 here. Published composition targets ("Fe2O3 1.0-1.5%",
+    # "TiO2 below 0.2%") are quoted on this basis, not on UMF.
+    fired_weight_percent: dict[str, float] = Field(default_factory=dict)
 
 
 class FoodSafetyFindingResponse(BaseModel):
@@ -651,6 +657,7 @@ async def calculate_umf(recipe: RecipeInput) -> UMFResponse:
         silica_alumina_ratio=round(umf.silica_alumina_ratio, 2),
         alkali_ratio=round(umf.alkali_ratio, 4),
         stull_prediction=umf.stull_point.surface_prediction,
+        fired_weight_percent=formulator.fired_weight_percent(glaze_recipe),
     )
 
 

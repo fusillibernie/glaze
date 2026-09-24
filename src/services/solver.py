@@ -18,6 +18,11 @@ SOLVER_OXIDES = [
     "SiO2", "Al2O3", "B2O3",
     "Na2O", "K2O", "Li2O",
     "CaO", "MgO", "BaO", "SrO", "ZnO", "PbO",
+    # P2O5 is declared as a target by the chun profile (phosphate drives
+    # the bubble-size variation that amplifies its opalescence). Without
+    # it here that target was accepted from the data and silently
+    # discarded, so a generated chun came back with no phosphate at all.
+    "P2O5",
 ]
 
 FLUX_OXIDES = {"Na2O", "K2O", "Li2O", "CaO", "MgO", "BaO", "SrO", "ZnO", "PbO"}

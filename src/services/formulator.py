@@ -262,18 +262,32 @@ class GlazeFormulator:
     def calculate_recipe_analysis(
         self,
         recipe: GlazeRecipe,
+        include_colorants: bool = False,
     ) -> OxideAnalysis:
         """Calculate the combined oxide analysis for a recipe.
 
         Args:
             recipe: Glaze recipe.
+            include_colorants: Fold colorant additions in as well. Off by
+                default because UMF is conventionally the base-glaze unity
+                formula and colorants are expressed as additions on top of
+                100% base. Turn it on to answer "how much iron is actually
+                in the fired glaze", which is what published composition
+                targets state.
 
         Returns:
             Combined oxide analysis.
         """
         combined = OxideAnalysis()
 
-        for ingredient in recipe.ingredients:
+        contributions = list(recipe.ingredients)
+        if include_colorants:
+            contributions += [
+                GlazeIngredient(material_name=c.material_name, percentage=c.percentage)
+                for c in recipe.colorants
+            ]
+
+        for ingredient in contributions:
             material = self._resolve(ingredient)
             if not material:
                 continue
@@ -288,6 +302,33 @@ class GlazeFormulator:
                 setattr(combined, oxide, current + addition)
 
         return combined
+
+    def fired_weight_percent(
+        self,
+        recipe: GlazeRecipe,
+        include_colorants: bool = True,
+    ) -> dict[str, float]:
+        """Oxide analysis as fired weight percent, normalized to 100.
+
+        This is the basis published composition targets are usually quoted
+        on ("Fe2O3 1.0-1.5%", "TiO2 below 0.2%"), and it is NOT what the
+        UMF panel shows: UMF is molar, normalized to flux unity, and
+        excludes colorant additions. A recipe carrying 1% red iron oxide
+        as an addition reads Fe2O3 0.10 in the base UMF and 1.16 here -
+        the difference between "nowhere near target" and "on target".
+
+        LOI is excluded, since it has left by the time the glaze is fired.
+        """
+        analysis = self.calculate_recipe_analysis(recipe, include_colorants=include_colorants)
+        weights = {
+            oxide: getattr(analysis, oxide)
+            for oxide in _COMBINABLE_OXIDES
+            if getattr(analysis, oxide) > 0
+        }
+        total = sum(weights.values())
+        if total <= 0:
+            return {}
+        return {oxide: round(value / total * 100, 3) for oxide, value in weights.items()}
 
     def calculate_dual_umf(
         self,

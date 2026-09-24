@@ -1,6 +1,7 @@
 """Unified recipe database loading from multiple sources."""
 
 import json
+import re
 import logging
 from pathlib import Path
 from typing import Optional
@@ -188,16 +189,57 @@ class RecipeDatabase:
                 ]
 
         if query:
-            q = query.lower()
-            results = [
-                r for r in results
-                if q in (r.get("name", "") or "").lower()
-                or q in (r.get("description", "") or "").lower()
-                or q in (r.get("subtype", "") or "").lower()
-                or q in (r.get("notes", "") or "").lower()
-            ]
+            results = self._rank_by_query(results, query)
 
         return results[offset:offset + limit]
+
+    #: Relevance weights. A whole-word hit in the name beats a substring
+    #: hit in someone's prose, which is the difference between searching
+    #: "chun" and getting chun glazes rather than Sam Chung's catalogue.
+    _MATCH_WEIGHTS = (
+        ("name", 100, 60),
+        ("subtype", 40, 30),
+        ("description", 20, 10),
+        ("notes", 20, 10),
+    )
+
+    def _rank_by_query(self, recipes: list[dict], query: str) -> list[dict]:
+        """Filter to matches, ordered by how well they match.
+
+        Previously this was an unranked filter - anything containing the
+        substring anywhere passed, and the result was then sliced in
+        corpus order, so relevance was down to file ordering. Searching
+        "chun" returned "Big Sky" and "Bleached Albany" ahead of "Blue
+        Chun Glaze", because both mention the potter Sam Chung in their
+        descriptions and "chun" is a substring of "Chung".
+
+        Substring matching is kept as a weaker signal so prefix searches
+        ("celad", "temmok") still work.
+        """
+        q = query.lower().strip()
+        if not q:
+            return recipes
+
+        word = re.compile(rf"\b{re.escape(q)}\b")
+        scored: list[tuple[int, dict]] = []
+
+        for recipe in recipes:
+            best = 0
+            for field, word_score, substring_score in self._MATCH_WEIGHTS:
+                haystack = (recipe.get(field) or "")
+                if not isinstance(haystack, str):
+                    continue
+                haystack = haystack.lower()
+                if word.search(haystack):
+                    best = max(best, word_score)
+                elif q in haystack:
+                    best = max(best, substring_score)
+            if best:
+                scored.append((best, recipe))
+
+        # Stable sort: equal scores keep their original corpus order.
+        scored.sort(key=lambda pair: -pair[0])
+        return [recipe for _, recipe in scored]
 
     def _matches_cone(self, recipe: dict, target_cone: str) -> bool:
         """Check if recipe matches a cone filter."""
