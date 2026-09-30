@@ -59,7 +59,13 @@ Thumbs.db
 # Project specific
 data/uploads/
 data/glazy_cache/
-data/glazy_bulk/
+# The 7.5MB corpus stays out, but its attribution must ship: the data is
+# CC BY-NC-SA 4.0 and crediting the source is a licence condition, so the
+# metadata cannot live only on the machine that ran the download.
+# Excluding the contents rather than the directory itself - git prunes an
+# excluded directory and never reaches a negation inside it.
+data/glazy_bulk/*
+!data/glazy_bulk/.metadata.json
 data/results/
 !data/results/firing_results.json
 data/saved_recipes/

@@ -1616,6 +1616,7 @@
                     </div>
                     <button class="small" onclick="searchLibrary()" style="width:100%;">Search</button>
                     <div id="library-stats" style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-muted);"></div>
+                    <div id="library-attribution" style="font-size: 0.75rem; color: var(--text-muted); line-height: 1.5;"></div>
                 </div>
 
                 <div class="card">
@@ -4524,6 +4525,7 @@
                     opt.textContent = `${s.name} (${s.count})`;
                     sel.appendChild(opt);
                 });
+                renderSourceAttribution(sources);
             } catch (e) { console.error('Failed to load sources:', e); }
 
             // Load stats
@@ -4536,6 +4538,25 @@
             } catch (e) {}
 
             searchLibrary();
+        }
+
+        /** Credit any source that ships a licence with its data.
+         *
+         *  Not decoration: the Glazy corpus is CC BY-NC-SA 4.0, which makes
+         *  attribution a condition of use. The sources endpoint has always
+         *  been able to return it, but the metadata file it reads did not
+         *  exist, so it silently returned name and count only and the
+         *  credit appeared nowhere in the app. */
+        function renderSourceAttribution(sources) {
+            const credited = (sources || []).filter(s => s.attribution);
+            const host = document.getElementById('library-attribution');
+            if (!host) return;
+            if (!credited.length) { host.innerHTML = ''; return; }
+            host.innerHTML = credited.map(s => `
+                <div style="margin-top:0.35rem;">
+                    ${escapeHtml(s.attribution)}
+                    ${s.last_updated ? ` <span style="opacity:.75;">Snapshot ${escapeHtml(s.last_updated)}.</span>` : ''}
+                </div>`).join('');
         }
 
         async function searchLibrary(resetOffset = true) {
