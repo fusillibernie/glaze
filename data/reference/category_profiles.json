@@ -439,8 +439,7 @@
         "Custer Feldspar",
         "Whiting",
         "Silica (Flint)",
-        "EPK Kaolin",
-        "Zircopax"
+        "EPK Kaolin"
       ],
       "material_constraints": {},
       "notes": "Zircopax 8-12% for reliable white. Tin oxide 4-6% for softer white. Titanium gives cream, not white."
@@ -631,6 +630,61 @@
       ],
       "material_constraints": {},
       "notes": "Rutile 4-8% plus iron 1-3% creates blue variegation in reduction. Titanium promotes crystal/opalescent effects."
+    },
+    "copper_red": {
+      "description": "Reduction copper red - colloidal metallic copper suspended in the glass. Covers oxblood, sang de boeuf, flambe and peach bloom.",
+      "preferred_atmosphere": [
+        "reduction"
+      ],
+      "surface": "glossy",
+      "umf_overrides": {
+        "SiO2": {
+          "min": 2.7,
+          "max": 3.6
+        },
+        "Al2O3": {
+          "min": 0.26,
+          "max": 0.47
+        },
+        "CaO": {
+          "min": 0.38,
+          "max": 0.63
+        },
+        "KNaO": {
+          "min": 0.22,
+          "max": 0.43
+        },
+        "B2O3": {
+          "min": 0.0,
+          "max": 0.31
+        }
+      },
+      "si_al_ratio": {
+        "min": 7.0,
+        "max": 12.5
+      },
+      "required_colorants": [
+        {
+          "oxide": "CuO",
+          "min_pct": 0.3,
+          "max_pct": 0.5,
+          "source_material": "Copper Carbonate"
+        },
+        {
+          "oxide": "SnO2",
+          "min_pct": 1.0,
+          "max_pct": 1.5,
+          "source_material": "Tin Oxide"
+        }
+      ],
+      "preferred_materials": [
+        "Custer Feldspar",
+        "Silica (Flint)",
+        "Whiting (Calcium Carbonate)",
+        "EPK Kaolin"
+      ],
+      "material_constraints": {},
+      "notes": "Reduction is not a preference here, it is the mechanism - the red is colloidal metallic copper, and it dies on reoxidation. Keep copper carbonate at or below 0.5%: above that the colour goes liver, metallic or straight green, and the corpus median sits at 0.49% right against that ceiling. Tin nucleates the colloid, so it is required rather than an opacifier here - roughly 1% tin to 0.33% copper (Pinnell). Start reduction early, around cone 012, so the glaze is reduced before it seals over. In a wood or soda kiln where the atmosphere swings, 0.25-0.5% silicon carbide in the copper layer reduces locally regardless of what the kiln is doing. Copper volatilises and will flash neighbouring pots pink and green from several shelves away - warn whoever shares the chamber."
     }
   }
 }
