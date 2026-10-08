@@ -21,7 +21,7 @@
       ],
       "cross_reference": {
         "source": "bloomfield-special-effect-glazes-2020",
-        "note": "Corroborates the Digitalfire remedies (add silica/talc). Also notes crazing can be deliberately induced for a controlled test: replace potash feldspar with soda feldspar or nepheline syenite, or reduce silica in 5% increments."
+        "note": "Agrees with the Digitalfire remedies (more silica or talc). Also useful for a controlled test: crazing can be provoked on purpose by swapping soda feldspar or nepheline syenite in for potash feldspar, or by cutting silica in 5% steps."
       },
       "risk_key": "crazing",
       "baseline_risk": 0.1,
@@ -71,7 +71,7 @@
       "other_remedies": [],
       "cross_reference": {
         "source": "bloomfield-special-effect-glazes-2020",
-        "note": "Remedy: add 5% nepheline syenite, or reduce silica by 5%."
+        "note": "Fix with about 5% added nepheline syenite, or a 5% cut in silica."
       }
     },
     "crawling": {
@@ -94,7 +94,7 @@
       ],
       "cross_reference": {
         "source": "bloomfield-special-effect-glazes-2020",
-        "note": "To deliberately induce (for testing): replace dolomite with light magnesium carbonate and apply the glaze more thickly. To prevent: apply more thinly, reduce clay content, or sponge the bisque clean before glazing."
+        "note": "To provoke it for testing: use light magnesium carbonate in place of dolomite and glaze heavily. To prevent it: glaze thinner, cut the clay content, or wipe the bisque down with a damp sponge first."
       },
       "risk_key": "crawling",
       "baseline_risk": 0.1,
@@ -162,7 +162,7 @@
       ],
       "cross_reference": {
         "source": "bloomfield-special-effect-glazes-2020",
-        "note": "To deliberately induce (for testing): dampen the bisque ware before applying glaze. To fix: soak (hold at peak temperature) for 15-30 minutes at the end of firing."
+        "note": "To provoke it for testing: glaze onto bisque that is still damp. To cure it: add a 15-30 minute soak at peak temperature before the kiln shuts off."
       },
       "risk_key": "pinholing",
       "baseline_risk": 0.15,
@@ -361,7 +361,7 @@
         "European (Turkish) colemanite splutters more readily than American sources at the same percentage"
       ],
       "chemistry_remedies": [
-        "Replace colemanite with calcium borate frit (an exact drop-in for the boron/calcium chemistry, with the water already removed during fritting) - the standard industry fix",
+        "Swap the colemanite for a calcium borate frit - the same boron and calcium, with the water already driven off during fritting. This is the usual industry fix.",
         "Keep raw colemanite to roughly 7-10% of the recipe for European sources if it must be used raw (American colemanite tolerates somewhat more)"
       ],
       "other_remedies": [

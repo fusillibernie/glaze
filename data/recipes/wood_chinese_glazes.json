@@ -228,13 +228,13 @@
         "K2O": 3.8,
         "Na2O": 0.7
       },
-      "notes": "Book gives firing range as '1360-1300C' (sic, likely a printing error for 1260-1300C given the neighboring recipes' ranges - preserved as printed). Stronger reduction gives more opacity/lustre/richness of tone; in oxidation, thin application shows the same brownish semi-transparency as Glaze 4."
+      "notes": "Book gives firing range as '1360-1300C' (sic, likely a printing error for 1260-1300C given the neighboring recipes' ranges - preserved as printed). Stronger reduction gives more opacity/lustre/richness of tone; applied thinly in oxidation it turns a translucent brown, much like Glaze 4."
     },
     {
       "name": "Mirror-Black Glaze (Wood, Glaze 6)",
       "source": "wood-chinese-glazes-1999",
       "source_id": "glaze-6",
-      "description": "Reconstructed from the analysis of a late-Qing Jingdezhen mirror-black glaze. Historically, 18th-19th century mirror-blacks used second-grade cobalt pigments that were essentially manganese ore with cobalt as a natural impurity, hence the large manganese dioxide content here.",
+      "description": "Reconstructed from the analysis of a late-Qing Jingdezhen mirror-black glaze. Historically, 18th-19th century mirror-blacks relied on low-grade cobalt ore - mostly manganese, with cobalt present only as an impurity, hence the large manganese dioxide content here.",
       "cone": "6-7",
       "atmosphere": "oxidation or reduction",
       "surface": "glossy",
@@ -289,7 +289,7 @@
       "name": "Chinese Blue Stoneware Glaze (Wood, Glaze 7)",
       "source": "wood-chinese-glazes-1999",
       "source_id": "glaze-7",
-      "description": "Reproduces the effect of impure Chinese cobalt ore (a natural mixture of iron, manganese and cobalt oxides) via a deliberate cobalt oxide + manganese dioxide + iron oxide blend, giving a good medium-blue that avoids the garishness of pure cobalt colouring.",
+      "description": "Reproduces the effect of impure Chinese cobalt ore (cobalt naturally contaminated with iron and manganese) via a deliberate cobalt oxide + manganese dioxide + iron oxide blend, giving a good medium-blue that avoids the garishness of pure cobalt colouring.",
       "cone": "7-10",
       "atmosphere": "reduction (preferred), oxidation, or as an overglaze",
       "surface": "glossy",
@@ -438,7 +438,7 @@
         "Na2O": 1.3,
         "P2O5": 0.9
       },
-      "notes": "1280-1300C. Slow cooling prevents too glassy a surface. Optional: brushwork with dilute copper-carbonate pigment on the dry glaze surface before firing, for diffused copper-red effects.",
+      "notes": "1280-1300C. Cool slowly, or the surface turns overly glassy. Optional: brushwork with dilute copper-carbonate pigment on the dry glaze surface before firing, for diffused copper-red effects.",
       "variations": [
         {
           "name": "Jun Glaze, copper-red brushwork",

@@ -1,5 +1,5 @@
 {
-  "_source_note": "60 glaze recipes from Chapter 11 of Richard Zakin's 'Electric Kiln Ceramics: A Guide to Clays and Glazes' (3rd ed, Krause/F+W Media, 2004) - ingredient/percentage data and Zakin's own surface/color descriptions, condensed rather than quoted verbatim. All recipes in this chapter are written for oxidation firing in an electric kiln, which is why the book exists. Generic material terms (boron frit, soda frit, potash feldspar, red clay, stoneware clay) are Zakin's own category names, not specific branded products - most are left unresolved rather than guessed at, except where this database already defaults a generic term to a standard equivalent (Potash Feldspar -> Custer Feldspar, Soda Feldspar -> Minspar 200, Iron/Iron Oxide -> Red Iron Oxide, Zirconium/Zirconium Opacifier -> Zircopax). Two recipes (Dewitt Mills, Franklin R 92) sum to 88% and 80% respectively as printed in the book - confirmed against the source text, not a transcription gap; kept faithful to the original rather than padded to 100. The Estacada recipe (cone 3) uses 'potash' and 'spodium' in the original where every neighboring recipe spells out 'potash feldspar' and 'spodumene' - treated as the book's own abbreviation/typo and resolved accordingly, noted per-recipe. Surface labels were inferred from Zakin's own prose descriptions and carry surface_source='description'; he states the fired surface for most glazes but not as a separate field. Five have no surface claim in the text and are deliberately left unlabelled rather than guessed.",
+  "_source_note": "60 glaze recipes from Chapter 11 of Richard Zakin's 'Electric Kiln Ceramics: A Guide to Clays and Glazes' (3rd ed, Krause/F+W Media, 2004) - ingredient/percentage data, with surface and colour descriptions written in our own words from the facts Zakin reports. All recipes in this chapter are written for oxidation firing in an electric kiln, which is why the book exists. Generic material terms (boron frit, soda frit, potash feldspar, red clay, stoneware clay) are Zakin's own category names, not specific branded products - most are left unresolved rather than guessed at, except where this database already defaults a generic term to a standard equivalent (Potash Feldspar -> Custer Feldspar, Soda Feldspar -> Minspar 200, Iron/Iron Oxide -> Red Iron Oxide, Zirconium/Zirconium Opacifier -> Zircopax). Two recipes (Dewitt Mills, Franklin R 92) sum to 88% and 80% respectively as printed in the book - confirmed against the source text, not a transcription gap; kept faithful to the original rather than padded to 100. The Estacada recipe (cone 3) uses 'potash' and 'spodium' in the original where every neighboring recipe spells out 'potash feldspar' and 'spodumene' - treated as the book's own abbreviation/typo and resolved accordingly, noted per-recipe. Surface labels were inferred from Zakin's own prose descriptions and carry surface_source='description'; he states the fired surface for most glazes but not as a separate field. Five have no surface claim in the text and are deliberately left unlabelled rather than guessed.",
   "zakin_electric_kiln_glazes": [
     {
       "name": "Opaque 04 k2",
@@ -88,7 +88,7 @@
     {
       "name": "Mohawk Green F k2",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This recipe is very low in silica and quite high in alumina and in fluxes. Its most significant fluxes are sodium, calcium, boron, and lithium derived respectively from soda spar, boron frit, and lithium carbonate. Its color is a rich saturated green. It has a fairly strong visual texture.",
+      "description": "Low in silica and high in alumina and flux, fluxed mainly by soda, calcium, boron and lithium. Saturated green with noticeable texture.",
       "cone": "04",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -121,7 +121,7 @@
     {
       "name": "Millbrook Visitor",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This is a highly durable transparent glaze with a shiny surface.",
+      "description": "Glossy, transparent and hard-wearing.",
       "cone": "02",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -152,7 +152,7 @@
     {
       "name": "Tottman",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze is dry surfaced. Its color is yellow where thick, rust where thin, and it has a good deal of visual texture. It derives its color from the iron in the red clay.",
+      "description": "Dry matte. Yellow thick, rust thin, heavily textured; iron from the red clay.",
       "cone": "02",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -187,7 +187,7 @@
     {
       "name": "Cobblestone Base",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze is satin shiny in surface and ivory white in color.",
+      "description": "Satin-gloss ivory.",
       "cone": "02",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -222,7 +222,7 @@
     {
       "name": "Lorraine Earth Yellow",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This is a satin shiny glaze. Its color is a soft yellow where thick, tan where thin. Its color is derived from iron in the red clay.",
+      "description": "Satin-gloss. Soft yellow thick, tan thin; red-clay iron.",
       "cone": "02",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -253,7 +253,7 @@
     {
       "name": "Wardwell Brown",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a satin matte surface. Its color is predominantly brown with persimmon-brown attracting the most notice. It is marked by a tight pattern of ocher spots. It derives its color from iron in the red clay and the stoneware clay.",
+      "description": "Satin matte brown leaning persimmon, with fine ochre spotting. Iron from both clays.",
       "cone": "02",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -288,7 +288,7 @@
     {
       "name": "Towle Gulf Yellow",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a matte surface. Where thick its color is a bright mustard yellow, where thin it's rust red. It derives its color from iron in the red clay.",
+      "description": "Matte. Mustard yellow thick, rust-red thin; red-clay iron.",
       "cone": "02",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -323,7 +323,7 @@
     {
       "name": "02 Millennium MetalBlack",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze derives its color from the iron and manganese in the Barnard clay and the cobalt oxide addition. Its color is midnight black. Though it has little visual texture, in combination with other glazes it will often encourage strong visual textures.",
+      "description": "Midnight black, from Barnard clay iron and manganese plus cobalt. Plain on its own, but tends to bring out texture in glazes layered with it.",
       "cone": "02",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -344,7 +344,7 @@
     {
       "name": "02 Orange Chartreuse",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a matte surface. It derives its color from its red clay content. Its color ranges from a chartreuse where thick to a rust where thin.",
+      "description": "Matte. Chartreuse thick, rust thin; colour from the red clay.",
       "cone": "02",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -379,7 +379,7 @@
     {
       "name": "02 Dark Matte",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a satin matte surface. It is a red-brown where thin and dark mustard where thick. It derives its color from iron in the red clay.",
+      "description": "Satin matte. Dark mustard thick, red-brown thin; red-clay iron.",
       "cone": "02",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -406,7 +406,7 @@
     {
       "name": "Tremaines Persimmon",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This shiny surfaced glaze is cream where thick, and brown where thin. It is low in viscosity and flows away from edges. It derives its color from iron in the stoneware clay and the red clay.",
+      "description": "Glossy and fluid - pulls back from edges. Cream thick, brown thin; iron from both clays.",
       "cone": "02",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -437,7 +437,7 @@
     {
       "name": "Millbrook Opaque 2",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This shiny, smooth surfaced glaze is opaque and white in color.",
+      "description": "Smooth, glossy opaque white.",
       "cone": "02",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -472,7 +472,7 @@
     {
       "name": "Millbrook Opaque 3",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This is an opaque, shiny surfaced glaze, white in color.",
+      "description": "Glossy opaque white.",
       "cone": "02",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -503,7 +503,7 @@
     {
       "name": "Cadwells Base",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "The surface of this glaze is a dry matte. It is opaque and its color is a muted bluish green.",
+      "description": "Dry matte, opaque, muted blue-green.",
       "cone": "3",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -553,7 +553,7 @@
     {
       "name": "Dewitt Mills",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze is opaque and its surface is satin matte. Its color varies from cream to tan (a thick application encourages a cream color). It has a good “hand” and is marked by strong visual texture.",
+      "description": "Opaque satin matte, cream to tan - cream when applied thick. Pleasant to handle and strongly textured.",
       "cone": "3",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -592,7 +592,7 @@
     {
       "name": "Dewitt White 1",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This is an opaque, soft, satin matte glaze. Its color is ivory white. Its slightly grayed color is derived from its stoneware clay content.",
+      "description": "Soft opaque satin matte in a slightly greyed ivory; the grey comes from the stoneware clay.",
       "cone": "3",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -631,7 +631,7 @@
     {
       "name": "Fulton 4a Deep Blue",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This opaque glaze has a soft looking waxy matte surface. Where thinly applied it is gray, where thick it is deep slate blue. Its high strontium content may encourage sedimenting.",
+      "description": "Opaque waxy matte. Grey thin, deep slate blue thick. Heavy in strontium, so watch for settling in the bucket.",
       "cone": "3",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -681,7 +681,7 @@
     {
       "name": "Oz Strontium IV",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This opaque glaze has a velvety matte surface. Its color is a strong green. Its surface is similar to a high barium glaze but doesn't have the toxicity of barium. It derives these characteristics from its high strontium content, which may cause it to sediment.",
+      "description": "Opaque velvety matte, strong green. Strontium gives a barium-like matte without barium's toxicity, though it can settle.",
       "cone": "3",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -727,7 +727,7 @@
     {
       "name": "Richmond Mills",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze is opaque and has a satin matte surface. Its color is a soft cream where thick and is a light amber where thin. It is durable and would be an excellent liner glaze.",
+      "description": "Opaque satin matte, cream thick, pale amber thin. Durable - a good liner candidate.",
       "cone": "3",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -762,7 +762,7 @@
     {
       "name": "Snyders 2",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze is opaque and its surface is satin shiny. Its color ranges from silver-gray to ocher and it is marked by visual texture. It derives its color from the iron in iron oxide and in the stoneware clay. It is quite durable.",
+      "description": "Opaque satin-gloss, silver-grey to ochre with visible texture. Iron from the oxide and the stoneware clay. Hard-wearing.",
       "cone": "3",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -793,7 +793,7 @@
     {
       "name": "Sodus Point 2",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze is opaque and matte surfaced. Its color ranges from yellow-ocher to brown. It derives its color from its Barnard/stoneware clay content.",
+      "description": "Opaque matte, yellow-ochre to brown, coloured by the Barnard and stoneware clays.",
       "cone": "3",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -828,7 +828,7 @@
     {
       "name": "Orwell Amber",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a satin surface. Its color is butterscotch where thick, and amber-brown where thin. It takes its color from iron in the red and stoneware clays and from the titanium in the stoneware clay.",
+      "description": "Satin. Butterscotch thick, amber-brown thin; iron from both clays, plus titania from the stoneware.",
       "cone": "3",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -859,7 +859,7 @@
     {
       "name": "Wardwell Persimmon",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a stony satin matte surface. Its color is a soft persimmon-brown. It takes its color mainly from the iron in the stoneware clay and the red clay.",
+      "description": "Stony satin matte in a soft persimmon-brown, mostly from stoneware and red-clay iron.",
       "cone": "3",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -898,7 +898,7 @@
     {
       "name": "Dutcherville Barn Red",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a satin shiny surface. It is a bright iron red in color. Iron in the red clay gives this glaze its vibrant color.",
+      "description": "Satin-gloss, bright iron red from the red clay.",
       "cone": "3",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -929,7 +929,7 @@
     {
       "name": "Minoa Amber",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a satin shiny surface. The glaze is tan where thick and red-amber where thin. The color is derived from iron in the red clay and the stoneware clay. Color and surface are significantly enhanced by the presence of tin oxide.",
+      "description": "Satin-gloss. Tan thick, red-amber thin; iron from both clays. Tin noticeably improves both colour and surface.",
       "cone": "3",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -960,7 +960,7 @@
     {
       "name": "Fairdale Bridge",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a satin matte surface. Its color is a very light yellow. The rutile in this recipe acts as both a flux and a colorant.",
+      "description": "Satin matte, very pale yellow. The rutile works as flux and colourant at once.",
       "cone": "3",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -999,7 +999,7 @@
     {
       "name": "Dewitt Dark Tan 3",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This rich satin matte surface varies in color and texture. It will produce various browns, and has a mottled appearance. This glaze takes its color from the iron and manganese in the Barnard clay.",
+      "description": "Satin matte in a mottled range of browns, coloured by Barnard clay iron and manganese.",
       "cone": "3",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1038,7 +1038,7 @@
     {
       "name": "Stone Hill",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a satin surface. It is a creamy tan in color. Visual texture results from variations in the glaze thickness. This glaze takes its color from the iron in the red clay.",
+      "description": "Satin, creamy tan, with texture following application thickness. Red-clay iron.",
       "cone": "3",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1073,7 +1073,7 @@
     {
       "name": "Checkered House Ocher",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a matte surface. It is a soft, earth yellow in color. This glaze takes its color from the iron in the rutile and the stoneware clay.",
+      "description": "Matte, soft earth yellow. Iron from the rutile and the stoneware clay.",
       "cone": "3",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1112,7 +1112,7 @@
     {
       "name": "Howardville",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a satin matte surface. It is earth yellow where applied thickly and amber where thin. Color is derived from the iron in the red and stoneware clays. Strong variations in the texture will result from differing glaze thicknesses.",
+      "description": "Satin matte. Earth yellow thick, amber thin, texture shifting strongly with thickness. Iron from both clays.",
       "cone": "3",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1143,7 +1143,7 @@
     {
       "name": "Bethel Gray",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a durable satin matte surface. It is gray-mustard where thick and orange-brown where thin. Some dark brown speckles may appear on the gray-mustard ground. It takes its color from the iron and titanium in the red and stoneware clays.",
+      "description": "Hard-wearing satin matte. Grey-mustard thick, orange-brown thin, sometimes flecked dark brown. Iron and titania from both clays.",
       "cone": "3",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1174,7 +1174,7 @@
     {
       "name": "Canton Brown",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a satin matte surface. Its color varies from ocher to brown. Its color is derived from the iron in the red clay and the cobalt colorant.",
+      "description": "Satin matte, ochre to brown. Red-clay iron plus the cobalt addition.",
       "cone": "3",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1217,7 +1217,7 @@
     {
       "name": "Estacada",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "Estacada will produce a matte glaze of warm yellow where used thickly and orange-tan where thin. It has some light speckling and an earthy appearance. Color is derived from iron in the red and stoneware clays.",
+      "description": "Matte. Warm yellow thick, orange-tan thin, lightly speckled and earthy. Iron from both clays.",
       "cone": "3",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1253,7 +1253,7 @@
     {
       "name": "C/3 Millennium MetalBlack",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a metallic grainy surface with a strong shine. Its color is an ebony black. Color is derived from iron and manganese in the Barnard clay. With the addition of 1% cobalt oxide its color is midnight black. Though it has little visual texture when used alone, in combination with other glazes it will often encourage strong visual textures.",
+      "description": "Grainy, high-shine metallic ebony black from Barnard clay iron and manganese; 1% cobalt deepens it to midnight black. Little texture alone, but brings it out in layered glazes.",
       "cone": "3",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1273,7 +1273,7 @@
     {
       "name": "Denton",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze is opaque and has a satin shiny surface. Its color is a cool green.",
+      "description": "Opaque satin-gloss, cool green.",
       "cone": "6",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1308,7 +1308,7 @@
     {
       "name": "Soft Tan Base",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze is opaque and has a matte surface. It is a warm ivory in color.",
+      "description": "Opaque matte, warm ivory.",
       "cone": "6",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1339,7 +1339,7 @@
     {
       "name": "Satin White",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This is an opaque glaze with a satin matte surface. Its color is a silvery white.",
+      "description": "Opaque satin matte, silvery white.",
       "cone": "6",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1374,7 +1374,7 @@
     {
       "name": "Transparent Matte Glaze",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a satin matte surface. It is translucent. This is a very unusual recipe in that it is a translucent matte glaze. This interesting and useful glaze type was popular in the United States from the early 1900s to the 1930s.",
+      "description": "Satin matte yet translucent - an unusual pairing, and a style common in American work from the 1900s to the 1930s.",
       "cone": "6",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1401,7 +1401,7 @@
     {
       "name": "MetalBlack",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a satin matte surface. Its color is a metallic black. It derives its color from its high percentage of Barnard clay along with the copper colorant.",
+      "description": "Satin matte metallic black, from a heavy Barnard clay load plus copper.",
       "cone": "6",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1424,7 +1424,7 @@
     {
       "name": "Corinth Corners",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This is a shiny opaque glaze. Its color is a deep gray-mustard with tinges of rust at the edges of the form where the glaze is thin. It derives its color from iron in the very high percentage of red clay.",
+      "description": "Glossy opaque, deep grey-mustard with rust showing at thin edges. A very heavy red-clay load supplies the iron.",
       "cone": "6",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1452,7 +1452,7 @@
     {
       "name": "Estacada 18",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a satin matte surface. It is a bleached mustard color where thin and amber-brown where thick. Color is derived from the iron in the red clay.",
+      "description": "Satin matte. Amber-brown thick, bleached mustard thin; red-clay iron.",
       "cone": "6",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1483,7 +1483,7 @@
     {
       "name": "Estacada Gray-Ocher",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a shiny surface. Where thick its color is a soft cream, where thin the color is a light burnt orange. Color is derived from iron in the red clay.",
+      "description": "Glossy. Soft cream thick, light burnt orange thin; red-clay iron.",
       "cone": "6",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1518,7 +1518,7 @@
     {
       "name": "Estacada Orange-Ocher",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a shiny surface. Where thick this glaze is a soft cream and where thin it takes on a burnt orange color. Visual textures may result from variations in the glaze thickness. Color is derived from the iron in the red clay.",
+      "description": "Glossy. Soft cream thick, burnt orange thin, with texture tracking thickness. Red-clay iron.",
       "cone": "6",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1553,7 +1553,7 @@
     {
       "name": "Barnard Estacada",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a shiny surface. Its color is a deep red umber. It may flow away from edges where thin. The source of its color is in its iron and manganese content from the Barnard clay.",
+      "description": "Glossy deep red umber; can pull away from thin edges. Colour from Barnard clay iron and manganese.",
       "cone": "6",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1588,7 +1588,7 @@
     {
       "name": "Maple View Cream-Orange",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a satin matte surface. It is orange where thick and a light cream-orange where thin. Visual texture may result from variations in glaze thickness. Its color is derived from the iron in the red clay.",
+      "description": "Satin matte. Orange thick, pale cream-orange thin, texture tracking thickness. Red-clay iron.",
       "cone": "6",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1619,7 +1619,7 @@
     {
       "name": "Sayles Corners",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a satin matte surface. Its color varies from light mustard if applied thickly to a light orange if thin. The source of color is the iron in the red clay.",
+      "description": "Satin matte. Light mustard thick, light orange thin; red-clay iron.",
       "cone": "6",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1650,7 +1650,7 @@
     {
       "name": "Crawling Vitgobe",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This vitreous engobe has a complex surface that is marked by both bubbling and wrinkling. Its color is a cream-tan. Both its color and complex texture are derived from its high percentage of stoneware clay.",
+      "description": "Vitreous engobe that bubbles and wrinkles into a complex surface, cream-tan; colour and texture both come from its heavy stoneware clay content.",
       "cone": "6",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1679,7 +1679,7 @@
     {
       "name": "Mullen Hill Base",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a smooth eggshell matte surface. Its color is an oyster white. With the addition of 2% copper carbonate its color ranges from amber to brown to green.",
+      "description": "Smooth eggshell matte, oyster white. With 2% copper carbonate it moves through amber and brown to green.",
       "cone": "6",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1714,7 +1714,7 @@
     {
       "name": "Vans White",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a satin shiny surface. Its color is white.",
+      "description": "Satin-gloss white.",
       "cone": "6",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1749,7 +1749,7 @@
     {
       "name": "Ridgebury",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a satin shiny surface. It is transparent and its color ranges from iron green to orange.",
+      "description": "Satin-gloss, transparent, iron green to orange.",
       "cone": "9",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1780,7 +1780,7 @@
     {
       "name": "Franklin R 92",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a satin surface. Its color ranges from red-brown to burnt umber. It is marked with strong visual texture derived from calcium and magnesium.",
+      "description": "Satin, red-brown to burnt umber, strongly textured by its calcium and magnesium.",
       "cone": "9",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1811,7 +1811,7 @@
     {
       "name": "Gateville R 92",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This translucent glaze has a satin surface. Its color ranges from ocher to amber to dark brown. It is marked by a strong visual texture derived from lithium, calcium/magnesium, and titanium.",
+      "description": "Translucent satin, ochre through amber to dark brown, strongly textured by lithium, calcium/magnesium and titania.",
       "cone": "9",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1838,7 +1838,7 @@
     {
       "name": "H GK 92",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "The surface of this opaque glaze ranges from stony/dry to pitted. Its color is bone-white.",
+      "description": "Opaque bone white; the surface runs from stony and dry to pitted.",
       "cone": "9",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1870,7 +1870,7 @@
     {
       "name": "Harpersfield R 92",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This opaque glaze has a satin surface. Its color is a red-brown. It is unstable and bubbling when used in a thick application.",
+      "description": "Opaque satin red-brown. Unstable, and bubbles when applied thick.",
       "cone": "9",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1901,7 +1901,7 @@
     {
       "name": "Deerpark Base",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This glaze has a satin matte surface. Its color ranges from an amber-cream to amber. It is marked by strong textures derived from iron and calcium/magnesium.",
+      "description": "Satin matte, amber-cream to amber, strongly textured by its iron and calcium/magnesium.",
       "cone": "9",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1932,7 +1932,7 @@
     {
       "name": "Pilgrim Vitreous Engobe 92",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This opaque glaze is semi-vitreous with a slight sheen. It is white in color.",
+      "description": "Opaque semi-vitreous white with a faint sheen.",
       "cone": "9",
       "atmosphere": "oxidation",
       "ingredients": [
@@ -1968,7 +1968,7 @@
     {
       "name": "Woodbourne Base 92",
       "source": "zakin-electric-kiln-ceramics-2004",
-      "description": "This opaque glaze has a satin matte surface. Its color is an amber-yellow.",
+      "description": "Opaque satin matte, amber-yellow.",
       "cone": "9",
       "atmosphere": "oxidation",
       "ingredients": [
