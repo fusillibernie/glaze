@@ -20,6 +20,7 @@ import pytest
 
 from src.models.umf import UMF
 from src.services import surface_model
+from tests.conftest import requires_glazy_corpus
 
 
 REPO = Path(__file__).parent.parent
@@ -190,6 +191,7 @@ class TestNormalizeSurface:
 
 
 class TestReproducibility:
+    @requires_glazy_corpus
     def test_shipped_model_reproduces_from_the_script(self):
         """Golden test: re-fit and diff. Without this the accuracy figures
         in the data file are just assertions nobody checks."""

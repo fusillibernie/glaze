@@ -215,12 +215,12 @@ class TestSurfaceSearchCanonicalization:
     matte), while "satin" missed the 451 recipes labelled Semi-matte.
     """
 
-    @pytest.fixture(scope="class")
-    def db(self):
-        from src.services.recipe_db import RecipeDatabase
-        database = RecipeDatabase()
-        database.load()
-        return database
+    @pytest.fixture
+    def db(self, synthetic_recipe_db):
+        # The synthetic corpus carries Matte, Semi-matte and Satin-matte
+        # explicitly. The real one is gitignored, so these previously
+        # passed only where it happened to be present.
+        return synthetic_recipe_db
 
     def test_matte_excludes_satin_matte(self, db):
         from src.services.surface_model import normalize_surface

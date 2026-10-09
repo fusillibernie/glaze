@@ -110,29 +110,36 @@ class TestFiredWeightPercent:
 class TestSearchRelevance:
     """Search was an unranked filter sliced in corpus order, so a query
     for "chun" returned Sam Chung's glazes - "chun" is a substring of
-    "Chung" - ahead of any actual chun."""
+    "Chung" - ahead of any actual chun.
 
-    def test_chun_query_returns_chun_glazes_first(self, recipe_db):
-        results = recipe_db.search(query="chun", cone="10", limit=8)
-        assert results
-        top_names = [r["name"].lower() for r in results[:5]]
+    Run against a small synthetic corpus rather than the real one: these
+    test the ranking logic, and the real corpus is gitignored, so they
+    previously passed only on a machine that happened to have it.
+    """
+
+    def test_chun_query_returns_chun_glazes_first(self, synthetic_recipe_db):
+        results = synthetic_recipe_db.search(query="chun", cone="10", limit=8)
+        top_names = [r["name"].lower() for r in results[:3]]
         assert all("chun" in n for n in top_names), top_names
 
-    def test_potter_surname_does_not_outrank_the_glaze(self, recipe_db):
+    def test_potter_surname_does_not_outrank_the_glaze(self, synthetic_recipe_db):
         """Sam Chung's recipes mention him in the description; a chun
         glaze has it in the name. Name must win."""
-        results = recipe_db.search(query="chun", limit=10)
-        assert "chung" not in results[0]["name"].lower()
+        results = synthetic_recipe_db.search(query="chun", limit=10)
+        names = [r["name"] for r in results]
+        chun_glazes = [i for i, n in enumerate(names) if "chun" in n.lower() and "chung" not in n.lower()]
+        surname_hits = [i for i, n in enumerate(names) if n in ("Big Sky", "Brown Steel - Chung")]
+        assert max(chun_glazes) < min(surname_hits), names
 
-    def test_substring_matching_still_works_for_prefixes(self, recipe_db):
+    def test_substring_matching_still_works_for_prefixes(self, synthetic_recipe_db):
         """Ranking must not become strict whole-word matching, or prefix
         searches stop working."""
-        assert recipe_db.search(query="celad", limit=5)
+        assert synthetic_recipe_db.search(query="celad", limit=5)
 
-    def test_description_matches_still_included(self, recipe_db):
+    def test_description_matches_still_included(self, synthetic_recipe_db):
         """Weaker signal, but still a match - just ranked below names."""
-        results = recipe_db.search(query="chun", limit=200)
-        assert any("chun" not in (r.get("name") or "").lower() for r in results)
+        results = synthetic_recipe_db.search(query="chun", limit=200)
+        assert "Opal Blue" in [r["name"] for r in results]
 
 
 class TestChunProfile:

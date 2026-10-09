@@ -155,6 +155,12 @@ class TestProvenance:
 
 
 class TestClassifierIndex:
-    def test_curated_recipes_are_actually_indexed(self):
-        """0 before this change."""
-        assert classifier.get_statistics()["total_indexed"] > 10_900
+    def test_curated_recipes_are_actually_indexed(self, curated):
+        """0 before this change.
+
+        Counts curated recipes specifically rather than the index total -
+        the total also includes the gitignored Glazy corpus, so asserting
+        on it only held on a machine that happened to have that file.
+        """
+        indexed = [r for r in curated if (r.get("chemistry") or {}).get("umf")]
+        assert len(indexed) >= 180
