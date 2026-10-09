@@ -11,6 +11,7 @@ from ..models.materials import Material, MaterialType, MaterialAnalysis, OxideAn
 from ..models.glaze import (
     GlazeRecipe,
     GlazeIngredient,
+    Colorant,
     ConeTemperature,
     AtmosphereType,
     GlazeSurface,
@@ -21,6 +22,33 @@ from ..models.umf import UMF
 
 GLAZY_API_BASE = "https://api.glazy.org/api"
 GLAZY_CDN = "https://ddms6z64wp3a6.cloudfront.net"
+GLAZY_RECIPE_URL = "https://glazy.org/recipes/{id}"
+
+# Glazy's atmosphere names -> ours. "Salt & Soda" is one Glazy category
+# covering both. Raku and Luster have no equivalent here and are left
+# unmapped rather than forced onto something they are not.
+_GLAZY_ATMOSPHERES = {
+    "oxidation": [AtmosphereType.OXIDATION],
+    "reduction": [AtmosphereType.REDUCTION],
+    "neutral": [AtmosphereType.NEUTRAL],
+    "wood": [AtmosphereType.WOOD],
+    "salt & soda": [AtmosphereType.SALT, AtmosphereType.SODA],
+    "salt": [AtmosphereType.SALT],
+    "soda": [AtmosphereType.SODA],
+}
+
+
+def glazy_recipe_url(glazy_id) -> Optional[str]:
+    """Public page for a Glazy recipe, or None without an id."""
+    return GLAZY_RECIPE_URL.format(id=glazy_id) if glazy_id else None
+
+
+def _to_float(value, default: float = 0.0) -> float:
+    """Glazy sends numbers as strings ("54.8000"); tolerate both."""
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return default
 
 
 @dataclass
@@ -215,60 +243,90 @@ class GlazyClient:
             return None
 
     def _parse_recipe(self, data: dict) -> GlazeRecipe:
-        """Parse Glazy API response into GlazeRecipe."""
-        # Parse ingredients
-        ingredients = []
-        for comp in data.get("components", []):
-            ingredients.append(GlazeIngredient(
-                material_name=comp.get("material", {}).get("name", ""),
-                percentage=comp.get("amount", 0),
-                material_id=str(comp.get("material_id")),
-            ))
+        """Parse a Glazy recipe payload into a GlazeRecipe.
 
-        # Parse cone
-        cone_str = data.get("cone", "6")
-        try:
-            cone = ConeTemperature(cone_str)
-        except ValueError:
-            cone = ConeTemperature.CONE_6
+        Written against Glazy's current API. The previous parser read an
+        obsolete schema - `components`, `amount`, `cone`, `atmosphere`,
+        `surface_type`, `umf` - of which only `name` still exists. Every
+        import therefore came back with the right name and nothing else:
+        no ingredients, and cone, atmosphere and surface silently replaced
+        by defaults. A cone 9-10 reduction chun imported as an empty cone
+        6 oxidation recipe, and the UI reported success.
 
-        # Parse atmosphere
-        atm_str = data.get("atmosphere", "oxidation").lower()
-        atmosphere = AtmosphereType.OXIDATION
-        if "reduction" in atm_str:
-            atmosphere = AtmosphereType.REDUCTION
+        The old field names are still read as fallbacks, so anything
+        cached in the old shape keeps parsing.
+        """
+        # A fresh fetch caches the full {"data": {...}} response, so a
+        # cache hit arrives wrapped while a live fetch arrives unwrapped.
+        # Accept either rather than depend on which path got here.
+        if isinstance(data.get("data"), dict):
+            data = data["data"]
 
-        # Parse surface
-        surface_str = data.get("surface_type", "glossy").lower()
-        surface = GlazeSurface.GLOSSY
-        if "matte" in surface_str:
-            surface = GlazeSurface.MATTE
-        elif "satin" in surface_str:
-            surface = GlazeSurface.SATIN
+        # Ingredients. `isAdditional` marks colourant additions on top of
+        # the 100% base, which used to be discarded along with everything
+        # else.
+        ingredients, colorants = [], []
+        for comp in data.get("materialComponents") or data.get("components") or []:
+            material = comp.get("material") or {}
+            name = material.get("name", "")
+            pct = _to_float(comp.get("percentageAmount", comp.get("amount")))
+            if not name or pct <= 0:
+                continue
+            if comp.get("isAdditional"):
+                colorants.append(Colorant(material_name=name, percentage=pct))
+            else:
+                ingredients.append(GlazeIngredient(
+                    material_name=name,
+                    percentage=pct,
+                    material_id=str(material.get("id", comp.get("material_id", ""))),
+                ))
 
-        # Parse UMF if available
+        cone = self._parse_cone(data)
+
+        # Atmospheres: Glazy lists several, and a recipe can genuinely suit
+        # more than one. Keep them all.
+        atmospheres: list[AtmosphereType] = []
+        names = [a.get("name", "") for a in data.get("atmospheres") or [] if isinstance(a, dict)]
+        if not names and data.get("atmosphere"):
+            names = [data["atmosphere"]]
+        for raw in names:
+            key = str(raw).strip().lower()
+            mapped = _GLAZY_ATMOSPHERES.get(key)
+            if mapped is None:
+                # Not a name we map exactly ("Heavy Reduction", say) - fall
+                # back to the broad family rather than to the oxidation
+                # default, which would silently invert it. Kept to plain
+                # REDUCTION rather than HEAVY_REDUCTION because the defect
+                # rules key on "reduction" and would otherwise stop firing.
+                if "reduction" in key:
+                    mapped = [AtmosphereType.REDUCTION]
+                elif "oxidation" in key:
+                    mapped = [AtmosphereType.OXIDATION]
+                else:
+                    mapped = []
+            for atm in mapped:
+                if atm not in atmospheres:
+                    atmospheres.append(atm)
+
+        surface = self._parse_surface(data.get("surfaceTypeName") or data.get("surface_type"))
+
+        # Glazy computes its own UMF; numbers arrive as strings.
         umf = None
-        if data.get("umf"):
-            umf_data = data["umf"]
-            umf = UMF(
-                SiO2=umf_data.get("SiO2", 0),
-                Al2O3=umf_data.get("Al2O3", 0),
-                B2O3=umf_data.get("B2O3", 0),
-                Na2O=umf_data.get("Na2O", 0),
-                K2O=umf_data.get("K2O", 0),
-                Li2O=umf_data.get("Li2O", 0),
-                CaO=umf_data.get("CaO", 0),
-                MgO=umf_data.get("MgO", 0),
-                BaO=umf_data.get("BaO", 0),
-                SrO=umf_data.get("SrO", 0),
-                ZnO=umf_data.get("ZnO", 0),
-            )
+        umf_data = (data.get("analysis") or {}).get("umfAnalysis") or data.get("umf")
+        if umf_data:
+            umf = UMF(**{
+                oxide: _to_float(umf_data.get(oxide))
+                for oxide in ("SiO2", "Al2O3", "B2O3", "Na2O", "K2O", "Li2O",
+                              "CaO", "MgO", "BaO", "SrO", "ZnO", "Fe2O3",
+                              "TiO2", "P2O5")
+            })
 
         return GlazeRecipe(
             name=data.get("name", ""),
             ingredients=ingredients,
+            colorants=colorants,
             target_cone=cone,
-            suitable_atmospheres=[atmosphere],
+            suitable_atmospheres=atmospheres or [AtmosphereType.OXIDATION],
             umf=umf,
             expected_surface=surface,
             glazy_id=data.get("id"),
@@ -276,6 +334,55 @@ class GlazyClient:
             author=data.get("user", {}).get("name"),
             notes=data.get("description"),
         )
+
+    @staticmethod
+    def _parse_cone(data: dict) -> ConeTemperature:
+        """Target cone from Glazy's from/to range.
+
+        Prefers the top of the range - the cone a "9-10" glaze is meant to
+        mature at. Glazy lists cones this app has no enum value for (05, 4
+        and so on), so those snap to the nearest cone that does exist
+        rather than silently becoming cone 6. The leading-zero series is
+        the low-fire end and runs the other way: 06 is far cooler than 6.
+        """
+        def signed(text):
+            text = str(text).strip()
+            try:
+                return -int(text[1:]) if len(text) > 1 and text.startswith("0") else int(text)
+            except ValueError:
+                return None
+
+        available = [(signed(c.value), c) for c in ConeTemperature]
+        for raw in (data.get("toOrtonConeName"), data.get("fromOrtonConeName"), data.get("cone")):
+            if raw in (None, ""):
+                continue
+            try:
+                return ConeTemperature(str(raw).strip())
+            except ValueError:
+                value = signed(raw)
+                if value is not None:
+                    return min(available, key=lambda pair: abs(pair[0] - value))[1]
+        return ConeTemperature.CONE_6
+
+    @staticmethod
+    def _parse_surface(raw) -> GlazeSurface:
+        """Map Glazy's surface vocabulary onto ours.
+
+        Reuses the same normalizer the recipe search uses, so "Satin-matte"
+        and "Semi-matte" land on satin rather than matte. Stony and dry
+        mattes keep their own class.
+        """
+        from ..services.surface_model import normalize_surface
+
+        text = str(raw or "").strip().lower()
+        if "dry" in text or "stony" in text:
+            return GlazeSurface.DRY_MATTE
+        canonical = normalize_surface(text)
+        return {
+            "glossy": GlazeSurface.GLOSSY,
+            "satin": GlazeSurface.SATIN,
+            "matte": GlazeSurface.MATTE,
+        }.get(canonical, GlazeSurface.GLOSSY)
 
     def _parse_material(self, data: dict) -> Material:
         """Parse Glazy API response into Material."""

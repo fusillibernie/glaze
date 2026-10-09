@@ -1116,6 +1116,10 @@
                     <div class="form-group">
                         <label>Recipe Name</label>
                         <input type="text" id="recipe-name" placeholder="My Glaze Recipe" value="">
+                        <a id="recipe-source-link" href="#" target="_blank" rel="noopener noreferrer"
+                           style="display:inline-block;margin-top:0.35rem;font-size:0.78rem;color:var(--primary);" hidden>
+                            View original on Glazy ↗
+                        </a>
                     </div>
 
                     <div class="form-group">
@@ -2587,6 +2591,7 @@
         document.getElementById('clear-recipe-btn').addEventListener('click', () => {
             recipeIngredients = [];
             recipeColorants = [];
+            setRecipeSourceLink(null);
             renderRecipeIngredients();
             renderRecipeColorants();
             document.getElementById('recipe-name').value = '';
@@ -2703,6 +2708,7 @@
 
             recipeIngredients = recipe.ingredients.map(i => ({ name: i.name, percentage: i.percentage }));
             recipeColorants = (recipe.colorants || []).map(c => ({ name: c.name, percentage: c.percentage }));
+            setRecipeSourceLink(null);
             renderRecipeIngredients();
             renderRecipeColorants();
             showToast(`Loaded "${recipe.name}"`, 'success');
@@ -3284,6 +3290,7 @@
             const recipe = window._lastFormulatedRecipe;
             if (!recipe) return;
 
+            setRecipeSourceLink(null);
             recipeIngredients = recipe.ingredients.map((ing, i) => ({
                 id: Date.now() + i,
                 name: ing.material || ing.material_name,
@@ -3465,6 +3472,7 @@
             if (!data || !data.recipe) return;
             const recipe = data.recipe;
 
+            setRecipeSourceLink(null);
             recipeIngredients = recipe.ingredients.map((ing, i) => ({
                 id: Date.now() + i,
                 name: ing.material || ing.material_name,
@@ -4235,27 +4243,75 @@
             `;
         }
 
+        /** Show or hide the "View original on Glazy" link under the name. */
+        function setRecipeSourceLink(url) {
+            const link = document.getElementById('recipe-source-link');
+            if (!link) return;
+            if (url) {
+                link.href = url;
+                link.hidden = false;
+            } else {
+                link.removeAttribute('href');
+                link.hidden = true;
+            }
+        }
+
+        /** Import a recipe from the live Glazy API into the builder.
+         *
+         *  This used to wrap everything in `if (recipe.ingredients)` and never
+         *  check `response.ok`. An error response parsed to {detail: ...} with
+         *  no ingredients and the function silently did nothing - and when the
+         *  backend's parser broke against Glazy's newer schema, it returned an
+         *  EMPTY ingredient list, which is truthy in JavaScript, so the UI
+         *  "imported" nothing and reported success. Every failure is now
+         *  reported, and colourants and cone come through as well. */
         async function importGlazyRecipe(glazyId) {
+            let recipe;
             try {
                 const response = await fetch(`${API_BASE}/api/glazy/recipe/${glazyId}`);
-                const recipe = await response.json();
-
-                if (recipe.ingredients) {
-                    recipeIngredients = recipe.ingredients.map((ing, i) => ({
-                        id: Date.now() + i,
-                        name: ing.material_name || ing.material || ing.name,
-                        percentage: ing.percentage
-                    }));
-                    document.getElementById('recipe-name').value = recipe.name || '';
-                    renderRecipeIngredients();
-                    document.querySelector('.tab[data-tab="recipe"]').click();
-                    showToast(`Imported "${recipe.name}"`, 'success');
-                    // Auto-calculate UMF after import
-                    setTimeout(calculateUMF, 500);
+                recipe = await response.json();
+                if (!response.ok) {
+                    showToast(recipe.detail || `Glazy recipe ${glazyId} could not be imported`, 'error');
+                    return;
                 }
             } catch (error) {
-                showToast('Failed to import recipe', 'error');
+                showToast('Could not reach the server to import from Glazy', 'error');
+                return;
             }
+
+            const ingredients = recipe.ingredients || [];
+            if (!ingredients.length) {
+                showToast(`"${recipe.name || glazyId}" has no ingredients to import`, 'error');
+                return;
+            }
+
+            recipeIngredients = ingredients.map((ing, i) => ({
+                id: Date.now() + i,
+                name: ing.material_name || ing.material || ing.name,
+                percentage: ing.percentage,
+            }));
+            // Additions on top of the base - previously dropped, so an
+            // iron-blue chun came in without its iron.
+            recipeColorants = (recipe.colorants || []).map(c => ({
+                name: c.material_name || c.material || c.name,
+                percentage: c.percentage,
+            }));
+
+            document.getElementById('recipe-name').value = recipe.name || '';
+            if (recipe.cone) {
+                targetCone = String(recipe.cone);
+                document.querySelectorAll('.cone-btn').forEach(b => b.classList.remove('selected'));
+                document.querySelector(`.cone-btn[data-cone="${targetCone}"]`)?.classList.add('selected');
+            }
+            setRecipeSourceLink(recipe.glazy_url);
+
+            renderRecipeIngredients();
+            renderRecipeColorants();
+            document.querySelector('.tab[data-tab="recipe"]').click();
+
+            const extras = recipeColorants.length ? ` + ${recipeColorants.length} colourant${recipeColorants.length > 1 ? 's' : ''}` : '';
+            showToast(`Imported "${recipe.name}" - ${recipeIngredients.length} ingredients${extras}`, 'success');
+            setTimeout(calculateUMF, 500);
         }
 
         // Keyboard shortcuts
@@ -4646,6 +4702,11 @@
         function loadLibraryRecipe(r) {
             const name = r.name || 'Untitled';
             document.getElementById('recipe-name').value = name;
+            // Library recipes from the Glazy corpus carry their Glazy id;
+            // curated book recipes do not, so the link only appears when
+            // there is a real page to point at.
+            const libraryGlazyId = r.glazy_id || (r.source === 'glazy-data' ? r.id : null);
+            setRecipeSourceLink(libraryGlazyId ? `https://glazy.org/recipes/${libraryGlazyId}` : null);
 
             // Set cone
             const cone = String(r.cone || '6');
@@ -4959,6 +5020,17 @@
             try {
                 const response = await fetch(`${API_BASE}/api/community/recipes/${id}`);
                 const r = await response.json();
+                if (!response.ok) {
+                    showToast(r.detail || `Recipe ${id} could not be imported`, 'error');
+                    return;
+                }
+                if (!r.ingredients || !r.ingredients.length) {
+                    showToast(`"${r.name || id}" has no ingredients to import`, 'error');
+                    return;
+                }
+                // Community recipes are the Glazy corpus, so the id is the
+                // Glazy id and the original formula has a public page.
+                setRecipeSourceLink(`https://glazy.org/recipes/${r.id || id}`);
                 if (r.ingredients) {
                     // Base ingredients (non-additives)
                     recipeIngredients = r.ingredients

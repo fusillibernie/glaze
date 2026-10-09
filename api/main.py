@@ -39,7 +39,7 @@ from src.services.analyzer import GlazeAnalyzer
 from src.services.predictor import OutcomePredictor
 from src.services.classifier import GlazeClassifier, StullRegion, GlazeCategory
 from src.services.substitution_service import SubstitutionService, AvailabilityStatus
-from src.integrations.glazy_client import GlazyClient
+from src.integrations.glazy_client import GlazyClient, glazy_recipe_url
 from src.services.glazy_bulk import CommunityRecipeService
 from src.services.recipe_db import RecipeDatabase
 from src.services.clay_body_db import ClayBodyDatabase
@@ -1084,14 +1084,32 @@ async def get_glazy_recipe(request: Request, glazy_id: int):
     recipe = glazy_client.get_recipe(glazy_id)
     if not recipe:
         raise HTTPException(status_code=404, detail="Recipe not found on Glazy")
+    if not recipe.ingredients:
+        # Previously returned 200 with an empty ingredient list, which the
+        # UI treated as a successful import of nothing. Say so instead.
+        raise HTTPException(
+            status_code=422,
+            detail=f"Glazy recipe {glazy_id} came back with no ingredients - "
+                   f"open it on Glazy to check: {glazy_recipe_url(glazy_id)}",
+        )
 
     return {
         "name": recipe.name,
         "glazy_id": recipe.glazy_id,
+        # Link back to the source so the formula can be checked against
+        # what Glazy itself shows.
+        "glazy_url": glazy_recipe_url(recipe.glazy_id or glazy_id),
         "author": recipe.author,
         "ingredients": [
             {"material": i.material_name, "percentage": i.percentage}
             for i in recipe.ingredients
+        ],
+        # Additions on top of the 100% base (Glazy's isAdditional). These
+        # were previously dropped, so an iron-blue chun imported without
+        # its iron.
+        "colorants": [
+            {"material": c.material_name, "percentage": c.percentage}
+            for c in recipe.colorants
         ],
         "cone": recipe.target_cone.value,
         "atmospheres": [a.value for a in recipe.suitable_atmospheres],

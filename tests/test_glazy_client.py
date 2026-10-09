@@ -183,8 +183,18 @@ class TestParseRecipe:
         assert recipe.suitable_atmospheres == [AtmosphereType.OXIDATION]
 
     def test_matte_surface_detected(self, client):
-        recipe = client._parse_recipe({"name": "x", "surface_type": "Satin Matte"})
+        recipe = client._parse_recipe({"name": "x", "surface_type": "Matte"})
         assert recipe.expected_surface == GlazeSurface.MATTE
+
+    def test_satin_matte_is_a_satin(self, client):
+        """This test used to assert "Satin Matte" -> MATTE, matching the old
+        parser's substring check. That is the classification the rest of
+        the app measured as wrong: treating satin-matte as matte put 1,092
+        non-matte glazes into a "matte" search, and the surface model is
+        trained with Satin-matte labelled satin. Glazy import now agrees
+        with the rest of the app."""
+        recipe = client._parse_recipe({"name": "x", "surface_type": "Satin Matte"})
+        assert recipe.expected_surface == GlazeSurface.SATIN
 
     def test_satin_surface_detected(self, client):
         recipe = client._parse_recipe({"name": "x", "surface_type": "Satin"})
