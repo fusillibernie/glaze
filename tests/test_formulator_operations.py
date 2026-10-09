@@ -234,10 +234,34 @@ class TestAshAccumulation:
         back = formulator.calculate_ash_accumulation(base_recipe, "back")
         assert firebox.ash_addition_pct > back.ash_addition_pct
 
-    def test_ash_raises_the_flux_load(self, formulator, base_recipe):
+    def test_ash_dilutes_the_glass_formers(self, formulator, base_recipe):
+        """Ash is flux-heavy, so it raises fluxes relative to silica and
+        alumina - which, once normalized to flux unity, shows up as LESS
+        SiO2 and Al2O3 per unit flux. This is the measurable form of "ash is
+        the enemy of opalescence": a Si:Al in band at the back of the kiln
+        will not be by the firebox.
+
+        This test used to assert that ash raised `flux_total`. UMF is
+        normalized to flux unity, so flux_total is 1.0 on both sides by
+        construction - the assertion compared a constant with itself, and
+        passed or failed on floating-point noise depending on platform.
+        """
         result = formulator.calculate_ash_accumulation(base_recipe, "firebox")
-        assert result.ash_modified_umf.flux_total >= result.base_umf.flux_total
-        assert result.ash_modified_umf.to_dict() != result.base_umf.to_dict()
+        assert result.ash_modified_umf.SiO2 < result.base_umf.SiO2
+        assert result.ash_modified_umf.Al2O3 < result.base_umf.Al2O3
+
+    def test_flux_stays_at_unity(self, formulator, base_recipe):
+        """Pinned so nobody re-asserts that ash changes flux_total."""
+        result = formulator.calculate_ash_accumulation(base_recipe, "firebox")
+        assert result.base_umf.flux_total == pytest.approx(1.0)
+        assert result.ash_modified_umf.flux_total == pytest.approx(1.0)
+
+    def test_dilution_increases_toward_the_firebox(self, formulator, base_recipe):
+        sio2 = {
+            pos: formulator.calculate_ash_accumulation(base_recipe, pos).ash_modified_umf.SiO2
+            for pos in ("back", "middle", "firebox")
+        }
+        assert sio2["firebox"] < sio2["middle"] < sio2["back"]
 
     def test_base_umf_is_the_unmodified_chemistry(self, formulator, base_recipe):
         result = formulator.calculate_ash_accumulation(base_recipe, "middle")
