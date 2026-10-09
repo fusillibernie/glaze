@@ -244,7 +244,8 @@
         input::placeholder { color: var(--text-muted); }
 
         /* Buttons */
-        button {
+        /* `.button` lets download anchors share the button styling. */
+        button, a.button {
             padding: 0.6rem 1.25rem;
             background: var(--accent);
             color: white;
@@ -259,13 +260,14 @@
             justify-content: center;
             gap: 0.4rem;
             letter-spacing: 0.01em;
+            text-decoration: none;
         }
 
-        button:hover {
+        button:hover, a.button:hover {
             filter: brightness(1.15);
         }
 
-        button:active { filter: brightness(0.95); }
+        button:active, a.button:active { filter: brightness(0.95); }
 
         button:disabled {
             opacity: 0.4;
@@ -273,13 +275,13 @@
             filter: none;
         }
 
-        button.secondary {
+        button.secondary, a.button.secondary {
             background: transparent;
             border: 1px solid var(--border);
             color: var(--text-secondary);
         }
 
-        button.secondary:hover {
+        button.secondary:hover, a.button.secondary:hover {
             background: var(--bg-hover);
             border-color: var(--border-light);
             color: var(--text-primary);
@@ -290,9 +292,15 @@
         button.warning { background: var(--warning); color: #1a1a1a; }
         button.danger { background: var(--danger); }
 
-        button.small {
+        button.small, a.button.small {
             padding: 0.4rem 0.8rem;
             font-size: 0.78rem;
+        }
+
+        .export-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         button.icon-btn {
@@ -1108,6 +1116,10 @@
                     <div class="form-group">
                         <label>Recipe Name</label>
                         <input type="text" id="recipe-name" placeholder="My Glaze Recipe" value="">
+                        <a id="recipe-source-link" href="#" target="_blank" rel="noopener noreferrer"
+                           style="display:inline-block;margin-top:0.35rem;font-size:0.78rem;color:var(--primary);" hidden>
+                            View original on Glazy ↗
+                        </a>
                     </div>
 
                     <div class="form-group">
@@ -1191,6 +1203,19 @@
                                 <button class="small" onclick="calculateBatch()" style="margin-bottom:0.1rem;">Calculate</button>
                             </div>
                             <div id="batch-results"></div>
+
+                            <div class="mt-1" style="padding-top:0.75rem;border-top:1px solid var(--border);">
+                                <label style="font-size:0.8rem;">Slurry Specific Gravity</label>
+                                <p class="text-muted" style="font-size:0.75rem;margin-bottom:0.5rem;">
+                                    Weigh a measured volume of mixed slurry, then enter both
+                                    (e.g. 140g in a 100mL sample = 1.40).
+                                </p>
+                                <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+                                    <input type="number" id="sg-weight" placeholder="Weight (g)" min="0" step="0.1" style="width:110px;" oninput="updateSpecificGravity()">
+                                    <input type="number" id="sg-volume" placeholder="Volume (mL)" min="0" step="0.1" style="width:110px;" oninput="updateSpecificGravity()">
+                                    <span id="sg-result" class="font-mono" style="font-weight:600;"></span>
+                                </div>
+                            </div>
                         </div>
                     </details>
                 </div>
@@ -1428,6 +1453,30 @@
                     </div>
                 </div>
             </div>
+
+            <div class="card mt-1">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <span class="card-title-icon">📥</span>
+                        Reference Export
+                    </h3>
+                    <a class="button small" href="/api/export/reference.zip"
+                       download data-tooltip="All four datasets as a zip of CSVs">
+                        Download All (.zip)
+                    </a>
+                </div>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">
+                    Spreadsheet-ready CSVs of the reference data. Oxide analyses carry their
+                    source attribution so mixed-origin figures stay auditable. Materials covers
+                    every entry including colorants; Colorants adds dosage ranges and fired colour.
+                </p>
+                <div class="export-links">
+                    <a class="button secondary small" href="/api/export/materials.csv" download>Materials</a>
+                    <a class="button secondary small" href="/api/export/colorants.csv" download>Colorants</a>
+                    <a class="button secondary small" href="/api/export/umf-limits.csv" download>UMF Limits</a>
+                    <a class="button secondary small" href="/api/export/substitutions.csv" download>Substitutions</a>
+                </div>
+            </div>
         </section>
 
         <!-- ANALYSIS TAB -->
@@ -1438,6 +1487,10 @@
                         <span class="card-title-icon">📊</span>
                         Full Recipe Analysis
                     </h3>
+                    <select id="analyze-clay-body-select" style="margin-right:0.5rem;"
+                            data-tooltip="Check glaze fit against a real clay body COE">
+                        <option value="">Fit check: no clay body selected</option>
+                    </select>
                     <button id="analyze-recipe-btn" class="small">Analyze Recipe</button>
                 </div>
                 <div id="analysis-results">
@@ -1567,6 +1620,7 @@
                     </div>
                     <button class="small" onclick="searchLibrary()" style="width:100%;">Search</button>
                     <div id="library-stats" style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-muted);"></div>
+                    <div id="library-attribution" style="font-size: 0.75rem; color: var(--text-muted); line-height: 1.5;"></div>
                 </div>
 
                 <div class="card">
@@ -1973,6 +2027,18 @@
 
         const API_BASE = '';
 
+        // Oxide display order: glass formers, then fluxes (R2O then RO), then
+        // colorants and minor oxides. Oxides absent from this list are appended
+        // after it, largest first.
+        const OXIDE_DISPLAY_ORDER = [
+            'SiO2', 'Al2O3', 'B2O3',
+            'Na2O', 'K2O', 'Li2O',
+            'CaO', 'MgO', 'BaO', 'SrO', 'ZnO', 'PbO',
+            'Fe2O3', 'FeO', 'TiO2', 'MnO', 'MnO2',
+            'CuO', 'CoO', 'Cr2O3', 'NiO', 'V2O5',
+            'ZrO2', 'SnO2', 'P2O5', 'F',
+        ];
+
         // State
         let materials = [];
         let selectedMaterial = null;
@@ -2118,6 +2184,22 @@
             }
         });
 
+        // Load named clay bodies (with real COE) for the glaze-fit check
+        async function loadClayBodiesDetailed() {
+            try {
+                const response = await fetch(`${API_BASE}/api/reference/clay-bodies-detailed`);
+                const bodies = await response.json();
+                const select = document.getElementById('analyze-clay-body-select');
+                if (!select) return;
+                select.innerHTML = '<option value="">Fit check: no clay body selected</option>'
+                    + bodies.map(b =>
+                        `<option value="${escapeHtml(b.name)}">${escapeHtml(b.name)} (COE ${b.coe})</option>`
+                    ).join('');
+            } catch (error) {
+                console.error('Failed to load clay bodies:', error);
+            }
+        }
+
         // Load materials
         async function loadMaterials() {
             try {
@@ -2239,7 +2321,7 @@
                 <div class="material-item ${selectedMaterial?.name === m.name ? 'selected' : ''}" data-name="${escapeHtml(m.name)}">
                     <div class="material-info">
                         <div class="material-name">${escapeHtml(m.name)}</div>
-                        <div class="material-type">${escapeHtml((m.material_type || 'unknown').replace(/_/g, ' '))}</div>
+                        <div class="material-type">${escapeHtml((m.material_type || 'unknown').replace(/_/g, ' '))}${m.discontinued ? ' · discontinued' : ''}</div>
                     </div>
                     <button class="small secondary material-add-btn" onclick="event.stopPropagation(); quickAddMaterial('${escapeHtml(m.name)}')">
                         + Add
@@ -2275,17 +2357,20 @@
             if (!m) return;
 
             const analysis = m.oxide_analysis || m.analysis || {};
-            const oxides = [
-                { name: 'SiO2', value: analysis.SiO2 },
-                { name: 'Al2O3', value: analysis.Al2O3 },
-                { name: 'Na2O', value: analysis.Na2O },
-                { name: 'K2O', value: analysis.K2O },
-                { name: 'CaO', value: analysis.CaO },
-                { name: 'MgO', value: analysis.MgO },
-                { name: 'Fe2O3', value: analysis.Fe2O3 },
-                { name: 'B2O3', value: analysis.B2O3 },
-                { name: 'ZnO', value: analysis.ZnO },
-            ].filter(o => o.value && o.value > 0);
+            // Render whatever oxides the API returns, in glaze-chemistry reading order
+            // (glass formers, then fluxes, then colorants/others). Anything not in the
+            // list still shows, appended at the end. LOI is displayed separately below.
+            const oxides = Object.keys(analysis)
+                .filter(k => k !== 'LOI' && typeof analysis[k] === 'number' && analysis[k] > 0)
+                .map(k => ({ name: k, value: analysis[k] }))
+                .sort((a, b) => {
+                    const ia = OXIDE_DISPLAY_ORDER.indexOf(a.name);
+                    const ib = OXIDE_DISPLAY_ORDER.indexOf(b.name);
+                    if (ia === -1 && ib === -1) return b.value - a.value;
+                    if (ia === -1) return 1;
+                    if (ib === -1) return -1;
+                    return ia - ib;
+                });
 
             const maxOxide = Math.max(...oxides.map(o => o.value), 1);
 
@@ -2295,8 +2380,15 @@
                         <h4 style="color: var(--accent-light); margin-bottom: 1rem; font-size: 1.25rem;">${escapeHtml(m.name)}</h4>
                         <p style="margin-bottom: 1rem;">
                             <span class="badge badge-primary">${escapeHtml((m.type || m.material_type || 'unknown').replace(/_/g, ' '))}</span>
+                            ${m.discontinued ? '<span class="badge badge-warning">discontinued</span>' : ''}
+                            ${m.soluble ? '<span class="badge badge-warning">soluble</span>' : ''}
                         </p>
                         ${m.description ? `<p style="color: var(--text-secondary); margin-bottom: 1rem;">${escapeHtml(m.description)}</p>` : ''}
+                        ${m.source ? `
+                            <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1rem;">
+                                Analysis source: ${escapeHtml(m.source)}
+                            </p>
+                        ` : ''}
                         ${m.typical_percentage_min !== undefined ? `
                             <p style="color: var(--text-muted); font-size: 0.9rem;">
                                 Typical usage: <strong>${m.typical_percentage_min}% - ${m.typical_percentage_max}%</strong>
@@ -2313,7 +2405,7 @@
                         <h4 style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">OXIDE ANALYSIS</h4>
                         ${oxides.map(o => `
                             <div class="oxide-bar">
-                                <span class="oxide-label">${o.name}</span>
+                                <span class="oxide-label">${escapeHtml(o.name)}</span>
                                 <div class="oxide-track">
                                     <div class="oxide-fill" style="width: ${(o.value / maxOxide) * 100}%"></div>
                                 </div>
@@ -2499,6 +2591,7 @@
         document.getElementById('clear-recipe-btn').addEventListener('click', () => {
             recipeIngredients = [];
             recipeColorants = [];
+            setRecipeSourceLink(null);
             renderRecipeIngredients();
             renderRecipeColorants();
             document.getElementById('recipe-name').value = '';
@@ -2512,20 +2605,55 @@
             showToast('Recipe cleared', 'info');
         });
 
-        // ============== Recipe Save/Load (localStorage) ==============
-        const SAVED_RECIPES_KEY = 'glaze-saved-recipes';
+        // ============== Recipe Save/Load (backend, GET/POST/DELETE /api/recipes/saved) ==============
+        // Was localStorage-only: clearing the browser or switching devices
+        // silently lost every saved recipe. cachedSavedRecipes mirrors the
+        // `materials`-array pattern used elsewhere in this file so
+        // onclick="loadSavedRecipe(id)" handlers (which only get an id, not
+        // a fetch-friendly async context) can look a recipe up synchronously.
+        const SAVED_RECIPES_KEY = 'glaze-saved-recipes'; // legacy, migration-only
+        let cachedSavedRecipes = [];
 
-        function getSavedRecipes() {
+        async function fetchSavedRecipes() {
             try {
-                return JSON.parse(localStorage.getItem(SAVED_RECIPES_KEY) || '[]');
-            } catch { return []; }
+                const response = await fetch(`${API_BASE}/api/recipes/saved`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                cachedSavedRecipes = Array.isArray(data) ? data : [];
+            } catch (error) {
+                console.error('Failed to load saved recipes:', error);
+                cachedSavedRecipes = [];
+            }
+            return cachedSavedRecipes;
         }
 
-        function setSavedRecipes(recipes) {
-            localStorage.setItem(SAVED_RECIPES_KEY, JSON.stringify(recipes));
+        // One-time, non-destructive: if this browser has recipes saved from
+        // before this backend existed and the backend has none yet, adopt
+        // them. localStorage itself is left alone either way.
+        async function migrateLocalStorageRecipesIfNeeded() {
+            let legacy;
+            try {
+                legacy = JSON.parse(localStorage.getItem(SAVED_RECIPES_KEY) || '[]');
+            } catch { legacy = []; }
+            if (!legacy.length) return;
+
+            const current = await fetchSavedRecipes();
+            if (current.length > 0) return;
+
+            for (const recipe of legacy) {
+                try {
+                    await fetch(`${API_BASE}/api/recipes/saved`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(recipe),
+                    });
+                } catch (error) {
+                    console.error('Failed to migrate saved recipe:', recipe.name, error);
+                }
+            }
         }
 
-        function saveCurrentRecipe() {
+        async function saveCurrentRecipe() {
             const name = document.getElementById('recipe-name').value.trim();
             if (!name) {
                 showToast('Please name your recipe before saving', 'warning');
@@ -2539,8 +2667,9 @@
             }
 
             const validColorants = recipeColorants.filter(c => c.name && c.percentage > 0);
+            const existing = cachedSavedRecipes.find(r => r.name === name);
             const recipe = {
-                id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+                id: existing?.id,
                 name,
                 cone: targetCone,
                 ingredients: validIngredients.map(i => ({ name: i.name, percentage: i.percentage })),
@@ -2553,24 +2682,23 @@
                 savedAt: new Date().toISOString(),
             };
 
-            const saved = getSavedRecipes();
-            // Check if same name exists — update it
-            const existingIdx = saved.findIndex(r => r.name === name);
-            if (existingIdx >= 0) {
-                recipe.id = saved[existingIdx].id;
-                saved[existingIdx] = recipe;
-                showToast(`Updated "${name}"`, 'success');
-            } else {
-                saved.unshift(recipe);
-                showToast(`Saved "${name}"`, 'success');
+            try {
+                const response = await fetch(`${API_BASE}/api/recipes/saved`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(recipe),
+                });
+                if (!response.ok) throw new Error('Save failed');
+                showToast(existing ? `Updated "${name}"` : `Saved "${name}"`, 'success');
+                await renderSavedRecipes();
+            } catch (error) {
+                console.error('Failed to save recipe:', error);
+                showToast('Failed to save recipe', 'error');
             }
-            setSavedRecipes(saved);
-            renderSavedRecipes();
         }
 
         function loadSavedRecipe(id) {
-            const saved = getSavedRecipes();
-            const recipe = saved.find(r => r.id === id);
+            const recipe = cachedSavedRecipes.find(r => r.id === id);
             if (!recipe) return;
 
             document.getElementById('recipe-name').value = recipe.name;
@@ -2580,24 +2708,31 @@
 
             recipeIngredients = recipe.ingredients.map(i => ({ name: i.name, percentage: i.percentage }));
             recipeColorants = (recipe.colorants || []).map(c => ({ name: c.name, percentage: c.percentage }));
+            setRecipeSourceLink(null);
             renderRecipeIngredients();
             renderRecipeColorants();
             showToast(`Loaded "${recipe.name}"`, 'success');
             setTimeout(() => calculateUMF(true), 300);
         }
 
-        function deleteSavedRecipe(id, e) {
+        async function deleteSavedRecipe(id, e) {
             e.stopPropagation();
-            const saved = getSavedRecipes();
-            const recipe = saved.find(r => r.id === id);
-            const filtered = saved.filter(r => r.id !== id);
-            setSavedRecipes(filtered);
-            renderSavedRecipes();
-            showToast(`Deleted "${recipe?.name || 'recipe'}"`, 'info');
+            const recipe = cachedSavedRecipes.find(r => r.id === id);
+            try {
+                const response = await fetch(`${API_BASE}/api/recipes/saved/${encodeURIComponent(id)}`, {
+                    method: 'DELETE',
+                });
+                if (!response.ok) throw new Error('Delete failed');
+                showToast(`Deleted "${recipe?.name || 'recipe'}"`, 'info');
+                await renderSavedRecipes();
+            } catch (error) {
+                console.error('Failed to delete recipe:', error);
+                showToast('Failed to delete recipe', 'error');
+            }
         }
 
-        function renderSavedRecipes() {
-            const saved = getSavedRecipes();
+        async function renderSavedRecipes() {
+            const saved = await fetchSavedRecipes();
             const countEl = document.getElementById('saved-recipe-count');
             const listEl = document.getElementById('saved-recipes-list');
             countEl.textContent = saved.length;
@@ -2806,8 +2941,27 @@
             document.getElementById('batch-results').innerHTML = html;
         }
 
-        // Load saved recipes on startup
-        renderSavedRecipes();
+        // SG = weight / volume - Digitalfire's documented measurement method
+        // (e.g. "100 ccs weighs 140 grams, that is 1.4 specific gravity").
+        // Measures an already-mixed slurry sample; this is not a predictive
+        // calculation of how much water a dry batch needs to reach a target
+        // SG - no verified formula for that was found when this was built.
+        function updateSpecificGravity() {
+            const weight = parseFloat(document.getElementById('sg-weight').value);
+            const volume = parseFloat(document.getElementById('sg-volume').value);
+            const resultEl = document.getElementById('sg-result');
+            if (!isFinite(weight) || !isFinite(volume) || volume <= 0) {
+                resultEl.textContent = '';
+                return;
+            }
+            resultEl.textContent = `SG: ${(weight / volume).toFixed(3)}`;
+        }
+
+        // Load saved recipes on startup. migrateLocalStorageRecipesIfNeeded
+        // adopts any pre-backend localStorage recipes the first time this
+        // runs against an empty store; renderSavedRecipes always runs after,
+        // whether or not there was anything to migrate.
+        migrateLocalStorageRecipesIfNeeded().finally(() => renderSavedRecipes());
 
         // UMF Calculation
         document.getElementById('calculate-umf-btn').addEventListener('click', () => calculateUMF(false));
@@ -2889,7 +3043,23 @@
                 { name: 'B₂O₃', value: data.B2O3 },
             ].filter(o => o.value && o.value > 0.001);
 
-            document.getElementById('umf-display').innerHTML = `
+            // Unresolved ingredients are excluded before the fluxes are
+            // normalized to 1.0, so the figures below describe only part of the
+            // batch. Say so before showing them.
+            const unresolved = data.unresolved_materials || [];
+            const unresolvedBanner = unresolved.length ? `
+                <div class="warning-item mb-1">
+                    <span>⚠️</span>
+                    <span>
+                        <strong>Not in the materials database:</strong>
+                        ${unresolved.map(escapeHtml).join(', ')}.
+                        These are left out of the calculation — the UMF below reflects
+                        the remaining ingredients only.
+                    </span>
+                </div>
+            ` : '';
+
+            document.getElementById('umf-display').innerHTML = unresolvedBanner + `
                 <div class="umf-display">
                     <div class="umf-section">
                         <h4>Fluxes (R₂O/RO) = 1.0</h4>
@@ -2932,6 +3102,41 @@
         let stullLimitOverlays = []; // loaded from API
         let showLimitOverlays = false;
 
+        // Surface bands from the calibrated model, fetched once. These
+        // replace three separate sets of thresholds that used to be
+        // hardcoded in this file and disagreed both with each other and
+        // with the backend. Never guess a boundary here - ask the API.
+        let surfaceBands = [];
+
+        async function loadSurfaceBands() {
+            if (surfaceBands.length) return surfaceBands;
+            try {
+                const response = await fetch(`${API_BASE}/api/visualization/stull-chart`);
+                const data = await response.json();
+                surfaceBands = data.regions || [];
+            } catch (e) {
+                console.error('Failed to load surface bands:', e);
+            }
+            return surfaceBands;
+        }
+
+        /** Most likely surface for a Si:Al ratio, with its probability. */
+        function surfaceForRatio(ratio) {
+            for (const band of surfaceBands) {
+                const aboveMin = band.si_al_min === null || ratio >= band.si_al_min;
+                const belowMax = band.si_al_max === null || ratio < band.si_al_max;
+                if (aboveMin && belowMax) {
+                    return {
+                        surface: band.name,
+                        probability: band.probability ?? (band.probabilities || {})[band.name],
+                        n: band.n,
+                        label: band.label,
+                    };
+                }
+            }
+            return { surface: 'unknown', probability: null, n: 0, label: '' };
+        }
+
         async function loadStullLimits() {
             try {
                 const response = await fetch(`${API_BASE}/api/reference/umf-limits-for-cone/${targetCone}`);
@@ -2956,160 +3161,6 @@
             }
         }
 
-        function renderStullChart(data) {
-            const al2o3 = data.Al2O3 || 0;
-            const sio2 = data.SiO2 || 0;
-
-            const traces = [{
-                x: [sio2],
-                y: [al2o3],
-                mode: 'markers',
-                type: 'scatter',
-                marker: {
-                    size: 20,
-                    color: '#7c3aed',
-                    symbol: 'diamond',
-                    line: { width: 2, color: '#fff' }
-                },
-                name: 'Your Recipe',
-                hovertemplate: `SiO₂: ${sio2.toFixed(2)}<br>Al₂O₃: ${al2o3.toFixed(3)}<extra></extra>`
-            }];
-
-            // Add target marker if set
-            if (stullTarget) {
-                traces.push({
-                    x: [stullTarget.x],
-                    y: [stullTarget.y],
-                    mode: 'markers+text',
-                    type: 'scatter',
-                    marker: {
-                        size: 18,
-                        color: '#ef4444',
-                        symbol: 'cross',
-                        line: { width: 2, color: '#fff' }
-                    },
-                    name: 'Target',
-                    text: ['TARGET'],
-                    textposition: 'top center',
-                    textfont: { color: '#ef4444', size: 10 },
-                    hovertemplate: `Target<br>SiO₂: ${stullTarget.x.toFixed(2)}<br>Al₂O₃: ${stullTarget.y.toFixed(3)}<extra></extra>`
-                });
-            }
-
-            const layout = {
-                paper_bgcolor: '#1a1a2e',
-                plot_bgcolor: '#0f0f1a',
-                xaxis: {
-                    title: { text: 'SiO₂', font: { color: '#94a3b8' } },
-                    range: [0, 6],
-                    gridcolor: '#334155',
-                    color: '#94a3b8',
-                    tickfont: { color: '#94a3b8' }
-                },
-                yaxis: {
-                    title: { text: 'Al₂O₃', font: { color: '#94a3b8' } },
-                    range: [0, 1],
-                    gridcolor: '#334155',
-                    color: '#94a3b8',
-                    tickfont: { color: '#94a3b8' }
-                },
-                margin: { t: 20, r: 20, b: 50, l: 60 },
-                showlegend: true,
-                legend: { font: { color: '#94a3b8' }, bgcolor: 'rgba(0,0,0,0)' },
-                shapes: [
-                    { type: 'rect', x0: 2.5, x1: 5, y0: 0.15, y1: 0.4,
-                      fillcolor: 'rgba(16, 185, 129, 0.15)', line: { color: '#10b981', width: 1 } },
-                    { type: 'rect', x0: 1.5, x1: 3.5, y0: 0.4, y1: 0.7,
-                      fillcolor: 'rgba(245, 158, 11, 0.15)', line: { color: '#f59e0b', width: 1 } },
-                    // Add limit overlays as dashed rectangles
-                    ...(showLimitOverlays ? stullLimitOverlays.map(lim => ({
-                        type: 'rect',
-                        x0: lim.sio2_min, x1: lim.sio2_max,
-                        y0: lim.al2o3_min, y1: lim.al2o3_max,
-                        fillcolor: 'rgba(0,0,0,0)',
-                        line: { color: lim.color, width: 2, dash: 'dash' },
-                    })) : []),
-                ],
-                annotations: [
-                    { x: 3.75, y: 0.27, text: 'GLOSSY', showarrow: false, font: { color: '#10b981', size: 11 } },
-                    { x: 2.5, y: 0.55, text: 'MATTE', showarrow: false, font: { color: '#f59e0b', size: 11 } },
-                    // Add limit labels
-                    ...(showLimitOverlays ? stullLimitOverlays.map(lim => ({
-                        x: lim.sio2_max, y: lim.al2o3_max,
-                        text: lim.label, showarrow: false,
-                        font: { color: lim.color, size: 9 },
-                        xanchor: 'right',
-                    })) : []),
-                ],
-                dragmode: 'pan',
-            };
-
-            Plotly.newPlot('stull-chart', traces, layout, {
-                responsive: true,
-                displayModeBar: true,
-                modeBarButtonsToRemove: ['lasso2d', 'select2d', 'autoScale2d', 'hoverClosestCartesian', 'hoverCompareCartesian', 'toggleSpikelines'],
-                displaylogo: false,
-            });
-
-            // Click to set target
-            const chartEl = document.getElementById('stull-chart');
-            chartEl.on('plotly_click', function(eventData) {
-                if (eventData.points && eventData.points.length > 0) {
-                    // Clicked on an existing point - ignore
-                    return;
-                }
-            });
-            chartEl.on('plotly_doubleclick', function() {
-                // Reset zoom on double-click is default, keep it
-            });
-
-            // Use plotly_click on the plot area (not on points) to set target
-            chartEl.removeAllListeners('plotly_click');
-            chartEl.on('plotly_click', function(eventData) {
-                const xaxis = chartEl._fullLayout.xaxis;
-                const yaxis = chartEl._fullLayout.yaxis;
-
-                if (eventData.points && eventData.points.length > 0) {
-                    // Clicked on a marker - do nothing
-                    return;
-                }
-
-                // Get click coordinates from event
-                const point = eventData.points?.[0];
-                if (!point) {
-                    // No point clicked - use event coordinates
-                    const evt = eventData.event;
-                    const bb = chartEl.querySelector('.plotly .nsewdrag')?.getBoundingClientRect();
-                    if (!bb || !evt) return;
-                    const xFrac = (evt.clientX - bb.left) / bb.width;
-                    const yFrac = (evt.clientY - bb.top) / bb.height;
-                    const xVal = xaxis.range[0] + xFrac * (xaxis.range[1] - xaxis.range[0]);
-                    const yVal = yaxis.range[1] - yFrac * (yaxis.range[1] - yaxis.range[0]);
-                    setStullTarget(xVal, yVal);
-                }
-            });
-
-            // Also handle click on the drag layer for empty-area clicks
-            setTimeout(() => {
-                const dragLayer = chartEl.querySelector('.nsewdrag');
-                if (dragLayer) {
-                    dragLayer.style.cursor = 'crosshair';
-                    dragLayer.addEventListener('click', function(evt) {
-                        const bb = dragLayer.getBoundingClientRect();
-                        const xaxis = chartEl._fullLayout.xaxis;
-                        const yaxis = chartEl._fullLayout.yaxis;
-                        const xFrac = (evt.clientX - bb.left) / bb.width;
-                        const yFrac = (evt.clientY - bb.top) / bb.height;
-                        const xVal = xaxis.range[0] + xFrac * (xaxis.range[1] - xaxis.range[0]);
-                        const yVal = yaxis.range[1] - yFrac * (yaxis.range[1] - yaxis.range[0]);
-                        if (xVal >= 0 && xVal <= 8 && yVal >= 0 && yVal <= 1.5) {
-                            setStullTarget(xVal, yVal);
-                        }
-                    });
-                }
-            }, 100);
-        }
-
         async function setStullTarget(sio2, al2o3) {
             stullTarget = { x: parseFloat(sio2.toFixed(2)), y: parseFloat(al2o3.toFixed(3)) };
             // Re-render chart with target
@@ -3126,11 +3177,15 @@
                 chartContainer.appendChild(panel);
             }
 
-            const ratio = stullTarget.y > 0 ? (stullTarget.x / stullTarget.y).toFixed(1) : 'N/A';
-            let surface = 'Unknown';
-            if (stullTarget.y < 0.35 && stullTarget.x > 3) surface = 'Glossy';
-            else if (stullTarget.y > 0.4 || stullTarget.x < 3) surface = 'Matte';
-            else surface = 'Satin';
+            const rawRatio = stullTarget.y > 0 ? stullTarget.x / stullTarget.y : 0;
+            const ratio = stullTarget.y > 0 ? rawRatio.toFixed(1) : 'N/A';
+            const band = surfaceForRatio(rawRatio);
+            let surface = band.surface === 'unknown'
+                ? 'Unknown'
+                : band.surface.charAt(0).toUpperCase() + band.surface.slice(1);
+            if (band.probability != null) {
+                surface += ` (${Math.round(band.probability * 100)}% of ${band.n.toLocaleString()} similar)`;
+            }
 
             panel.innerHTML = `
                 <div class="card-header">
@@ -3177,9 +3232,9 @@
             const resultEl = document.getElementById('stull-formulation-result');
             resultEl.innerHTML = '<div class="loading active"><div class="spinner"></div>Generating formula...</div>';
 
-            let surface = 'glossy';
-            if (stullTarget.y > 0.4 || stullTarget.x < 3) surface = 'matte';
-            else if (stullTarget.y >= 0.3 && stullTarget.x <= 4) surface = 'satin';
+            const targetRatio = stullTarget.y > 0 ? stullTarget.x / stullTarget.y : 0;
+            const targetBand = surfaceForRatio(targetRatio);
+            const surface = targetBand.surface === 'unknown' ? 'glossy' : targetBand.surface;
 
             try {
                 const response = await fetch(`${API_BASE}/api/recipes/formulate`, {
@@ -3235,6 +3290,7 @@
             const recipe = window._lastFormulatedRecipe;
             if (!recipe) return;
 
+            setRecipeSourceLink(null);
             recipeIngredients = recipe.ingredients.map((ing, i) => ({
                 id: Date.now() + i,
                 name: ing.material || ing.material_name,
@@ -3416,6 +3472,7 @@
             if (!data || !data.recipe) return;
             const recipe = data.recipe;
 
+            setRecipeSourceLink(null);
             recipeIngredients = recipe.ingredients.map((ing, i) => ({
                 id: Date.now() + i,
                 name: ing.material || ing.material_name,
@@ -3483,7 +3540,11 @@
 
             try {
                 const validColorants = recipeColorants.filter(c => c.name && c.percentage > 0);
-                const response = await fetch(`${API_BASE}/api/recipes/analyze`, {
+                const clayBodyName = document.getElementById('analyze-clay-body-select')?.value || '';
+                const url = new URL(`${API_BASE}/api/recipes/analyze`, window.location.origin);
+                if (clayBodyName) url.searchParams.set('clay_body_name', clayBodyName);
+
+                const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -3507,6 +3568,84 @@
                 console.error('Failed to analyze:', error);
                 showToast('Failed to analyze recipe', 'error');
             }
+        }
+
+        function renderThermalExpansion(fit) {
+            if (!fit) {
+                return `
+                    <div class="analysis-section" style="margin-bottom:0.75rem;">
+                        <h4 style="margin-bottom:0.5rem;">Glaze Fit</h4>
+                        <p class="text-muted" style="font-size:0.85rem;">
+                            Select a clay body above and re-analyze to check crazing/shivering risk
+                            against a real body COE.
+                        </p>
+                    </div>
+                `;
+            }
+
+            const riskBadge = (risk) => {
+                const cls = risk === 'high' ? 'badge-danger' : risk === 'medium' ? 'badge-warning' : 'badge-success';
+                return `<span class="badge ${cls}">${escapeHtml(risk)}</span>`;
+            };
+
+            return `
+                <div class="analysis-section" style="margin-bottom:0.75rem;">
+                    <h4 style="margin-bottom:0.5rem;">Glaze Fit</h4>
+                    <div class="grid grid-2" style="gap:0.5rem;font-size:0.85rem;margin-bottom:0.5rem;">
+                        <div style="padding:0.5rem;background:var(--bg-secondary);border-radius:var(--radius-sm);">
+                            <div style="color:var(--text-muted);font-size:0.75rem;">Calculated Glaze COE</div>
+                            <div style="font-weight:600;">${fit.calculated_coe.toFixed(2)} &times;10&#8315;&#8310;/&#176;C</div>
+                        </div>
+                        <div style="padding:0.5rem;background:var(--bg-secondary);border-radius:var(--radius-sm);">
+                            <div style="color:var(--text-muted);font-size:0.75rem;">Clay Body COE</div>
+                            <div style="font-weight:600;">${fit.clay_body_coe.toFixed(2)} &times;10&#8315;&#8310;/&#176;C</div>
+                        </div>
+                    </div>
+                    <p style="margin-bottom:0.5rem;">
+                        Crazing risk: ${riskBadge(fit.crazing_risk)}
+                        &nbsp;&nbsp;Shivering risk: ${riskBadge(fit.shivering_risk)}
+                    </p>
+                    ${fit.recommendations.map(r => `
+                        <div class="recommendation-item">
+                            <span class="issue-icon">💡</span>
+                            <span>${escapeHtml(r)}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function renderFoodSafety(safety) {
+            if (!safety) return '';
+
+            const riskBadge = (risk) => {
+                const cls = risk === 'high' ? 'badge-danger' : risk === 'medium' ? 'badge-warning' : 'badge-success';
+                return `<span class="badge ${cls}">${escapeHtml(risk)}</span>`;
+            };
+            const severityIcon = { concern: '❌', caution: '⚠️', info: 'ℹ️' };
+
+            return `
+                <div class="analysis-section" style="margin-bottom:0.75rem;">
+                    <h4 style="margin-bottom:0.5rem;">
+                        Food-Contact Safety ${riskBadge(safety.risk_level)}
+                    </h4>
+                    <p class="text-muted" style="font-size:0.8rem;margin-bottom:0.5rem;">
+                        Known risk patterns, not a certification — only real leach testing confirms
+                        whether a specific glaze is actually safe.
+                    </p>
+                    ${safety.findings.map(f => `
+                        <div class="${f.severity === 'info' ? 'recommendation-item' : 'warning-item'} mb-1">
+                            <span>${severityIcon[f.severity] || 'ℹ️'}</span>
+                            <span>${escapeHtml(f.message)}</span>
+                        </div>
+                    `).join('')}
+                    ${safety.testing_recommendation ? `
+                        <p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.5rem;">
+                            <strong>Test it:</strong> ${escapeHtml(safety.testing_recommendation)}
+                        </p>
+                    ` : ''}
+                </div>
+            `;
         }
 
         function renderAnalysis(data) {
@@ -3602,6 +3741,9 @@
                         ${fluxes.length === 0 ? '<p class="text-muted" style="font-size:0.85rem;">No fluxes detected</p>' : ''}
                     </div>
                 </div>
+
+                ${renderThermalExpansion(data.thermal_expansion)}
+                ${renderFoodSafety(data.food_safety)}
 
                 ${issues.length ? `
                     <div class="analysis-section" style="margin-bottom:0.75rem;">
@@ -3796,15 +3938,46 @@
         function renderPrediction(data) {
             const prediction = data.prediction || data;
             const defects = prediction.defect_risks || {};
+            const probs = prediction.surface_probabilities || {};
+            const confidence = prediction.confidence || 0;
+            const detailsByDefect = Object.fromEntries(
+                (prediction.defect_details || []).map(d => [d.defect, d]));
+
+            // Show the whole distribution, not just the winner. Chemistry
+            // alone only reaches ~67% accuracy on surface, so the spread
+            // between the classes is as informative as the top pick - and
+            // this number used to be a hardcoded 95% for every recipe.
+            const barColors = { glossy: '#10b981', satin: '#f59e0b', matte: '#a855f7' };
+            const strip = Object.keys(probs).length ? `
+                <div style="margin-top:0.6rem;">
+                    ${['glossy','satin','matte'].filter(k => k in probs).map(k => `
+                        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.2rem;">
+                            <span style="width:3.4rem;font-size:0.72rem;color:#94a3b8;">${escapeHtml(k)}</span>
+                            <div style="flex:1;height:6px;background:rgba(148,163,184,0.15);border-radius:3px;overflow:hidden;">
+                                <div style="width:${(probs[k]*100).toFixed(0)}%;height:100%;background:${barColors[k] || '#64748b'};"></div>
+                            </div>
+                            <span style="width:2.4rem;text-align:right;font-size:0.72rem;color:#94a3b8;">${(probs[k]*100).toFixed(0)}%</span>
+                        </div>`).join('')}
+                </div>` : '';
+            const caveat = prediction.surface_caveat
+                ? `<div style="margin-top:0.5rem;font-size:0.72rem;color:#f59e0b;">${escapeHtml(prediction.surface_caveat)}</div>`
+                : '';
+            const stability = (prediction.stability_flags || []).length
+                ? `<div style="margin-top:0.4rem;">${prediction.stability_flags.map(f =>
+                     `<span class="badge badge-warning" style="margin-right:0.25rem;">${escapeHtml(f)}</span>`).join('')}</div>`
+                : '';
 
             document.getElementById('prediction-results').innerHTML = `
                 <div class="grid grid-2 mb-1">
                     <div class="prediction-card">
                         <div class="prediction-header">
                             <span class="prediction-title">Predicted Surface</span>
-                            <span class="badge badge-primary">${((prediction.confidence || 0) * 100).toFixed(0)}%</span>
+                            <span class="badge ${confidence >= 0.6 ? 'badge-primary' : 'badge-warning'}">${(confidence * 100).toFixed(0)}%</span>
                         </div>
-                        <div class="prediction-value">${prediction.predicted_surface || 'Unknown'}</div>
+                        <div class="prediction-value">${escapeHtml(prediction.predicted_surface || 'Unknown')}</div>
+                        ${strip}
+                        ${stability}
+                        ${caveat}
                     </div>
                     <div class="prediction-card">
                         <div class="prediction-title">Predicted Color</div>
@@ -3814,10 +3987,18 @@
 
                 <h4 style="margin-bottom: 0.75rem;">Defect Risks</h4>
                 <div class="grid grid-2">
-                    ${Object.entries(defects).map(([defect, risk]) => `
+                    ${Object.entries(defects).map(([defect, risk]) => {
+                        // Attach the explanation and its provenance. An
+                        // "uncalibrated" marker matters more here than any
+                        // single threshold: some of these numbers come from
+                        // a cited book and some are long-standing guesses,
+                        // and until now they looked identical.
+                        const detail = detailsByDefect[defect];
+                        const sourced = detail && detail.evidence === 'book_quantified';
+                        return `
                         <div class="prediction-card">
                             <div class="prediction-header">
-                                <span class="prediction-title">${defect.replace(/_/g, ' ')}</span>
+                                <span class="prediction-title">${escapeHtml(defect.replace(/_/g, ' '))}</span>
                                 <span class="${risk > 0.5 ? 'text-danger' : risk > 0.3 ? 'text-warning' : 'text-success'}">
                                     ${(risk * 100).toFixed(0)}%
                                 </span>
@@ -3826,8 +4007,25 @@
                                 <div class="risk-fill ${risk > 0.5 ? 'risk-high' : risk > 0.3 ? 'risk-medium' : 'risk-low'}"
                                      style="width: ${Math.max(5, risk * 100)}%"></div>
                             </div>
-                        </div>
-                    `).join('')}
+                            ${detail ? `
+                                <div style="margin-top:0.45rem;font-size:0.72rem;color:#94a3b8;line-height:1.4;">
+                                    ${escapeHtml(detail.message)}
+                                </div>
+                                <div style="margin-top:0.3rem;font-size:0.68rem;">
+                                    ${sourced
+                                        ? `<span style="color:#10b981;">📖 ${escapeHtml(detail.source)}</span>`
+                                        : `<span style="color:#f59e0b;" title="General ceramic principle, not calibrated against firing data">⚠ heuristic, not calibrated</span>`}
+                                </div>
+                                ${detail.remedies && detail.remedies.length ? `
+                                    <details style="margin-top:0.35rem;">
+                                        <summary style="font-size:0.7rem;color:#7c3aed;cursor:pointer;">remedies</summary>
+                                        <ul style="margin:0.3rem 0 0 1rem;font-size:0.7rem;color:#94a3b8;line-height:1.5;">
+                                            ${detail.remedies.slice(0,4).map(x => `<li>${escapeHtml(x)}</li>`).join('')}
+                                        </ul>
+                                    </details>` : ''}
+                            ` : ''}
+                        </div>`;
+                    }).join('')}
                 </div>
             `;
         }
@@ -4045,27 +4243,75 @@
             `;
         }
 
+        /** Show or hide the "View original on Glazy" link under the name. */
+        function setRecipeSourceLink(url) {
+            const link = document.getElementById('recipe-source-link');
+            if (!link) return;
+            if (url) {
+                link.href = url;
+                link.hidden = false;
+            } else {
+                link.removeAttribute('href');
+                link.hidden = true;
+            }
+        }
+
+        /** Import a recipe from the live Glazy API into the builder.
+         *
+         *  This used to wrap everything in `if (recipe.ingredients)` and never
+         *  check `response.ok`. An error response parsed to {detail: ...} with
+         *  no ingredients and the function silently did nothing - and when the
+         *  backend's parser broke against Glazy's newer schema, it returned an
+         *  EMPTY ingredient list, which is truthy in JavaScript, so the UI
+         *  "imported" nothing and reported success. Every failure is now
+         *  reported, and colourants and cone come through as well. */
         async function importGlazyRecipe(glazyId) {
+            let recipe;
             try {
                 const response = await fetch(`${API_BASE}/api/glazy/recipe/${glazyId}`);
-                const recipe = await response.json();
-
-                if (recipe.ingredients) {
-                    recipeIngredients = recipe.ingredients.map((ing, i) => ({
-                        id: Date.now() + i,
-                        name: ing.material_name || ing.material || ing.name,
-                        percentage: ing.percentage
-                    }));
-                    document.getElementById('recipe-name').value = recipe.name || '';
-                    renderRecipeIngredients();
-                    document.querySelector('.tab[data-tab="recipe"]').click();
-                    showToast(`Imported "${recipe.name}"`, 'success');
-                    // Auto-calculate UMF after import
-                    setTimeout(calculateUMF, 500);
+                recipe = await response.json();
+                if (!response.ok) {
+                    showToast(recipe.detail || `Glazy recipe ${glazyId} could not be imported`, 'error');
+                    return;
                 }
             } catch (error) {
-                showToast('Failed to import recipe', 'error');
+                showToast('Could not reach the server to import from Glazy', 'error');
+                return;
             }
+
+            const ingredients = recipe.ingredients || [];
+            if (!ingredients.length) {
+                showToast(`"${recipe.name || glazyId}" has no ingredients to import`, 'error');
+                return;
+            }
+
+            recipeIngredients = ingredients.map((ing, i) => ({
+                id: Date.now() + i,
+                name: ing.material_name || ing.material || ing.name,
+                percentage: ing.percentage,
+            }));
+            // Additions on top of the base - previously dropped, so an
+            // iron-blue chun came in without its iron.
+            recipeColorants = (recipe.colorants || []).map(c => ({
+                name: c.material_name || c.material || c.name,
+                percentage: c.percentage,
+            }));
+
+            document.getElementById('recipe-name').value = recipe.name || '';
+            if (recipe.cone) {
+                targetCone = String(recipe.cone);
+                document.querySelectorAll('.cone-btn').forEach(b => b.classList.remove('selected'));
+                document.querySelector(`.cone-btn[data-cone="${targetCone}"]`)?.classList.add('selected');
+            }
+            setRecipeSourceLink(recipe.glazy_url);
+
+            renderRecipeIngredients();
+            renderRecipeColorants();
+            document.querySelector('.tab[data-tab="recipe"]').click();
+
+            const extras = recipeColorants.length ? ` + ${recipeColorants.length} colourant${recipeColorants.length > 1 ? 's' : ''}` : '';
+            showToast(`Imported "${recipe.name}" - ${recipeIngredients.length} ingredients${extras}`, 'success');
+            setTimeout(calculateUMF, 500);
         }
 
         // Keyboard shortcuts
@@ -4104,10 +4350,11 @@
             loadFiringLog();
         }
 
-        function populateFiringRecipeSelect() {
+        async function populateFiringRecipeSelect() {
             const sel = document.getElementById('firing-recipe-name');
-            // Add saved recipes
-            const saved = getSavedRecipes();
+            // Add saved recipes (re-fetch: this lazy-loaded tab can open
+            // before the startup load finishes populating the cache)
+            const saved = await fetchSavedRecipes();
             saved.forEach(r => {
                 const opt = document.createElement('option');
                 opt.value = r.name;
@@ -4334,6 +4581,7 @@
                     opt.textContent = `${s.name} (${s.count})`;
                     sel.appendChild(opt);
                 });
+                renderSourceAttribution(sources);
             } catch (e) { console.error('Failed to load sources:', e); }
 
             // Load stats
@@ -4346,6 +4594,25 @@
             } catch (e) {}
 
             searchLibrary();
+        }
+
+        /** Credit any source that ships a licence with its data.
+         *
+         *  Not decoration: the Glazy corpus is CC BY-NC-SA 4.0, which makes
+         *  attribution a condition of use. The sources endpoint has always
+         *  been able to return it, but the metadata file it reads did not
+         *  exist, so it silently returned name and count only and the
+         *  credit appeared nowhere in the app. */
+        function renderSourceAttribution(sources) {
+            const credited = (sources || []).filter(s => s.attribution);
+            const host = document.getElementById('library-attribution');
+            if (!host) return;
+            if (!credited.length) { host.innerHTML = ''; return; }
+            host.innerHTML = credited.map(s => `
+                <div style="margin-top:0.35rem;">
+                    ${escapeHtml(s.attribution)}
+                    ${s.last_updated ? ` <span style="opacity:.75;">Snapshot ${escapeHtml(s.last_updated)}.</span>` : ''}
+                </div>`).join('');
         }
 
         async function searchLibrary(resetOffset = true) {
@@ -4435,6 +4702,11 @@
         function loadLibraryRecipe(r) {
             const name = r.name || 'Untitled';
             document.getElementById('recipe-name').value = name;
+            // Library recipes from the Glazy corpus carry their Glazy id;
+            // curated book recipes do not, so the link only appears when
+            // there is a real page to point at.
+            const libraryGlazyId = r.glazy_id || (r.source === 'glazy-data' ? r.id : null);
+            setRecipeSourceLink(libraryGlazyId ? `https://glazy.org/recipes/${libraryGlazyId}` : null);
 
             // Set cone
             const cone = String(r.cone || '6');
@@ -4748,6 +5020,17 @@
             try {
                 const response = await fetch(`${API_BASE}/api/community/recipes/${id}`);
                 const r = await response.json();
+                if (!response.ok) {
+                    showToast(r.detail || `Recipe ${id} could not be imported`, 'error');
+                    return;
+                }
+                if (!r.ingredients || !r.ingredients.length) {
+                    showToast(`"${r.name || id}" has no ingredients to import`, 'error');
+                    return;
+                }
+                // Community recipes are the Glazy corpus, so the id is the
+                // Glazy id and the original formula has a public page.
+                setRecipeSourceLink(`https://glazy.org/recipes/${r.id || id}`);
                 if (r.ingredients) {
                     // Base ingredients (non-additives)
                     recipeIngredients = r.ingredients
@@ -4829,13 +5112,16 @@
             }
         }
 
-        // Override renderStullChart to include community data overlay
-        const _originalRenderStullChart = renderStullChart;
-        renderStullChart = async function(data) {
+        // Sole entry point for the Stull chart. This used to monkey-patch
+        // over an earlier renderStullChart defined above, which was then
+        // never called - so that function's copy of the Stull thresholds
+        // was dead code that still looked authoritative. It has been
+        // removed; edit the thresholds in surface_model.json, not here.
+        async function renderStullChart(data) {
             lastUMFData = data;
-            await loadStullOverlay();
+            await Promise.all([loadStullOverlay(), loadSurfaceBands()]);
             _renderStullChartWithOverlay(data);
-        };
+        }
 
         function _renderStullChartWithOverlay(data) {
             const al2o3 = data.Al2O3 || 0;
@@ -4928,10 +5214,17 @@
                 showlegend: true,
                 legend: { font: { color: '#94a3b8' }, bgcolor: 'rgba(0,0,0,0)' },
                 shapes: [
-                    { type: 'rect', x0: 2.5, x1: 5, y0: 0.15, y1: 0.4,
-                      fillcolor: 'rgba(16, 185, 129, 0.15)', line: { color: '#10b981', width: 1 } },
-                    { type: 'rect', x0: 1.5, x1: 3.5, y0: 0.4, y1: 0.7,
-                      fillcolor: 'rgba(245, 158, 11, 0.15)', line: { color: '#f59e0b', width: 1 } },
+                    // Si:Al band edges from the calibrated model. A constant
+                    // Si:Al ratio is a straight line through the origin, not
+                    // a box - the two rectangles that used to sit here were a
+                    // third geometry, agreeing with neither the backend's
+                    // ratio wedges nor the click handler's cuts.
+                    ...surfaceBands.filter(b => b.si_al_max).map(band => ({
+                        type: 'line',
+                        x0: 0, y0: 0,
+                        x1: 6, y1: 6 / band.si_al_max,
+                        line: { color: 'rgba(148,163,184,0.45)', width: 1, dash: 'dot' },
+                    })),
                     ...(showLimitOverlays ? stullLimitOverlays.map(lim => ({
                         type: 'rect',
                         x0: lim.sio2_min, x1: lim.sio2_max,
@@ -4941,8 +5234,20 @@
                     })) : []),
                 ],
                 annotations: [
-                    { x: 3.75, y: 0.27, text: 'GLOSSY', showarrow: false, font: { color: '#10b981', size: 11 } },
-                    { x: 2.5, y: 0.55, text: 'MATTE', showarrow: false, font: { color: '#f59e0b', size: 11 } },
+                    // Label each band with the measured probability and
+                    // sample size rather than asserting a region name.
+                    ...surfaceBands.map(band => {
+                        const lo = band.si_al_min ?? 2;
+                        const hi = band.si_al_max ?? 20;
+                        const mid = (lo + Math.min(hi, 16)) / 2;
+                        return {
+                            x: 5.7, y: 5.7 / mid,
+                            text: `${band.name} ${Math.round((band.probability ?? 0) * 100)}%`,
+                            showarrow: false,
+                            font: { color: '#94a3b8', size: 9 },
+                            xanchor: 'right',
+                        };
+                    }),
                     ...(showLimitOverlays ? stullLimitOverlays.map(lim => ({
                         x: lim.sio2_max, y: lim.al2o3_max,
                         text: lim.label, showarrow: false,
@@ -4991,6 +5296,7 @@
         loadMaterialTypes();
         loadColorants();
         loadUnavailableMaterials();
+        loadClayBodiesDetailed();
 
         // Show quick start on first visit
         if (!localStorage.getItem('glaze-visited')) {

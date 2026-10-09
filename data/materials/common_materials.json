@@ -3,7 +3,9 @@
     {
       "name": "Custer Feldspar",
       "type": "feldspar",
-      "description": "Potash feldspar, common flux for mid to high fire glazes",
+      "description": "Potash feldspar, common flux for mid to high fire glazes. Discontinued 2024; its usual substitute G-200 HP is also discontinued, so Mahavir or a potash/soda feldspar blend is the practical route. Post-2021 datasheets show higher Na2O (4.5%).",
+      "source": "digitalfire",
+      "discontinued": true,
       "analysis": {
         "SiO2": 68.5,
         "Al2O3": 17.0,
@@ -11,8 +13,13 @@
         "Na2O": 3.0,
         "CaO": 0.3,
         "Fe2O3": 0.1,
-        "LOI": 0.5
-      }
+        "LOI": 0.3
+      },
+      "alternate_names": [
+        "Custer",
+        "Custer Spar",
+        "Potash Feldspar"
+      ]
     },
     {
       "name": "G-200 Feldspar",
@@ -26,7 +33,12 @@
         "CaO": 0.5,
         "Fe2O3": 0.08,
         "LOI": 0.3
-      }
+      },
+      "alternate_names": [
+        "G200 Feldspar",
+        "G-200",
+        "G200"
+      ]
     },
     {
       "name": "Nepheline Syenite",
@@ -40,7 +52,12 @@
         "CaO": 0.7,
         "Fe2O3": 0.08,
         "LOI": 0.2
-      }
+      },
+      "alternate_names": [
+        "Neph Sye",
+        "Nph Sy",
+        "Nepheline"
+      ]
     },
     {
       "name": "Silica (Flint)",
@@ -51,7 +68,13 @@
         "Al2O3": 0.2,
         "Fe2O3": 0.02,
         "LOI": 0.2
-      }
+      },
+      "alternate_names": [
+        "Silica",
+        "Flint",
+        "Quartz",
+        "Silica 325"
+      ]
     },
     {
       "name": "EPK Kaolin",
@@ -67,12 +90,19 @@
         "Fe2O3": 0.4,
         "TiO2": 0.4,
         "LOI": 14.0
-      }
+      },
+      "alternate_names": [
+        "EP Kaolin",
+        "EPK",
+        "Edgar Plastic Kaolin",
+        "Kaolin",
+        "China Clay"
+      ]
     },
     {
       "name": "Grolleg Kaolin",
       "type": "clay",
-      "description": "English kaolin, very white, good for porcelain",
+      "description": "English kaolin, very white, good for porcelain. Analysis corroborated by Nigel Wood, 'Chinese Glazes' p.266, which publishes SiO2 48.0 / Al2O3 37.0 / K2O 1.85 / Fe2O3 0.75 / TiO2 0.02 for the same clay - agreeing with this entry to within rounding.",
       "analysis": {
         "SiO2": 47.3,
         "Al2O3": 37.0,
@@ -83,7 +113,11 @@
         "Fe2O3": 0.7,
         "TiO2": 0.03,
         "LOI": 12.0
-      }
+      },
+      "alternate_names": [
+        "Grolleg",
+        "Grolleg China Clay"
+      ]
     },
     {
       "name": "Whiting (Calcium Carbonate)",
@@ -92,7 +126,12 @@
       "analysis": {
         "CaO": 56.0,
         "LOI": 44.0
-      }
+      },
+      "alternate_names": [
+        "Whiting",
+        "Calcium Carbonate",
+        "Calcium Carb"
+      ]
     },
     {
       "name": "Wollastonite",
@@ -141,18 +180,6 @@
       }
     },
     {
-      "name": "Bone Ash",
-      "type": "calcium",
-      "description": "Calcium phosphate, promotes opalescence",
-      "analysis": {
-        "CaO": 55.0,
-        "P2O5": 42.0,
-        "MgO": 1.0,
-        "Na2O": 1.0,
-        "LOI": 1.0
-      }
-    },
-    {
       "name": "Gerstley Borate",
       "type": "boron",
       "description": "Natural calcium borate, primary boron source (variable)",
@@ -166,7 +193,11 @@
         "K2O": 0.5,
         "Fe2O3": 0.3,
         "LOI": 30.0
-      }
+      },
+      "alternate_names": [
+        "GB",
+        "Gerstly Borate"
+      ]
     },
     {
       "name": "Frit 3134",
@@ -179,7 +210,11 @@
         "Na2O": 10.3,
         "Al2O3": 1.0,
         "K2O": 0.1
-      }
+      },
+      "alternate_names": [
+        "Ferro Frit 3134",
+        "3134"
+      ]
     },
     {
       "name": "Frit 3110",
@@ -192,7 +227,11 @@
         "Al2O3": 4.0,
         "CaO": 5.2,
         "B2O3": 2.7
-      }
+      },
+      "alternate_names": [
+        "Ferro Frit 3110",
+        "3110"
+      ]
     },
     {
       "name": "Frit 3195",
@@ -205,7 +244,11 @@
         "Na2O": 6.0,
         "Al2O3": 10.0,
         "MgO": 5.0
-      }
+      },
+      "alternate_names": [
+        "Ferro Frit 3195",
+        "3195"
+      ]
     },
     {
       "name": "Barium Carbonate",
@@ -214,7 +257,10 @@
       "analysis": {
         "BaO": 77.7,
         "LOI": 22.3
-      }
+      },
+      "alternate_names": [
+        "Barium Carb"
+      ]
     },
     {
       "name": "Strontium Carbonate",
@@ -223,7 +269,10 @@
       "analysis": {
         "SrO": 70.0,
         "LOI": 30.0
-      }
+      },
+      "alternate_names": [
+        "Strontium Carb"
+      ]
     },
     {
       "name": "Lithium Carbonate",
@@ -232,7 +281,10 @@
       "analysis": {
         "Li2O": 40.4,
         "LOI": 59.6
-      }
+      },
+      "alternate_names": [
+        "Lithium Carb"
+      ]
     },
     {
       "name": "Spodumene",
@@ -255,7 +307,10 @@
       "analysis": {
         "Na2O": 58.5,
         "LOI": 41.5
-      }
+      },
+      "alternate_names": [
+        "Sodium Carbonate"
+      ]
     },
     {
       "name": "Ball Clay (OM4)",
@@ -271,7 +326,15 @@
         "Fe2O3": 0.9,
         "TiO2": 1.6,
         "LOI": 11.0
-      }
+      },
+      "alternate_names": [
+        "OM-4",
+        "OM-4 Ball Clay",
+        "OM4",
+        "OM4 Ball Clay",
+        "Old Mine #4",
+        "Tennessee Ball Clay"
+      ]
     },
     {
       "name": "Bentonite",
@@ -286,7 +349,11 @@
         "K2O": 0.1,
         "Fe2O3": 3.2,
         "LOI": 6.0
-      }
+      },
+      "alternate_names": [
+        "Bentonite (Volclay)",
+        "Western Bentonite"
+      ]
     },
     {
       "name": "Alumina Hydrate",
@@ -295,7 +362,10 @@
       "analysis": {
         "Al2O3": 65.4,
         "LOI": 34.6
-      }
+      },
+      "alternate_names": [
+        "Hydrated Alumina"
+      ]
     },
     {
       "name": "Calcined Alumina",
@@ -321,7 +391,13 @@
         "MgO": 1.5,
         "TiO2": 0.8,
         "LOI": 7.5
-      }
+      },
+      "alternate_names": [
+        "Redart Clay",
+        "Redart",
+        "Red Art Clay",
+        "RedArt"
+      ]
     },
     {
       "name": "Hawthorne Bond",
@@ -337,7 +413,12 @@
         "MgO": 0.5,
         "TiO2": 1.5,
         "LOI": 9.5
-      }
+      },
+      "alternate_names": [
+        "Hawthorn Bond Fire Clay",
+        "Hawthorn Bond",
+        "Hawthorne Bond Fireclay"
+      ]
     },
     {
       "name": "Ferro Frit 3124",
@@ -350,7 +431,11 @@
         "Al2O3": 9.9,
         "Na2O": 6.3,
         "K2O": 0.2
-      }
+      },
+      "alternate_names": [
+        "Frit 3124",
+        "3124"
+      ]
     },
     {
       "name": "Ferro Frit 3249",
@@ -364,7 +449,11 @@
         "CaO": 8.0,
         "Na2O": 4.5,
         "ZnO": 2.5
-      }
+      },
+      "alternate_names": [
+        "Frit 3249",
+        "3249"
+      ]
     },
     {
       "name": "Gillespie Borate",
@@ -404,7 +493,11 @@
       "analysis": {
         "K2O": 68.2,
         "LOI": 31.8
-      }
+      },
+      "alternate_names": [
+        "Pearl Ash",
+        "Potassium Carbonate"
+      ]
     },
     {
       "name": "Volcanic Ash",
@@ -437,7 +530,12 @@
         "Fe2O3": 1.5,
         "MnO": 1.5,
         "LOI": 15.0
-      }
+      },
+      "alternate_names": [
+        "Wood Ash (Mixed)",
+        "Mixed Wood Ash",
+        "Hardwood Ash"
+      ]
     },
     {
       "name": "Rice Hull Ash",
@@ -465,7 +563,14 @@
         "MgO": 1.2,
         "Na2O": 0.8,
         "LOI": 1.5
-      }
+      },
+      "alternate_names": [
+        "Bone Ash",
+        "Calcium Phosphate",
+        "Synthetic Bone Ash",
+        "Synthetic Calcium Phosphate",
+        "Tricalcium Phosphate"
+      ]
     },
     {
       "name": "Pyrophyllite",
@@ -496,7 +601,513 @@
       "analysis": {
         "MgO": 47.8,
         "LOI": 52.2
+      },
+      "alternate_names": [
+        "Mag Carb",
+        "Magnesium Carb"
+      ]
+    },
+    {
+      "name": "Alberta Slip",
+      "type": "clay",
+      "description": "Replacement for discontinued Albany Slip. Iron-bearing low-melting clay blend. Standalone glaze at cone 10R (chocolate brown gloss); use with frit at cone 6. Over 40% raw requires calcined/raw blend to prevent drying cracks.",
+      "source": "digitalfire",
+      "analysis": {
+        "SiO2": 53.54,
+        "Al2O3": 15.2,
+        "Fe2O3": 4.5,
+        "CaO": 5.9,
+        "MgO": 3.9,
+        "K2O": 3.5,
+        "Na2O": 2.2,
+        "TiO2": 0.3,
+        "P2O5": 0.1,
+        "LOI": 9.2
+      },
+      "alternate_names": [
+        "Alberta Slip Raw"
+      ]
+    },
+    {
+      "name": "Alberta Slip Calcined",
+      "type": "clay",
+      "description": "Calcined version of Alberta Slip. Same chemistry but zero LOI and no shrinkage. Mixed with raw Alberta Slip (50/50 typical) in high-slip recipes to prevent drying cracks.",
+      "source": "digitalfire (calculated LOI-free basis)",
+      "analysis": {
+        "SiO2": 59.0,
+        "Al2O3": 16.7,
+        "Fe2O3": 4.95,
+        "CaO": 6.5,
+        "MgO": 4.3,
+        "K2O": 3.85,
+        "Na2O": 2.42,
+        "TiO2": 0.33,
+        "P2O5": 0.11
       }
+    },
+    {
+      "name": "Albany Slip",
+      "type": "clay",
+      "description": "Historic high-iron silty clay mined in Albany, NY — discontinued. Melted to glossy chocolate brown at cone 8-10R. Alberta Slip is the standard replacement.",
+      "source": "digitalfire",
+      "discontinued": true,
+      "analysis": {
+        "SiO2": 57.82,
+        "Al2O3": 14.63,
+        "Fe2O3": 5.21,
+        "CaO": 5.81,
+        "MgO": 2.71,
+        "K2O": 3.2,
+        "Na2O": 0.8,
+        "TiO2": 0.4,
+        "LOI": 9.41
+      }
+    },
+    {
+      "name": "Minspar 200",
+      "type": "feldspar",
+      "description": "Soda feldspar from Spruce Pine, NC. Formerly NC-4 Feldspar; very similar to discontinued F-4. High Na2O raises thermal expansion — prone to crazing at high percentages.",
+      "source": "digitalfire",
+      "analysis": {
+        "SiO2": 68.8,
+        "Al2O3": 18.2,
+        "Na2O": 6.5,
+        "K2O": 4.1,
+        "CaO": 1.5,
+        "Fe2O3": 0.07,
+        "LOI": 0.3
+      },
+      "alternate_names": [
+        "Soda Feldspar"
+      ]
+    },
+    {
+      "name": "Cornwall Stone",
+      "type": "feldspar",
+      "description": "Complex low-iron feldspar from Cornwall, UK. Higher silica than most feldspars with diverse fluxes. Variable batch chemistry; often replaced by synthetic equivalents. Good for engobes and low-shrinkage glazes. Analysis excludes fluorine.",
+      "source": "digitalfire",
+      "analysis": {
+        "SiO2": 73.76,
+        "Al2O3": 16.33,
+        "K2O": 4.31,
+        "Na2O": 3.3,
+        "CaO": 1.81,
+        "Fe2O3": 0.2,
+        "TiO2": 0.15,
+        "MgO": 0.14
+      },
+      "alternate_names": [
+        "Cornish Stone"
+      ]
+    },
+    {
+      "name": "Colemanite",
+      "type": "boron",
+      "description": "Natural calcium borate mineral. Very high B2O3 content — insoluble boron source. High concentrations cause decrepitation (wrinkling/spalling). Industry prefers boron frits; colemanite chemistry varies by source (Turkey, Chile, California). Fraser (Ceramic Faults and Their Remedies) puts a practical ceiling on raw use: keep to roughly 7-10% of the recipe (European/Turkish sources; American colemanite tolerates somewhat more) or risk 'splutter' - glaze pieces ejecting from the ware as colemanite's ~27%-by-weight water of crystallisation releases too fast, typically 400-800C. Calcium borate frit is chemically equivalent with that water already removed, and is the standard fix.",
+      "source": "digitalfire",
+      "analysis": {
+        "B2O3": 50.8,
+        "CaO": 27.3,
+        "LOI": 21.9
+      }
+    },
+    {
+      "name": "Calcined Kaolin",
+      "type": "clay",
+      "description": "Kaolin fired to remove crystal-bound water. No LOI, no shrinkage, no plasticity. Used to replace raw kaolin when high kaolin content (>20%) causes drying cracks — maintains glaze chemistry without the shrinkage. Refractory, softens around cone 35.",
+      "source": "digitalfire",
+      "analysis": {
+        "SiO2": 54.1,
+        "Al2O3": 45.9
+      }
+    },
+    {
+      "name": "Ferro Frit 3269",
+      "type": "frit",
+      "description": "Leadless high-alkali low-calcia frit. High thermal expansion (9.98) makes it useful for crackle glazes — try with ~10% kaolin. Works as partial or full glaze base at cone 06-01. Analysis also carries ~1.5% F.",
+      "source": "digitalfire",
+      "analysis": {
+        "SiO2": 51.23,
+        "B2O3": 15.06,
+        "Al2O3": 12.4,
+        "Na2O": 10.97,
+        "K2O": 7.42,
+        "ZnO": 0.97,
+        "CaO": 0.41,
+        "F": 1.5
+      },
+      "alternate_names": [
+        "Frit 3269",
+        "3269"
+      ]
+    },
+    {
+      "name": "Ferro Frit 3278",
+      "type": "frit",
+      "description": "Leadless high-boron calcia-alkali silicate frit. Elevated Na2O gives high thermal expansion. Recommended for wall tile glazes at cone 08-02. High B2O3 makes it active at low temperatures.",
+      "source": "digitalfire",
+      "analysis": {
+        "SiO2": 56.31,
+        "B2O3": 21.73,
+        "Na2O": 15.1,
+        "CaO": 6.86
+      },
+      "alternate_names": [
+        "Frit 3278",
+        "3278"
+      ]
+    },
+    {
+      "name": "Goldart",
+      "type": "clay",
+      "description": "Cedar Heights airfloated plastic stoneware clay from southern Ohio. Wide firing range, excellent working properties; fires light buff at cone 10 reduction. Substitute for Jordan fireclay.",
+      "source": "digitalfire",
+      "alternate_names": [
+        "Goldart Clay",
+        "Cedar Heights Goldart"
+      ],
+      "analysis": {
+        "SiO2": 55.2,
+        "Al2O3": 28.8,
+        "Fe2O3": 1.4,
+        "TiO2": 1.8,
+        "K2O": 1.9,
+        "MgO": 0.4,
+        "CaO": 0.2,
+        "Na2O": 0.2,
+        "LOI": 10.0
+      }
+    },
+    {
+      "name": "Barnard Slip",
+      "type": "clay",
+      "description": "Non-plastic silty iron/manganese clay, long used as an iron source in dark-firing glazes. Fires brown at cone 04 to black by cone 3. High fired shrinkage; messy and staining to handle.",
+      "source": "digitalfire",
+      "alternate_names": [
+        "Barnard Clay",
+        "Blackbird Slip"
+      ],
+      "analysis": {
+        "SiO2": 59.0,
+        "Al2O3": 10.0,
+        "Fe2O3": 15.0,
+        "MnO": 3.5,
+        "K2O": 2.0,
+        "MgO": 0.8,
+        "TiO2": 0.7,
+        "CaO": 0.3,
+        "LOI": 8.31
+      }
+    },
+    {
+      "name": "Tile #6 Kaolin",
+      "type": "clay",
+      "description": "Air-floated highly plastic kaolin with high green strength — exceptional among North American kaolins. Good for suspending glazes and for throwing bodies. Not suited to casting bodies (relatively impermeable).",
+      "source": "digitalfire",
+      "alternate_names": [
+        "Tile 6 Kaolin",
+        "Tile #6",
+        "Tile 6",
+        "Tile 6 Ball Clay"
+      ],
+      "analysis": {
+        "SiO2": 45.5,
+        "Al2O3": 38.1,
+        "Fe2O3": 0.5,
+        "TiO2": 1.4,
+        "MgO": 0.4,
+        "CaO": 0.3,
+        "Na2O": 0.1,
+        "LOI": 13.5
+      }
+    },
+    {
+      "name": "Ulexite",
+      "type": "boron",
+      "description": "Sodium calcium borate mineral, one of the lowest-melting non-lead ceramic minerals — forms ultra-gloss transparent glass by cone 06. High LOI complicates clear low-fire glazes; use drop-and-hold or thinner application. A component of Gerstley Borate and a common GB replacement.",
+      "source": "digitalfire",
+      "analysis": {
+        "B2O3": 42.95,
+        "CaO": 13.84,
+        "Na2O": 7.65,
+        "LOI": 35.55
+      }
+    },
+    {
+      "name": "F-4 Feldspar",
+      "type": "feldspar",
+      "description": "Soda feldspar prized for porcelain due to low iron. Discontinued — Minspar 200 (formerly NC-4) has virtually identical chemistry and is the recommended substitute.",
+      "source": "digitalfire",
+      "discontinued": true,
+      "alternate_names": [
+        "F4 Feldspar",
+        "F-4",
+        "F4"
+      ],
+      "analysis": {
+        "SiO2": 66.7,
+        "Al2O3": 19.6,
+        "Na2O": 6.9,
+        "K2O": 4.8,
+        "CaO": 1.7,
+        "LOI": 0.2
+      }
+    },
+    {
+      "name": "G-200 HP Feldspar",
+      "type": "feldspar",
+      "description": "Successor to the original G-200, with higher potassium. Also discontinued. Blending 7:3 with a soda feldspar approximates original G-200 chemistry.",
+      "source": "digitalfire",
+      "discontinued": true,
+      "alternate_names": [
+        "G200HP",
+        "G200 HP Feldspar",
+        "G-200 HP",
+        "G200 HP"
+      ],
+      "analysis": {
+        "SiO2": 65.9,
+        "Al2O3": 18.2,
+        "K2O": 13.2,
+        "Na2O": 1.52,
+        "CaO": 0.75,
+        "Fe2O3": 0.09,
+        "LOI": 0.16
+      }
+    },
+    {
+      "name": "Laguna Borate",
+      "type": "boron",
+      "description": "Formulated Gerstley Borate substitute, delisted by Laguna as of 2023. Chemistry differs enough from GB to cause problems with iron reds, metallics, floating blues, chrome-tin pinks and opalescents. Needs 6-8% bentonite or hectorite for suspension.",
+      "source": "digitalfire",
+      "discontinued": true,
+      "analysis": {
+        "B2O3": 27.5,
+        "CaO": 18.9,
+        "SiO2": 18.7,
+        "Al2O3": 8.1,
+        "Na2O": 4.0,
+        "MgO": 2.3,
+        "K2O": 1.4,
+        "Fe2O3": 0.1,
+        "LOI": 19.0
+      }
+    },
+    {
+      "name": "Sheffield Slip",
+      "type": "clay",
+      "description": "Albany Slip substitute: Sheffield (MA) glacial clay blended with fluxes, designed to duplicate 100% Albany at cone 10 in oxidation or reduction.",
+      "source": "digitalfire",
+      "analysis": {
+        "SiO2": 56.1,
+        "Al2O3": 14.8,
+        "CaO": 5.9,
+        "MgO": 4.7,
+        "Fe2O3": 3.1,
+        "K2O": 3.1,
+        "FeO": 2.4,
+        "Na2O": 1.0,
+        "TiO2": 0.9,
+        "LOI": 8.0
+      }
+    },
+    {
+      "name": "Fusion Frit F-69",
+      "type": "frit",
+      "description": "Low-expansion magnesium frit with no Na2O/K2O. Base for low-expansion glazes; added to low/mid-fire glazes to solve crazing. Softening point 1700F; listed COE 3.96e-6. May need added CaO or other flux to melt fully.",
+      "source": "digitalfire",
+      "alternate_names": [
+        "F-69",
+        "Fusion F-69"
+      ],
+      "analysis": {
+        "SiO2": 44.5,
+        "B2O3": 30.2,
+        "MgO": 12.8,
+        "Al2O3": 12.5
+      }
+    },
+    {
+      "name": "Fusion Frit F-75",
+      "type": "frit",
+      "description": "High-sodium high-expansion low-boron bond frit, very similar to Ferro 3110 (flows slightly more freely, lower surface tension). Used for crackle glazes, concentrated Na2O supply, and clarity in crystalline glazes.",
+      "source": "digitalfire",
+      "alternate_names": [
+        "F-75",
+        "Fusion F-75"
+      ],
+      "analysis": {
+        "SiO2": 70.0,
+        "Na2O": 15.3,
+        "CaO": 6.4,
+        "Al2O3": 3.7,
+        "B2O3": 2.5,
+        "K2O": 2.1
+      }
+    },
+    {
+      "name": "Helmer Kaolin",
+      "type": "clay",
+      "description": "Idaho kaolin used primarily for its flashing properties in wood firing. Wet-processed to remove soluble salts and iron. Distributed by Plainsman as 'Troy Clay' (hammermilled ~40 mesh).",
+      "source": "digitalfire",
+      "alternate_names": [
+        "Helmer",
+        "Troy Clay"
+      ],
+      "analysis": {
+        "SiO2": 46.0,
+        "Al2O3": 36.0,
+        "Fe2O3": 1.3,
+        "TiO2": 1.13,
+        "K2O": 0.53,
+        "CaO": 0.48,
+        "MgO": 0.26,
+        "Na2O": 0.08,
+        "LOI": 13.22
+      }
+    },
+    {
+      "name": "Newman Red Clay",
+      "type": "clay",
+      "description": "High-temperature red-burning low-plasticity stoneware/fireclay. Staining power beyond what its iron suggests - stays bright red at 50% dilution in oxidation. Usually compounded with ball clay and feldspar.",
+      "source": "digitalfire",
+      "alternate_names": [
+        "Newman Red"
+      ],
+      "analysis": {
+        "SiO2": 59.66,
+        "Al2O3": 16.64,
+        "Fe2O3": 5.58,
+        "TiO2": 2.05,
+        "MgO": 1.35,
+        "Na2O": 0.23,
+        "LOI": 7.3
+      }
+    },
+    {
+      "name": "Lincoln 60",
+      "type": "clay",
+      "description": "Dark buff-firing plastic stoneware ('not really a fireclay' despite the name). Gladding McBean sewer-pipe clay from the late 1800s; backbone of West Coast pottery bodies. Vitrifies unglazed by cone 10.",
+      "source": "digitalfire",
+      "alternate_names": [
+        "Lincoln Fireclay",
+        "Lincoln 60 Fireclay"
+      ],
+      "analysis": {
+        "SiO2": 52.0,
+        "Al2O3": 32.5,
+        "Fe2O3": 2.2,
+        "K2O": 0.75,
+        "MgO": 0.6,
+        "Na2O": 0.3,
+        "CaO": 0.2,
+        "LOI": 11.2
+      }
+    },
+    {
+      "name": "Mahavir Potash Feldspar",
+      "type": "feldspar",
+      "description": "Indian high-grade white-firing potash feldspar, imported by Laguna. Positioned as the G-200/Custer successor: marginally higher K2O and SiO2, slightly lower alumina. Melting temperature ~1220C.",
+      "source": "digitalfire",
+      "alternate_names": [
+        "Mahavir Feldspar",
+        "Mahavir"
+      ],
+      "analysis": {
+        "SiO2": 67.0,
+        "Al2O3": 17.5,
+        "K2O": 11.5,
+        "Na2O": 3.0,
+        "CaO": 0.15,
+        "MgO": 0.15,
+        "Fe2O3": 0.08,
+        "LOI": 0.5
+      }
+    },
+    {
+      "name": "Hyplas 71 Ball Clay",
+      "type": "clay",
+      "description": "High-silica ECC ball clay. Wood specifies it where the extra silica matters - substituting an ordinary aluminous ball clay requires roughly 7% clay plus 5% quartz instead. Analysis from Nigel Wood, 'Chinese Glazes' (A & C Black, 1999) p.266. LOI is the balance to 100%. Book publishes KNaO 2.3 combined; split 95:5 K2O:Na2O per the Grolleg and Molochite rows in the same ECC table.",
+      "source": "wood-chinese-glazes-1999",
+      "analysis": {
+        "SiO2": 71.0,
+        "Al2O3": 19.0,
+        "TiO2": 1.5,
+        "Fe2O3": 0.6,
+        "CaO": 0.1,
+        "MgO": 0.14,
+        "K2O": 2.185,
+        "Na2O": 0.115,
+        "LOI": 5.36
+      },
+      "alternate_names": [
+        "Hyplas 71",
+        "Hyplas"
+      ]
+    },
+    {
+      "name": "Hymod SMD Ball Clay",
+      "type": "clay",
+      "description": "ECC ball clay, more aluminous than Hyplas 71. Analysis from Nigel Wood, 'Chinese Glazes' (A & C Black, 1999) p.266. LOI is the balance to 100%. Book publishes KNaO 2.5 combined; split 95:5 K2O:Na2O per the Grolleg and Molochite rows in the same ECC table.",
+      "source": "wood-chinese-glazes-1999",
+      "analysis": {
+        "SiO2": 66.0,
+        "Al2O3": 22.0,
+        "TiO2": 1.6,
+        "Fe2O3": 1.0,
+        "CaO": 0.1,
+        "MgO": 0.5,
+        "K2O": 2.375,
+        "Na2O": 0.125,
+        "LOI": 6.3
+      },
+      "alternate_names": [
+        "SMD Ball Clay",
+        "Hymod SMD",
+        "SMD"
+      ]
+    },
+    {
+      "name": "AT Ball Clay",
+      "type": "clay",
+      "description": "Highly aluminous, comparatively iron-rich ECC ball clay. Analysis from Nigel Wood, 'Chinese Glazes' (A & C Black, 1999) p.266. LOI is the balance to 100%. Book publishes KNaO 3.5 combined; split 95:5 K2O:Na2O per the Grolleg and Molochite rows in the same ECC table.",
+      "source": "wood-chinese-glazes-1999",
+      "analysis": {
+        "SiO2": 52.0,
+        "Al2O3": 30.0,
+        "TiO2": 1.0,
+        "Fe2O3": 2.6,
+        "CaO": 0.2,
+        "MgO": 0.6,
+        "K2O": 3.325,
+        "Na2O": 0.175,
+        "LOI": 10.1
+      },
+      "alternate_names": [
+        "AT Clay"
+      ]
+    },
+    {
+      "name": "Molochite",
+      "type": "clay",
+      "description": "Calcined china clay from English China Clays, used to cut the drying shrinkage of a glaze. Being calcined it has effectively no LOI. Wood notes 15% raw china clay may be substituted if unavailable. Analysis from Nigel Wood, 'Chinese Glazes' (A & C Black, 1999) p.266. LOI is the balance to 100%.",
+      "source": "wood-chinese-glazes-1999",
+      "analysis": {
+        "SiO2": 54.5,
+        "Al2O3": 42.0,
+        "TiO2": 0.07,
+        "Fe2O3": 1.1,
+        "CaO": 0.06,
+        "MgO": 0.31,
+        "K2O": 2.0,
+        "Na2O": 0.1,
+        "LOI": 0.0
+      },
+      "alternate_names": [
+        "Molochite (Calcined China Clay)",
+        "Molochite Dust",
+        "Calcined China Clay"
+      ]
     }
   ]
 }

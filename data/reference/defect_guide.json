@@ -1,0 +1,485 @@
+{
+  "description": "Structured glaze/body defect troubleshooting, sourced from Digitalfire's Troubles pages ahead of the site's shutdown. Intended to replace the predictor's explicitly-labeled 'heuristic estimates not calibrated against firing data' with published cause/cure reasoning.",
+  "source": "digitalfire",
+  "defects": {
+    "crazing": {
+      "category": "glaze_fit",
+      "stress_type": "tension",
+      "summary": "Fine surface cracks. The fired glaze has a significantly higher coefficient of thermal expansion than the body - no amount of careful firing or thin application avoids it once the mismatch is real.",
+      "chemistry_cause": "Excess high-expansion oxides, chiefly K2O and Na2O.",
+      "chemistry_remedies": [
+        "Replace K2O/Na2O with lower-expansion fluxes: MgO, CaO, ZnO",
+        "Introduce B2O3 to replace some of the alkali flux",
+        "Increase SiO2 in glossy, well-melted glazes (raises Si:Al but lowers expansion)",
+        "Add enough flux to allow more SiO2 and Al2O3 - both are very low expansion"
+      ],
+      "other_remedies": [
+        "Use 325 mesh silica instead of 200 mesh for better melt dissolution",
+        "Adjust the clay body itself: add talc or dolomite to raise body expansion to meet the glaze",
+        "Add zirconium opacifier (up to ~3%) to slightly reduce expansion",
+        "Substitute a lower-expansion frit, especially where frit is 30%+ of the recipe"
+      ],
+      "cross_reference": {
+        "source": "bloomfield-special-effect-glazes-2020",
+        "note": "Agrees with the Digitalfire remedies (more silica or talc). Also useful for a controlled test: crazing can be provoked on purpose by swapping soda feldspar or nepheline syenite in for potash feldspar, or by cutting silica in 5% steps."
+      },
+      "risk_key": "crazing",
+      "baseline_risk": 0.1,
+      "triggers": [
+        {
+          "id": "alkali_dominant_flux",
+          "risk": 0.5,
+          "when": [
+            {
+              "kind": "umf_ratio",
+              "ratio": "alkali_ratio",
+              "op": ">",
+              "value": 0.4
+            }
+          ],
+          "message": "Alkalis are {ratio_value:.0%} of the flux. Na2O and K2O have the highest thermal expansion of the common fluxes, so the glaze contracts more than the body on cooling.",
+          "source": "legacy-predictor-heuristic",
+          "evidence": "uncalibrated_heuristic"
+        },
+        {
+          "id": "alkali_elevated_flux",
+          "risk": 0.2,
+          "when": [
+            {
+              "kind": "umf_ratio",
+              "ratio": "alkali_ratio",
+              "op": ">",
+              "value": 0.3
+            }
+          ],
+          "message": "Alkalis are {ratio_value:.0%} of the flux - moderately expansion-prone.",
+          "source": "legacy-predictor-heuristic",
+          "evidence": "uncalibrated_heuristic"
+        }
+      ]
+    },
+    "shivering": {
+      "category": "glaze_fit",
+      "stress_type": "compression",
+      "summary": "The opposite of crazing: the glaze is under compression and flakes off the body, especially at edges. Glaze tolerates compression far worse than tension, so shivering is less common but more dangerous - flakes can be razor-sharp, a food-safety hazard.",
+      "chemistry_cause": "Glaze COE too low relative to the body COE.",
+      "chemistry_remedies": [
+        "Raise glaze expansion by substituting some CaO/MgO/Li2O/SrO/ZnO for Na2O",
+        "Switch to a higher-sodium frit (e.g. Ferro 3110)",
+        "Change only the Na2O/K2O balance when adjusting via chemistry software, compensating for any other oxides a feldspar or frit swap would introduce"
+      ],
+      "other_remedies": [],
+      "cross_reference": {
+        "source": "bloomfield-special-effect-glazes-2020",
+        "note": "Fix with about 5% added nepheline syenite, or a 5% cut in silica."
+      }
+    },
+    "crawling": {
+      "category": "surface",
+      "summary": "Molten glaze withdraws into islands, leaving bare clay patches.",
+      "causes": [
+        "Excessive drying shrinkage from too much raw clay in the glaze (over ~20% ball clay/kaolin)",
+        "Poor glaze-to-bisque bond",
+        "Slow drying (thick walls, dense bisque, high water content) that prolongs the fragile pre-crack stage"
+      ],
+      "remedies": [
+        "Replace some high-plasticity clay (ball clay) with a less plastic kaolin",
+        "Calcine part of the clay content - e.g. 35% kaolin as 15% calcined + 20% raw",
+        "Check specific gravity of the slurry; use deflocculant/flocculant to correct",
+        "Add gum binder to harden the dried layer and bond it to bisque",
+        "Apply thinner layers; a fountain-glazing approach for interiors",
+        "Speed drying: preheat bisque before dipping, thinner coats, more porous (lower-fired) bisque",
+        "Replace Gerstley Borate with a boron frit; use calcined rather than raw zinc oxide",
+        "For multi-coat glazes: make the upper layer lower-clay/lower-shrinkage, apply thin and fast-drying, or bisque between coats"
+      ],
+      "cross_reference": {
+        "source": "bloomfield-special-effect-glazes-2020",
+        "note": "To provoke it for testing: use light magnesium carbonate in place of dolomite and glaze heavily. To prevent it: glaze thinner, cut the clay content, or wipe the bisque down with a damp sponge first."
+      },
+      "risk_key": "crawling",
+      "baseline_risk": 0.1,
+      "triggers": [
+        {
+          "id": "high_alumina_stiff_raw_layer",
+          "risk": 0.3,
+          "when": [
+            {
+              "kind": "umf",
+              "oxide": "Al2O3",
+              "op": ">",
+              "value": 0.5
+            }
+          ],
+          "message": "Al2O3 {oxide_value:.2f} molar. A stiff, high-alumina raw layer shrinks more on drying and is likelier to lift from the body.",
+          "source": "legacy-predictor-heuristic",
+          "evidence": "uncalibrated_heuristic"
+        }
+      ]
+    },
+    "pinholing_pitting": {
+      "category": "surface",
+      "summary": "Small holes or pits where escaping gas disrupted the melt before it could heal over.",
+      "causes_by_source": {
+        "body": [
+          "Large or gas-producing particles that decompose late",
+          "Particles that melt too vigorously, forming glass chemistry that resists healing",
+          "Talc/dolomite/whiting release large gas volumes during decomposition",
+          "Soluble salts migrating to the surface on drying, forming a reactive layer",
+          "Open/porous body structure venting gas faster than the glaze can heal",
+          "Immature (underfired) body robbing the glaze of flux",
+          "Rough bisque surface from grog, sand, or trimming marks"
+        ],
+        "glaze": [
+          "Binder decomposing at high temperature",
+          "Late-decomposing materials (whiting, dolomite, talc, coloring carbonates) still gassing after the glaze starts to melt",
+          "Standard glaze fired on a fast-fire schedule it was not formulated for",
+          "Viscous melt that resists gas bubbles passing through",
+          "Glaze sealing over before the body finishes outgassing"
+        ],
+        "application": [
+          "Too-thin application with insufficient glaze to heal disruptions",
+          "Excessive slurry water, poor bonding, trapped air",
+          "Contamination; insufficient ball milling"
+        ],
+        "firing": [
+          "Firing too rapidly for the melt to smooth over disruptions",
+          "Mismatched gas-evolution timing between body and glaze",
+          "Inadequate kiln ventilation",
+          "Uneven heating (electric kiln, heavy or shaded ware)",
+          "Fast cooldown - pitting can occur on cooling too, especially with high-sulphur bodies"
+        ]
+      },
+      "remedies": [
+        "Sieve-analyze and replace coarse or gassy body particles",
+        "Substitute wollastonite for whiting (CaO), frits for MgO/talc, ceramic stains for carbonates",
+        "Bisque as high and as long as practical, with good oxidizing airflow",
+        "Slow the firing curve toward cone end (e.g. ~1 hour/cone at cone 6); soak if possible",
+        "Slow cool from peak - drop-and-hold, or ~150F/hr cooling through the critical range",
+        "Increase melt fluidity (more flux, lower Al2O3:SiO2, ZnO/SrO/Li2O additions) so bubbles can pass",
+        "Screen and ball-mill (12+ hours) to remove contamination",
+        "Reduce slurry water and increase specific gravity toward ~1.8 for denser laydown",
+        "For once-fired ware: switch to bisque firing, or use a fast-fire glaze with a soak"
+      ],
+      "cross_reference": {
+        "source": "bloomfield-special-effect-glazes-2020",
+        "note": "To provoke it for testing: glaze onto bisque that is still damp. To cure it: add a 15-30 minute soak at peak temperature before the kiln shuts off."
+      },
+      "risk_key": "pinholing",
+      "baseline_risk": 0.15,
+      "triggers": [
+        {
+          "id": "crash_cooling",
+          "risk": 0.4,
+          "when": [
+            {
+              "kind": "firing",
+              "field": "cooling_rate",
+              "op": "==",
+              "value": "crash"
+            }
+          ],
+          "message": "Crash cooling gives the melt no time to heal bubbles that surfaced late in the firing.",
+          "source": "legacy-predictor-heuristic",
+          "evidence": "uncalibrated_heuristic"
+        },
+        {
+          "id": "high_boron_offgassing",
+          "risk": 0.3,
+          "when": [
+            {
+              "kind": "umf",
+              "oxide": "B2O3",
+              "op": ">",
+              "value": 0.3
+            }
+          ],
+          "message": "B2O3 {oxide_value:.2f} molar. Boron-rich melts are still releasing gas as they stiffen.",
+          "source": "legacy-predictor-heuristic",
+          "evidence": "uncalibrated_heuristic"
+        }
+      ]
+    },
+    "blistering": {
+      "category": "surface",
+      "summary": "Larger ruptured bubbles in the fired surface; related to pinholing but driven more by melt rheology than raw gas volume.",
+      "causes": [
+        "Insufficient melt fluidity to heal bubble ruptures",
+        "Paradoxically, a fluid melt with high surface tension can also trap bubbles (common in reactive high-boron glazes)",
+        "Excessive gas generation from dolomite, whiting, manganese dioxide, or other carbonates",
+        "Body gassing (from organics, up to ~950C) escaping through an already-melted glaze",
+        "High boron (0.7+ molar at cone 6) causing phase separation into glass regions of differing surface tension - these often blister worse on a refire"
+      ],
+      "remedies": [
+        "Reformulate for more fluidity: more flux, or a lower Al2O3:SiO2 ratio",
+        "Use a drop-and-hold schedule - cool to a lower, higher-viscosity temperature where bubbles break but the melt still levels",
+        "Substitute frits/wollastonite/cleaner clays for high-gas carbonates",
+        "Use a fast-fire glaze formulation that stays unmelted until after ~950C",
+        "Reduce boron; expect worse blistering on any refire of a high-boron glaze",
+        "Fire bisque hot (cone 04-02) and slow through 700-950C (50C/hr is 'slow')",
+        "Apply thinner; raise slurry specific gravity toward 1.8; ball-mill up to 12 hours",
+        "In gas kilns: avoid heavy reduction, start reduction 1-2 cones above bisque temperature, avoid flame impingement"
+      ],
+      "cross_reference": {
+        "source": "bloomfield-special-effect-glazes-2020",
+        "note": "To deliberately induce (for testing): add 2% silicon carbide and 5% titanium dioxide to a matte glaze or underlying slip. To avoid: fire to a lower temperature, or apply the glaze more thinly."
+      },
+      "risk_key": "blistering",
+      "baseline_risk": 0.05,
+      "triggers": [
+        {
+          "id": "boron_phase_separation",
+          "risk": 0.45,
+          "when": [
+            {
+              "kind": "umf",
+              "oxide": "B2O3",
+              "op": ">=",
+              "value": 0.7
+            },
+            {
+              "kind": "cone",
+              "op": "<=",
+              "value": 6
+            }
+          ],
+          "message": "B2O3 {oxide_value:.2f} molar at cone {cone}. Above about 0.7 boron the glass separates into regions of differing surface tension, which blister - and blister worse on a refire.",
+          "source": "digitalfire",
+          "evidence": "book_quantified"
+        }
+      ]
+    },
+    "dunting_cracking": {
+      "category": "body",
+      "summary": "Cracks from thermal stress during firing or cooling, distinct from drying cracks.",
+      "causes": [
+        "Temperature gradients within a piece from uneven heating or cooling",
+        "Cooling (or heating) too fast through the quartz inversion point (~1050F / 570C)",
+        "Thick, uneven wall sections; sharp concave angles that concentrate stress",
+        "Wide flat bottoms absorbing heat unevenly from kiln shelves",
+        "Rapid heat-up rate amplifying existing gradients in thick or irregular pieces"
+      ],
+      "remedies": [
+        "Slow the firing cycle through quartz inversion in both directions, especially cooling",
+        "Extended low-temperature holds to remove moisture gradually",
+        "Round and compress sharp concave angles; aim for even wall thickness",
+        "Ensure even kiln heat distribution; electric kilns need slower firing (no draft to even things out)",
+        "Overnight candling at the boiling point before ramping up"
+      ]
+    },
+    "bittiness": {
+      "category": "surface",
+      "summary": "Small imperfections make the fired glaze surface look and feel slightly rough, despite adequate glaze thickness over the body.",
+      "causes": [
+        "Glaze not sieved, or sieved through too coarse a mesh, or a faulty sieve",
+        "Material added to the glaze after sieving",
+        "Contamination from material clinging to the clay/bisque surface, dislodged during dipping",
+        "Crystals of calcium carbonate growing in stored slop glaze - frits have a small but real solubility in water, and dissolved calcium recombines with carbonate ions from dissolved CO2 in the water over time (worse in warm weather, worse with more soluble/alkaline frits)"
+      ],
+      "remedies": [
+        "Resieve the glaze through a sufficiently fine mesh; fit a recirculation pump to keep glaze in suspension and continuously screened",
+        "Store slop glaze cool - calcium carbonate crystal growth is markedly slower in cold storage",
+        "Store glaze dry rather than as a slop where practical",
+        "Reformulate toward stiffer, less soluble frits if recurring",
+        "A small acid addition (hydrochloric or acetic) delays carbonate bead formation, but flocculates the glaze - usually not worth the tradeoff"
+      ],
+      "cross_reference": {
+        "source": "fraser-ceramic-faults-2005",
+        "note": "Removing the tiny calcium carbonate beads before use does not measurably change the fired glaze, since the calcium removed is a small fraction of the total."
+      }
+    },
+    "bloating": {
+      "category": "body",
+      "summary": "Bulges or blisters appear in ware fired to vitrification (stoneware/porcelain), revealing a cavity when broken open. Rare in porous bodies like earthenware.",
+      "chemistry_cause": "Gas generation (from carbonaceous material burning off, or dissociation of iron oxides/sulphides/carbonates/manganese) coinciding with vitrification sealing the body's surface before the gas can escape.",
+      "causes": [
+        "Overfiring, or firing too quickly through the 650-1000C carbon-burnout range before the surface vitrifies",
+        "Increased volatile/carbonaceous material content in the clay batch (fireclays and ball clays can vary 1-2% batch to batch)",
+        "Residual moisture in once-fired ware at the point the surface densifies, trapping interior gas",
+        "Reduction within the 650-1000C range converts Fe2O3 to FeO, a much more vigorous flux that seals the surface early",
+        "More common in electric kilns (poor ventilation vs. a gas kiln's moving atmosphere) and in tightly packed loads"
+      ],
+      "remedies": [
+        "Lower the maximum firing temperature (treats the symptom, not the cause, but usually works)",
+        "Slow the firing through the 650-1000C carbon-burnout range, or extend once-fired ware's time in that range to 5+ hours",
+        "Add grog or coarse sand to open the body structure and let gases escape more easily",
+        "Use low-iron clays/grogs if firing in reduction, since high-iron material fluxes and softens early, allowing easier deformation",
+        "Ensure ware is fully dry before firing, or slow the firing to compensate for residual moisture",
+        "To diagnose: refire some unglazed ware from the same load - if it stays bloat-free while glazed ware bloats, the cause is trapped gas rather than overfiring"
+      ],
+      "cross_reference": {
+        "source": "fraser-ceramic-faults-2005",
+        "note": "Electric kilns bloat more readily than gas due to poorer ventilation during the carbon-burnout stage."
+      },
+      "risk_key": "bloating",
+      "baseline_risk": 0.0,
+      "triggers": [
+        {
+          "id": "iron_body_in_reduction",
+          "risk": 0.3,
+          "when": [
+            {
+              "kind": "firing",
+              "field": "atmosphere",
+              "op": "==",
+              "value": "reduction"
+            },
+            {
+              "kind": "clay_body",
+              "field": "analysis.Fe2O3",
+              "op": ">",
+              "value": 1.5
+            }
+          ],
+          "message": "Reduction firing on a body carrying {clay_body_value:.1f}% Fe2O3. Reduction between 650 and 1000C converts Fe2O3 to FeO, a far more vigorous flux, which can seal the surface before carbon has finished burning out. Note this also depends on your heating rate through that range, which this app does not model.",
+          "source": "fraser-ceramic-faults-2005",
+          "evidence": "book_quantified"
+        }
+      ]
+    },
+    "blow_out": {
+      "category": "body",
+      "summary": "A piece of biscuit or glazed biscuit flakes/ejects away from the pot, usually during biscuit firing, leaving a cavity - often with a white or off-white particle remnant visible at its base.",
+      "causes": [
+        "Particles of pyrites or lime-bearing nodules in the clay, which hydrate and swell after a low-temperature biscuit firing",
+        "With once-fired (not twice-fired) ware, pyrite particles can eject pieces of ware directly"
+      ],
+      "remedies": [
+        "Source clay with fewer mineral inclusions, or screen/process to remove them",
+        "Lime blow-outs are rare in stoneware/porcelain: the higher firing temperature converts the lime nodule into stable complex silicates instead of reverting to reactive calcium oxide on cooling, and the fired body is strong enough to resist the hydration pressure"
+      ],
+      "cross_reference": {
+        "source": "fraser-ceramic-faults-2005",
+        "note": "Distinct from bloating: blow-out is a biscuit-stage mineral-inclusion problem, not a glost-stage gas-trapping problem."
+      }
+    },
+    "colemanite_splutter": {
+      "category": "glaze_fit",
+      "summary": "Pieces of glaze are ejected from the pot during firing when colemanite releases its water of crystallisation too quickly (colemanite is ~27% water by weight, typically released 400-800C) - leaves bare patches on the ware and glaze speckles on the kiln shelf.",
+      "chemistry_cause": "Colemanite (hydrated calcium borate, ~2CaO*3B2O3*5H2O, composition varies by source) is a variable, partly-soluble natural mineral - unlike a fritted boron source, its water of crystallisation is released raw during firing rather than already driven off during manufacture.",
+      "causes": [
+        "Too much colemanite in the recipe relative to what the glaze film thickness can tolerate",
+        "European (Turkish) colemanite splutters more readily than American sources at the same percentage"
+      ],
+      "chemistry_remedies": [
+        "Swap the colemanite for a calcium borate frit - the same boron and calcium, with the water already driven off during fritting. This is the usual industry fix.",
+        "Keep raw colemanite to roughly 7-10% of the recipe for European sources if it must be used raw (American colemanite tolerates somewhat more)"
+      ],
+      "other_remedies": [
+        "Fire more slowly up to about 800C",
+        "Keep the glaze film as thin as possible"
+      ],
+      "cross_reference": {
+        "source": "fraser-ceramic-faults-2005",
+        "note": "Gerstley Borate behaves similarly - it's an ore containing colemanite plus ulexite (sodium calcium borate)."
+      },
+      "risk_key": "colemanite_splutter",
+      "baseline_risk": 0.0,
+      "triggers": [
+        {
+          "id": "colemanite_batch_high",
+          "risk": 0.55,
+          "when": [
+            {
+              "kind": "batch_pct",
+              "materials": [
+                "Colemanite",
+                "Gerstley Borate"
+              ],
+              "op": ">",
+              "value": 10
+            }
+          ],
+          "message": "{batch_pct:.0f}% colemanite or Gerstley Borate in the batch. Colemanite is roughly 27% water of crystallisation by weight, released between 400 and 800C; above about 7-10% it ejects glaze off the ware. Calcium borate frit is the same chemistry with the water already driven off.",
+          "source": "fraser-ceramic-faults-2005",
+          "evidence": "book_quantified"
+        },
+        {
+          "id": "colemanite_batch_caution",
+          "risk": 0.25,
+          "when": [
+            {
+              "kind": "batch_pct",
+              "materials": [
+                "Colemanite",
+                "Gerstley Borate"
+              ],
+              "op": ">",
+              "value": 7
+            }
+          ],
+          "message": "{batch_pct:.0f}% colemanite or Gerstley Borate. European (Turkish) colemanite splutters at lower percentages than American; fire slowly to 800C and keep the glaze thin.",
+          "source": "fraser-ceramic-faults-2005",
+          "evidence": "book_quantified"
+        }
+      ]
+    },
+    "running": {
+      "category": "glaze_fit",
+      "summary": "Glaze flows down the ware during firing, thinning at the rim and pooling at the foot - at worst welding the pot to the shelf.",
+      "causes": [
+        "Insufficient alumina to hold melt viscosity",
+        "Overfiring, or too long a soak at peak temperature",
+        "Glaze applied too thickly"
+      ],
+      "remedies": [
+        "Raise Al2O3, typically by substituting kaolin for part of the feldspar",
+        "Apply more thinly and keep the glaze well clear of the foot",
+        "Fire to a lower temperature or shorten the soak",
+        "Use a shelf cookie under pieces glazed near the foot"
+      ],
+      "cross_reference": {
+        "source": "legacy-predictor-heuristic",
+        "note": "Entry added so the predictor's long-standing alumina rules have a documented home; the thresholds are uncalibrated heuristics, not book-sourced."
+      },
+      "risk_key": "running",
+      "baseline_risk": 0.1,
+      "triggers": [
+        {
+          "id": "very_low_alumina",
+          "risk": 0.5,
+          "when": [
+            {
+              "kind": "umf",
+              "oxide": "Al2O3",
+              "op": "<",
+              "value": 0.2
+            }
+          ],
+          "message": "Al2O3 {oxide_value:.2f} molar. Below about 0.2 there is little alumina holding the melt's viscosity up.",
+          "source": "legacy-predictor-heuristic",
+          "evidence": "uncalibrated_heuristic"
+        },
+        {
+          "id": "low_alumina",
+          "risk": 0.3,
+          "when": [
+            {
+              "kind": "umf",
+              "oxide": "Al2O3",
+              "op": "<",
+              "value": 0.3
+            }
+          ],
+          "message": "Al2O3 {oxide_value:.2f} molar - a fluid melt; keep the glaze off the foot.",
+          "source": "legacy-predictor-heuristic",
+          "evidence": "uncalibrated_heuristic"
+        }
+      ]
+    }
+  },
+  "trigger_schema": {
+    "description": "Executable conditions that turn each defect entry into a risk the predictor can raise against a specific recipe, with the source attached. Conditions inside one trigger's `when` are ANDed; triggers within a defect are ORed and combined by max, never summed, so the value stays in 0-1 and interpretable.",
+    "condition_kinds": {
+      "umf": "oxide/op/value against the recipe UMF",
+      "umf_ratio": "ratio/op/value against a computed UMF ratio (e.g. alkali_ratio)",
+      "batch_pct": "materials[]/op/value against summed raw batch percentage - needed where the fired UMF cannot see the problem, as with colemanite's water of crystallisation",
+      "cone": "op/value against the firing cone number",
+      "firing": "field/op/value against the firing schedule",
+      "clay_body": "field/op/value against the clay body record (dotted paths allowed)"
+    },
+    "evidence_levels": {
+      "book_quantified": "Threshold stated quantitatively in a cited published source.",
+      "uncalibrated_heuristic": "Inherited from the predictor's original hardcoded thresholds. General ceramic principle, not calibrated against firing data."
+    }
+  }
+}

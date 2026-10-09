@@ -81,12 +81,42 @@ class TestClassification:
         assert classification.stull.si_al_ratio > 8
 
     def test_classify_matte(self, classifier, matte_recipe):
-        """Test classification of matte glaze."""
+        """The matte fixture (Si:Al 5.6, Al2O3 0.5, CaO 0.5) now classifies
+        GLOSSY, and that is a deliberate change rather than a regression.
+
+        The old hardcoded cuts said "Si:Al below 6 is matte, and above
+        Al2O3 0.45 it is dry matte". Against 7,575 labelled community
+        recipes those cuts scored 52.2% - worse than always answering
+        "glossy" (60.5%). In the band this fixture occupies the corpus is
+        52% glossy (n=1,256); narrowed further to Al2O3 above 0.45 it is
+        still 49% glossy against 23% matte (n=643).
+
+        Reinstating an Al2O3 override to keep this test's original
+        expectation was considered and rejected: it would override
+        measurement with a textbook belief, and adding Al2O3 as a feature
+        measures worse overall (64.9% vs 65.3%). What the test pins now is
+        the ratio, which is unambiguous, plus the fact that the model
+        reports its own uncertainty for a chemistry this borderline.
+        """
         classification = classifier.classify(matte_recipe)
 
-        # DRY_MATTE is also a valid matte classification for low Si:Al ratios
-        assert classification.stull.region in [StullRegion.MATTE, StullRegion.SATIN, StullRegion.DRY_MATTE]
         assert classification.stull.si_al_ratio < 8
+        prediction = matte_recipe.umf.predict_surface()
+        assert prediction.probabilities["matte"] > 0.15
+        assert prediction.confidence < 0.6, "a borderline glaze must not read as certain"
+
+    def test_dry_matte_still_distinguished_when_model_says_matte(self, classifier):
+        """High alumina picks DRY_MATTE over plain MATTE - but only once
+        the calibrated model has already concluded matte. Alumina refines
+        which kind of matte, it does not overrule the gloss call."""
+        recipe = GlazeRecipe(
+            name="Stiff Matte",
+            ingredients=[GlazeIngredient(material_name="Kaolin", percentage=100.0)],
+            target_cone=ConeTemperature.CONE_6,
+            umf=UMF(SiO2=1.8, Al2O3=0.6, CaO=0.7, MgO=0.3),
+        )
+        classification = classifier.classify(recipe)
+        assert classification.stull.region in (StullRegion.DRY_MATTE, StullRegion.MATTE)
 
     def test_classify_no_umf_raises(self, classifier):
         """Test that classification without UMF raises error."""
@@ -220,3 +250,60 @@ class TestStullCoordinates:
         """Test stability check."""
         classification = classifier.classify(glossy_recipe)
         assert classification.stull.is_stable
+
+
+class TestIndexKeying:
+    """The search index is keyed by a caller-supplied stable id, not by
+    name. Keying by name silently dropped 1,007 of the 10,799 Glazy bulk
+    records whose names collide ("floating blue" appears 22 times, and 50
+    records have no name at all) - they were absent from every region and
+    category search while still inflating the bucket counts.
+    """
+
+    def _recipe(self, name, sio2, al2o3):
+        return GlazeRecipe(
+            name=name,
+            ingredients=[GlazeIngredient(material_name="Feldspar", percentage=100.0)],
+            target_cone=ConeTemperature.CONE_6,
+            umf=UMF(SiO2=sio2, Al2O3=al2o3, CaO=0.6, K2O=0.4),
+        )
+
+    def test_same_name_different_keys_both_indexed(self, classifier):
+        classifier.classify(self._recipe("Floating Blue", 3.8, 0.35), index_key="glazy:1")
+        classifier.classify(self._recipe("Floating Blue", 2.4, 0.55), index_key="glazy:2")
+        assert classifier.get_statistics()["total_indexed"] == 2
+
+    def test_unnamed_records_do_not_collapse(self, classifier):
+        for i in range(5):
+            classifier.classify(self._recipe("", 3.8, 0.35), index_key=f"glazy:{i}")
+        assert classifier.get_statistics()["total_indexed"] == 5
+
+    def test_reclassifying_same_key_does_not_duplicate(self, classifier):
+        """Buckets used to grow unboundedly: the dict overwrote but the
+        region/category lists appended every time."""
+        for _ in range(4):
+            classifier.classify(self._recipe("Same Glaze", 3.8, 0.35), index_key="glazy:7")
+        stats = classifier.get_statistics()
+        assert stats["total_indexed"] == 1
+        assert sum(stats["by_region"].values()) == 1
+        assert sum(stats["by_category"].values()) == 1
+
+    def test_bucket_totals_match_index_size(self, classifier):
+        for i in range(6):
+            classifier.classify(self._recipe(f"Glaze {i}", 3.0 + i * 0.2, 0.35), index_key=f"g:{i}")
+        stats = classifier.get_statistics()
+        assert sum(stats["by_region"].values()) == stats["total_indexed"]
+        assert sum(stats["by_category"].values()) == stats["total_indexed"]
+
+    def test_region_search_returns_display_names_not_keys(self, classifier):
+        c = classifier.classify(self._recipe("Amber Celadon", 3.8, 0.35), index_key="glazy:99")
+        assert "Amber Celadon" in classifier.search_by_region(c.stull.region)
+
+    def test_lookup_by_name_still_works_when_keyed_by_id(self, classifier):
+        classifier.classify(self._recipe("Amber Celadon", 3.8, 0.35), index_key="glazy:99")
+        found = classifier.get_classification("Amber Celadon")
+        assert found is not None and found.recipe_name == "Amber Celadon"
+
+    def test_defaults_to_name_when_no_key_given(self, classifier):
+        classifier.classify(self._recipe("Legacy Path", 3.8, 0.35))
+        assert classifier.get_classification("Legacy Path") is not None

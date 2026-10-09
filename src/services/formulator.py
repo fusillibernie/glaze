@@ -1,9 +1,17 @@
 """Glaze formulation engine."""
 
-from dataclasses import dataclass, field
+import logging
+from dataclasses import dataclass, field, fields as dataclass_fields, replace
 from typing import Optional
 
 from ..models.materials import Material, MaterialType, OxideAnalysis, OXIDE_MOLECULAR_WEIGHTS
+
+# Every combinable oxide on OxideAnalysis (LOI excluded - it's not part of
+# the fired glass). Derived from the dataclass rather than hand-listed: the
+# three call sites below used to each hardcode their own copy of this list,
+# and all three had silently drifted to the same incomplete 23-of-26 set
+# (missing MnO2, V2O5, F). A derived list can't drift out of sync again.
+_COMBINABLE_OXIDES = [f.name for f in dataclass_fields(OxideAnalysis) if f.name != "LOI"]
 from ..models.glaze import (
     GlazeRecipe,
     GlazeIngredient,
@@ -125,6 +133,9 @@ class ResolvedInheritance:
     inherited_ingredients: list[GlazeIngredient]
 
 
+logger = logging.getLogger(__name__)
+
+
 class GlazeFormulator:
     """Engine for creating and adjusting glaze recipes."""
 
@@ -225,22 +236,59 @@ class GlazeFormulator:
             inherited_ingredients=inherited,
         )
 
+    def _resolve(self, ingredient: GlazeIngredient) -> Optional[Material]:
+        """Look up an ingredient's material, logging when it cannot be resolved.
+
+        An unresolved ingredient is excluded from the oxide totals, which are
+        then normalized to unity — so the resulting UMF looks valid while
+        understating whatever the missing material contributed. Callers that
+        report chemistry to a user should also surface
+        `MaterialsDatabase.unresolved()` so the omission is visible.
+        """
+        material = self.materials_db.get(ingredient.material_name)
+        if material is None:
+            logger.warning(
+                "Unresolved ingredient %r (%.1f%%) excluded from analysis",
+                ingredient.material_name, ingredient.percentage,
+            )
+        return material
+
+    def unresolved_ingredients(self, recipe: GlazeRecipe) -> list[str]:
+        """Ingredient names in `recipe` that match no known material."""
+        return self.materials_db.unresolved(
+            i.material_name for i in recipe.ingredients
+        )
+
     def calculate_recipe_analysis(
         self,
         recipe: GlazeRecipe,
+        include_colorants: bool = False,
     ) -> OxideAnalysis:
         """Calculate the combined oxide analysis for a recipe.
 
         Args:
             recipe: Glaze recipe.
+            include_colorants: Fold colorant additions in as well. Off by
+                default because UMF is conventionally the base-glaze unity
+                formula and colorants are expressed as additions on top of
+                100% base. Turn it on to answer "how much iron is actually
+                in the fired glaze", which is what published composition
+                targets state.
 
         Returns:
             Combined oxide analysis.
         """
         combined = OxideAnalysis()
 
-        for ingredient in recipe.ingredients:
-            material = self.materials_db.get(ingredient.material_name)
+        contributions = list(recipe.ingredients)
+        if include_colorants:
+            contributions += [
+                GlazeIngredient(material_name=c.material_name, percentage=c.percentage)
+                for c in recipe.colorants
+            ]
+
+        for ingredient in contributions:
+            material = self._resolve(ingredient)
             if not material:
                 continue
 
@@ -248,17 +296,39 @@ class GlazeFormulator:
             factor = ingredient.percentage / 100.0
             analysis = material.analysis.oxide_analysis
 
-            for oxide in [
-                "SiO2", "Al2O3", "B2O3", "Na2O", "K2O", "Li2O",
-                "CaO", "MgO", "BaO", "SrO", "ZnO", "PbO",
-                "Fe2O3", "FeO", "TiO2", "MnO", "CuO", "CoO",
-                "Cr2O3", "NiO", "ZrO2", "SnO2", "P2O5"
-            ]:
+            for oxide in _COMBINABLE_OXIDES:
                 current = getattr(combined, oxide)
                 addition = getattr(analysis, oxide) * factor
                 setattr(combined, oxide, current + addition)
 
         return combined
+
+    def fired_weight_percent(
+        self,
+        recipe: GlazeRecipe,
+        include_colorants: bool = True,
+    ) -> dict[str, float]:
+        """Oxide analysis as fired weight percent, normalized to 100.
+
+        This is the basis published composition targets are usually quoted
+        on ("Fe2O3 1.0-1.5%", "TiO2 below 0.2%"), and it is NOT what the
+        UMF panel shows: UMF is molar, normalized to flux unity, and
+        excludes colorant additions. A recipe carrying 1% red iron oxide
+        as an addition reads Fe2O3 0.10 in the base UMF and 1.16 here -
+        the difference between "nowhere near target" and "on target".
+
+        LOI is excluded, since it has left by the time the glaze is fired.
+        """
+        analysis = self.calculate_recipe_analysis(recipe, include_colorants=include_colorants)
+        weights = {
+            oxide: getattr(analysis, oxide)
+            for oxide in _COMBINABLE_OXIDES
+            if getattr(analysis, oxide) > 0
+        }
+        total = sum(weights.values())
+        if total <= 0:
+            return {}
+        return {oxide: round(value / total * 100, 3) for oxide, value in weights.items()}
 
     def calculate_dual_umf(
         self,
@@ -284,7 +354,7 @@ class GlazeFormulator:
         insoluble_ingredients = []
 
         for ingredient in recipe.ingredients:
-            material = self.materials_db.get(ingredient.material_name)
+            material = self._resolve(ingredient)
             if not material:
                 insoluble_ingredients.append(ingredient)
                 continue
@@ -305,15 +375,11 @@ class GlazeFormulator:
         body_analysis = OxideAnalysis()
         surface_analysis = OxideAnalysis()
 
-        oxides = [
-            "SiO2", "Al2O3", "B2O3", "Na2O", "K2O", "Li2O",
-            "CaO", "MgO", "BaO", "SrO", "ZnO", "PbO",
-            "Fe2O3", "FeO", "TiO2", "MnO", "CuO", "CoO",
-            "Cr2O3", "NiO", "ZrO2", "SnO2", "P2O5"
-        ]
+        oxides = _COMBINABLE_OXIDES
 
         # Add insoluble materials fully to both body and surface
         for ingredient in insoluble_ingredients:
+            # Already logged when first resolved above.
             material = self.materials_db.get(ingredient.material_name)
             if not material:
                 continue
@@ -350,7 +416,7 @@ class GlazeFormulator:
         flux_oxides = ["Na2O", "K2O", "Li2O", "CaO", "MgO", "BaO", "SrO", "ZnO", "PbO"]
 
         for ingredient in recipe.ingredients:
-            material = self.materials_db.get(ingredient.material_name)
+            material = self._resolve(ingredient)
             if not material:
                 continue
             factor = ingredient.percentage / 100.0
@@ -405,14 +471,8 @@ class GlazeFormulator:
         # Add virtual ash: multiply ash composition by position multiplier
         # and add to the base analysis
         modified_analysis = OxideAnalysis()
-        oxides = [
-            "SiO2", "Al2O3", "B2O3", "Na2O", "K2O", "Li2O",
-            "CaO", "MgO", "BaO", "SrO", "ZnO", "PbO",
-            "Fe2O3", "FeO", "TiO2", "MnO", "CuO", "CoO",
-            "Cr2O3", "NiO", "ZrO2", "SnO2", "P2O5"
-        ]
 
-        for oxide in oxides:
+        for oxide in _COMBINABLE_OXIDES:
             base_val = getattr(base_analysis, oxide)
             ash_val = ash_comp.get(oxide, 0.0) * multiplier
             setattr(modified_analysis, oxide, base_val + ash_val)
@@ -566,10 +626,15 @@ class GlazeFormulator:
         Returns:
             Adjusted recipe.
         """
+        # Copy the ingredient objects, not just the list. list() gives a
+        # new list holding the SAME GlazeIngredient instances, so the
+        # mutations below (`ing.percentage += amount`, then the
+        # renormalize loop) rewrote the caller's recipe in place - a
+        # 40/30/30 recipe came back from adjust_recipe as 36.4/36.4/27.3.
         new_recipe = GlazeRecipe(
             name=f"{recipe.name} (adjusted)",
-            ingredients=list(recipe.ingredients),
-            colorants=list(recipe.colorants),
+            ingredients=[replace(i) for i in recipe.ingredients],
+            colorants=[replace(c) for c in recipe.colorants],
             target_cone=recipe.target_cone,
             suitable_atmospheres=list(recipe.suitable_atmospheres),
             suitable_clay_bodies=list(recipe.suitable_clay_bodies),
@@ -634,10 +699,13 @@ class GlazeFormulator:
         Returns:
             New recipe with colorant added.
         """
+        # Copied for the same reason as adjust_recipe: sharing the objects
+        # only stays safe while nothing downstream mutates them, which is
+        # not a property worth relying on.
         new_recipe = GlazeRecipe(
             name=f"{recipe.name} + {colorant_name}",
-            ingredients=list(recipe.ingredients),
-            colorants=list(recipe.colorants),
+            ingredients=[replace(i) for i in recipe.ingredients],
+            colorants=[replace(c) for c in recipe.colorants],
             target_cone=recipe.target_cone,
             suitable_atmospheres=list(recipe.suitable_atmospheres),
             suitable_clay_bodies=list(recipe.suitable_clay_bodies),

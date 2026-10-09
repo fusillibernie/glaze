@@ -1,0 +1,97 @@
+{
+  "description": "Per-oxide properties for glaze chemistry calculations, sourced from Digitalfire's oxide reference pages ahead of the site's shutdown. Replaces the analyzer's earlier invented 'simplified Appen factors' with published coefficients.",
+  "coe_note": "Coefficient of linear expansion values are Digitalfire's tabulated per-oxide factors. Digitalfire's own pages don't state the exponent explicitly; use of the values here is calibrated by src/services/analyzer.py's GlazeAnalyzer._calculate_coe, which converts a glaze's UMF to oxide weight percent and sums weight_percent x factor per oxide. That calculation was validated against typical cone 6 glossy UMFs and lands in the ~5-8 range, matching the x10^-6/C scale already used for clay body COE in data/materials/clay_bodies.json - so a calculated glaze COE and a clay_bodies.json body COE are directly comparable. Digitalfire is explicit that this approach does not extend to clay bodies: fired clay is a mix of unreacted mineral grains, melted glass, and altered crystal phases, so no oxide-formula calculation predicts body COE - always resolve body COE from clay_bodies.json or a real measurement, never calculate it. Treat any calculated glaze COE as a starting point for empirical testing (a bar or ring test), not a guarantee of fit.",
+  "source": "digitalfire",
+  "oxides": {
+    "SiO2": {
+      "name": "Silica",
+      "role": "glass_former",
+      "coe_factor": 0.035,
+      "effects": "Principal glass-forming oxide, typically >60% of most glazes. Lowers thermal expansion (lowest of all oxides alongside B2O3 and Al2O3). Raises melting point; less SiO2 relative to flux increases melt fluidity. Increases acid resistance, hardness, gloss and resistance to leaching."
+    },
+    "Al2O3": {
+      "name": "Alumina",
+      "role": "intermediate",
+      "coe_factor": 0.063,
+      "effects": "Second only to SiO2 in importance. Stiffens the melt and stabilizes it across a wider temperature range, preventing runoff. Prime source of durability: raises melting temperature, tensile strength and hardness; lowers thermal expansion."
+    },
+    "B2O3": {
+      "name": "Boron",
+      "role": "flux",
+      "coe_factor": 0.031,
+      "effects": "Acts as both glass former and flux - primary melting agent below cone 6. Low thermal expansion in normal amounts, valuable against crazing; but above roughly 10-14% the effect reverses and elasticity loss increases crazing risk. Only fritted forms (not borax/boracic acid) are suitable raw material sources - those are soluble."
+    },
+    "Na2O": {
+      "name": "Soda",
+      "role": "flux",
+      "coe_factor": 0.387,
+      "effects": "Strongest common flux, active 900-1300C. Highest thermal expansion of any oxide - the single biggest driver of crazing when overrepresented, especially with feldspar >35-40% and insufficient SiO2/Al2O3. Produces bright, brilliant surfaces with strong copper/cobalt/iron color response. Volatilizes at high temperature (the mechanism behind salt/soda firing). Increases lead solubility when both are present."
+    },
+    "K2O": {
+      "name": "Potash",
+      "role": "flux",
+      "coe_factor": 0.331,
+      "effects": "Important auxiliary high-temperature flux. High thermal expansion, though somewhat less severe than Na2O; promotes higher melt viscosity than Na2O. Very stable and predictable. Intensifies cobalt blue (to 2%), copper blue and other colorants, especially in low-alumina alkaline glazes."
+    },
+    "Li2O": {
+      "name": "Lithia",
+      "role": "flux",
+      "coe_factor": 0.068,
+      "effects": "Powerful flux; 1% noticeably increases gloss, ~3% can drop melting temperature several cones. Much lower expansion than Na2O/K2O at normal levels, but nonlinear: above ~5% it can drastically raise expansion instead, and expansion calculations become unreliable in that range (glazes may shiver despite a low calculated COE). Lightest and most reactive alkali; promotes fluid, color-saturated melts and devitrification. Can cause bubbling used alone."
+    },
+    "CaO": {
+      "name": "Calcia",
+      "role": "flux",
+      "coe_factor": 0.148,
+      "effects": "Ineffective flux below cone 4, moderate at 5-6, very active at cone 10 (melting point 2910C, but active in glazes from ~1100C). Hardens glazes and improves acid/scratch resistance. Intermediate thermal expansion, but replacing SiO2/Al2O3 with CaO as a flux pushes expansion upward - crazing has been observed from as little as 10% calcium carbonate addition. 30%+ encourages crystal growth (matte/decorative)."
+    },
+    "MgO": {
+      "name": "Magnesia",
+      "role": "flux",
+      "coe_factor": 0.026,
+      "effects": "Secondary high-temperature flux, active from ~1170C; frit softening point 2800C, tied for highest of any oxide. Increases melt viscosity and surface tension, producing silky micro-wrinkled mattes and opacity above ~0.4 molar. Very low thermal expansion - replacing alkalis with MgO is described as the single most effective way to reduce crazing. Poor host for bright colors (hostile to chrome red) but excellent for earth tones, cobalt purple/pink, nickel green. Does not volatilize; can cause crawling if it worsens dry-layer shrinkage."
+    },
+    "ZnO": {
+      "name": "Zinc",
+      "role": "flux",
+      "coe_factor": 0.094,
+      "effects": "Metallic oxide flux (with PbO); melting point 1975C, frit softening 1800C, begins fluxing around 1000C - a late, vigorous melter for low-fire glazes. Low-expansion secondary flux that improves elasticity, helping glazes that would otherwise craze or shiver. In moderate-to-high amounts (up to 0.8 molar) produces mattes and willemite (Zn2SiO4) crystal surfaces on slow cooling, which can cause cutlery marking. Powerful flux up to 5%."
+    },
+    "BaO": {
+      "name": "Barium",
+      "role": "flux",
+      "coe_factor": 0.129,
+      "effects": "Matting agent with strong color response (marked blue with copper); high refractive index brightens in-glaze color. Forms silicates slowly; most effective combined with other fluxes. Use with caution in functional ware - like lead, it leaches from improperly formulated or fired surfaces, and art-glaze levels above ~20% (sometimes 40-50%) BaCO3 are almost certainly leachable, especially in 'dry matte'/'stony matte' surfaces."
+    },
+    "SrO": {
+      "name": "Strontia",
+      "role": "flux",
+      "coe_factor": 0.130,
+      "effects": "Non-hazardous, non-poisonous - a viable substitute for barium or small amounts of lead. Does not break down until ~1100C (cone 02) raw, so needs a fritted source below that. Expansion akin to CaO; substituting SrO for BaO can improve interface and lower expansion. Substituting part of the CaO for SrO in stoneware glazes often produces a glossier surface; particularly useful at cone 1 for high-gloss, craze-resistant glazes."
+    },
+    "PbO": {
+      "name": "Lead",
+      "role": "flux",
+      "coe_factor": 0.083,
+      "effects": "Reacts readily with silica for low-melting, high-gloss lead silicates with long firing range and low thermal expansion. Strong color response: iron tans/browns/reds, titanium yellows/reds. FDA 1992 CPG sets 4% acetic-acid leach limits (cups/mugs dropped from 5.0 to 0.5 micrograms/ml). Inhalation risk above 0.075 mg/m3 over an 8-hour workday; blood concern above 40 micrograms/100ml. Even leaded frits can leach if formulation or firing is faulty. Alkalis (Na2O, K2O) increase lead solubility when combined."
+    },
+    "Fe2O3": {
+      "name": "Iron (ferric)",
+      "role": "colorant",
+      "coe_factor": 0.125,
+      "effects": "Behaves as a refractory antiflux in oxidation, combining with alkalis. In reduction it converts to FeO and becomes a remarkable flux, sharply increasing fluidity - the same glaze can be stable and light in oxidation, dark and fluid in reduction. Oxidation color by concentration: amber/yellow ~4%, tan ~6%, browns higher, matte by ~20%."
+    },
+    "TiO2": {
+      "name": "Titania",
+      "role": "colorant_opacifier",
+      "coe_factor": 0.144,
+      "effects": "Opacifies, variegates and crystallizes glazes; modifies colorant response from Cr, Mn, Fe, Co, Ni, Cu. Below 1% dissolves fully; 1-2% gives a bluish-white flush; 2-6% increasingly variegates via minute crystals; 5%+ opacity/matteness accelerates; 5-10% gives yellow/tan crystalline surfaces. Some lead glazes can absorb up to 25%."
+    },
+    "ZrO2": {
+      "name": "Zirconia",
+      "role": "opacifier",
+      "coe_factor": 0.020,
+      "effects": "Effective opacifier, especially as zirconium silicate (Zircopax). Does not dissolve into the melt, so it does not participate in glaze chemistry - but its very high melting point (~2700C) and surface tension stiffen and can harden the melt even below opacifying levels. 7.5-10% zirconium silicate gives comparable opacity to 15% zircon."
+    }
+  }
+}

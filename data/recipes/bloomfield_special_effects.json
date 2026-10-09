@@ -1,0 +1,594 @@
+{
+  "_source_note": "Recipes extracted from Linda & Henry Bloomfield's 'New Ceramics: Special Effect Glazes' (Herbert Press / American Ceramic Society, 2020) - ingredient/percentage data only, descriptions written independently. UK material terms (china clay, quartz/flint, potash/soda feldspar, borax/calcium borate frit) are mapped to specific US materials in this app's database as a reasonable generic equivalence, not a claim the author specified those exact brands. Some recipes reference materials not in this database (rare earth oxides, fine silicon carbide, aluminum powder) - these will show as unresolved ingredients.",
+  "bloomfield_special_effect_glazes": [
+    {
+      "name": "Yellow Matt Glaze (Iron)",
+      "source": "bloomfield-special-effect-glazes-2020",
+      "description": "Nepheline-syenite matt base with a heavy barium content, colored with red iron oxide and opacified with zirconium silicate.",
+      "cone": "8",
+      "atmosphere": "oxidation",
+      "surface": "matte",
+      "ingredients": [
+        {
+          "material": "Nepheline Syenite",
+          "percentage": 42.5
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 15.5
+        },
+        {
+          "material": "Barium Carbonate",
+          "percentage": 24.0
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 9.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 9.0
+        }
+      ],
+      "variations": [
+        {
+          "name": "Yellow Matt Glaze (Iron)",
+          "colorants": [
+            {
+              "material": "Zircopax",
+              "percentage": 19.0
+            },
+            {
+              "material": "Red Iron Oxide",
+              "percentage": 3.5
+            }
+          ],
+          "expected_color": "yellow matte"
+        }
+      ],
+      "notes": "Contains barium carbonate - not food safe as formulated."
+    },
+    {
+      "name": "Red Iron Glaze",
+      "source": "bloomfield-special-effect-glazes-2020",
+      "description": "Potash-feldspar/bone-ash base fired red with a high red iron oxide addition.",
+      "cone": "8",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 47.0
+        },
+        {
+          "material": "Talc",
+          "percentage": 17.0
+        },
+        {
+          "material": "Bone Ash",
+          "percentage": 15.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 11.5
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 6.0
+        },
+        {
+          "material": "Lithium Carbonate",
+          "percentage": 4.0
+        }
+      ],
+      "variations": [
+        {
+          "name": "Red Iron Glaze",
+          "colorants": [
+            {
+              "material": "Red Iron Oxide",
+              "percentage": 11.5
+            }
+          ],
+          "expected_color": "red (to cone 8)"
+        }
+      ]
+    },
+    {
+      "name": "Rutile-Tin Pink Glaze",
+      "source": "bloomfield-special-effect-glazes-2020",
+      "description": "Soda-feldspar/boron-frit base with tin oxide and rutile for a pink, needle-crystal surface.",
+      "cone": "8",
+      "atmosphere": "oxidation",
+      "surface": "satin",
+      "ingredients": [
+        {
+          "material": "Minspar 200",
+          "percentage": 47.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 18.0
+        },
+        {
+          "material": "Frit 3134",
+          "percentage": 15.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 14.0
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 5.0
+        }
+      ],
+      "variations": [
+        {
+          "name": "Rutile-Tin Pink Glaze",
+          "colorants": [
+            {
+              "material": "Tin Oxide",
+              "percentage": 4.0
+            },
+            {
+              "material": "Rutile",
+              "percentage": 2.0
+            }
+          ],
+          "expected_color": "pink"
+        }
+      ]
+    },
+    {
+      "name": "Rutile Yellow Glaze",
+      "source": "bloomfield-special-effect-glazes-2020",
+      "description": "Potash-feldspar/talc base with tin oxide and a heavier rutile addition for yellow-orange streaking.",
+      "cone": "8",
+      "atmosphere": "oxidation",
+      "surface": "satin",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 33.0
+        },
+        {
+          "material": "Talc",
+          "percentage": 21.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 12.0
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 15.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 16.0
+        }
+      ],
+      "variations": [
+        {
+          "name": "Rutile Yellow Glaze",
+          "colorants": [
+            {
+              "material": "Tin Oxide",
+              "percentage": 5.0
+            },
+            {
+              "material": "Rutile",
+              "percentage": 7.0
+            }
+          ],
+          "expected_color": "yellow-orange, mottled"
+        }
+      ],
+      "notes": "Cross-checked against the book's own block-format restatement of the same recipe on a later page."
+    },
+    {
+      "name": "Vanadium Yellow Matt Glaze",
+      "source": "bloomfield-special-effect-glazes-2020",
+      "description": "Potash-feldspar/dolomite/bone-ash matt base colored with vanadium pentoxide.",
+      "cone": "8",
+      "atmosphere": "oxidation",
+      "surface": "matte",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 50.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 20.0
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 20.0
+        },
+        {
+          "material": "Bone Ash",
+          "percentage": 10.0
+        }
+      ],
+      "variations": [
+        {
+          "name": "Vanadium Yellow Matt Glaze",
+          "colorants": [
+            {
+              "material": "Vanadium Pentoxide",
+              "percentage": 5.0
+            }
+          ],
+          "expected_color": "yellow matte"
+        },
+        {
+          "name": "Vanadium Green Matt Glaze",
+          "colorants": [
+            {
+              "material": "Vanadium Pentoxide",
+              "percentage": 5.0
+            },
+            {
+              "material": "Zircopax",
+              "percentage": 5.0
+            }
+          ],
+          "expected_color": "green matte"
+        }
+      ],
+      "notes": "Vanadium pentoxide is toxic (per the book's own oxide notes) - handle raw material with care."
+    },
+    {
+      "name": "Rare Earth Transparent Glaze",
+      "source": "bloomfield-special-effect-glazes-2020",
+      "description": "The book's recurring base glaze (soda feldspar/quartz/boron frit/whiting/kaolin, ~99% total) colored with monazite sand and rare earth oxides (neodymium, praseodymium, erbium).",
+      "cone": "8",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Minspar 200",
+          "percentage": 47.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 18.0
+        },
+        {
+          "material": "Frit 3134",
+          "percentage": 15.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 14.0
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 5.0
+        }
+      ],
+      "notes": "Add 6% monazite sand / rare earth oxide blend (neodymium, praseodymium, erbium) for pale yellow/green/lavender/pink coloring - none of those oxides are in this app's materials database."
+    },
+    {
+      "name": "Zirconium-Opacified Glaze (Earthenware)",
+      "source": "bloomfield-special-effect-glazes-2020",
+      "description": "Boron-frit-fluxed earthenware base opacified with zirconium silicate.",
+      "cone": "04",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Frit 3134",
+          "percentage": 39.0
+        },
+        {
+          "material": "Minspar 200",
+          "percentage": 27.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 5.0
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 6.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 23.0
+        }
+      ],
+      "variations": [
+        {
+          "name": "Zirconium-Opacified Glaze (Earthenware)",
+          "colorants": [
+            {
+              "material": "Zircopax",
+              "percentage": 5.0
+            }
+          ],
+          "expected_color": "opaque white"
+        }
+      ]
+    },
+    {
+      "name": "Kuan (Snowflake) Crackle Glaze",
+      "source": "bloomfield-special-effect-glazes-2020",
+      "description": "High-nepheline crackle glaze with a bentonite suspension aid, applied thickly. Digitalfire's Stull-chart glaze #4.",
+      "cone": "6-8",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Nepheline Syenite",
+          "percentage": 80.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 5.0
+        },
+        {
+          "material": "Frit 3134",
+          "percentage": 15.0
+        }
+      ],
+      "variations": [
+        {
+          "name": "Kuan (Snowflake) Crackle Glaze",
+          "colorants": [
+            {
+              "material": "Bentonite",
+              "percentage": 2.0
+            }
+          ],
+          "expected_color": "crackle, apply very thick"
+        }
+      ]
+    },
+    {
+      "name": "Crackle Celadon (Wood Ash)",
+      "source": "bloomfield-special-effect-glazes-2020",
+      "description": "Wood-ash-fluxed crackle celadon with copper and cobalt for a subtle blue-green.",
+      "cone": "9",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Wood Ash (Mixed Hardwood)",
+          "percentage": 30.0
+        },
+        {
+          "material": "Custer Feldspar",
+          "percentage": 30.0
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 17.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 4.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 21.0
+        }
+      ],
+      "variations": [
+        {
+          "name": "Crackle Celadon (Wood Ash)",
+          "colorants": [
+            {
+              "material": "Copper Carbonate",
+              "percentage": 0.5
+            },
+            {
+              "material": "Cobalt Carbonate",
+              "percentage": 0.1
+            }
+          ],
+          "expected_color": "crackle blue-green celadon"
+        }
+      ]
+    },
+    {
+      "name": "Blue Celadon (Porcelain, Copper)",
+      "source": "bloomfield-special-effect-glazes-2020",
+      "description": "The book's recurring base glaze, colored blue-turquoise with a very small copper addition rather than the traditional iron - low clay content keeps the color blue rather than green.",
+      "cone": "6-8",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Minspar 200",
+          "percentage": 47.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 18.0
+        },
+        {
+          "material": "Frit 3134",
+          "percentage": 15.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 14.0
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 5.0
+        }
+      ],
+      "variations": [
+        {
+          "name": "Blue Celadon (pale blue)",
+          "colorants": [
+            {
+              "material": "Copper Carbonate",
+              "percentage": 0.1
+            }
+          ],
+          "expected_color": "pale blue"
+        },
+        {
+          "name": "Blue Celadon (pale turquoise)",
+          "colorants": [
+            {
+              "material": "Copper Carbonate",
+              "percentage": 0.5
+            }
+          ],
+          "expected_color": "pale turquoise"
+        }
+      ],
+      "notes": "Best on porcelain (low titanium keeps the copper blue rather than green); needs oxidation firing."
+    },
+    {
+      "name": "Green Celadon (Reducing Agent)",
+      "source": "bloomfield-special-effect-glazes-2020",
+      "description": "An oxidation-fired celadon that achieves a reduction-style green using yellow iron oxide plus a small aluminum powder addition as a local reducing agent, rather than a kiln reduction atmosphere.",
+      "cone": "6-8",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Custer Feldspar",
+          "percentage": 34.0
+        },
+        {
+          "material": "Frit 3134",
+          "percentage": 14.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 11.0
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 13.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 23.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 5.0
+        }
+      ],
+      "variations": [
+        {
+          "name": "Green Celadon (Reducing Agent)",
+          "colorants": [
+            {
+              "material": "Yellow Iron Oxide",
+              "percentage": 0.75
+            },
+            {
+              "material": "Aluminum Powder",
+              "percentage": 0.2
+            }
+          ],
+          "expected_color": "green celadon"
+        }
+      ],
+      "notes": "Technique credited to Dr. William Carty, Alfred University. Too much aluminum powder causes black speckling."
+    },
+    {
+      "name": "Copper Red (Electric Kiln, Silicon Carbide)",
+      "source": "bloomfield-special-effect-glazes-2020",
+      "description": "The book's recurring base glaze, reduced locally to oxblood red in an electric (oxidation) kiln using fine silicon carbide as a reducing agent instead of a gas-kiln reduction atmosphere.",
+      "cone": "6-8",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Minspar 200",
+          "percentage": 47.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 18.0
+        },
+        {
+          "material": "Frit 3134",
+          "percentage": 15.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 14.0
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 5.0
+        }
+      ],
+      "variations": [
+        {
+          "name": "Copper Red (Electric Kiln, Silicon Carbide)",
+          "colorants": [
+            {
+              "material": "Tin Oxide",
+              "percentage": 1.0
+            },
+            {
+              "material": "Copper Carbonate",
+              "percentage": 0.3
+            }
+          ],
+          "expected_color": "oxblood red"
+        }
+      ],
+      "notes": "Needs 0.3% fine (600-1200 mesh) silicon carbide, not in this app's materials database, plus the tin/copper listed. Sieve and stir frequently; may need Epsom salts/bentonite flocculation."
+    },
+    {
+      "name": "Pale Copper Blue Glaze",
+      "source": "bloomfield-special-effect-glazes-2020",
+      "description": "Soda-feldspar base with a very light copper addition for a pale blue.",
+      "cone": "8",
+      "atmosphere": "oxidation",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Minspar 200",
+          "percentage": 45.0
+        },
+        {
+          "material": "Silica (Flint)",
+          "percentage": 17.0
+        },
+        {
+          "material": "Frit 3134",
+          "percentage": 15.0
+        },
+        {
+          "material": "Whiting (Calcium Carbonate)",
+          "percentage": 14.0
+        },
+        {
+          "material": "EPK Kaolin",
+          "percentage": 5.0
+        }
+      ],
+      "variations": [
+        {
+          "name": "Pale Copper Blue Glaze",
+          "colorants": [
+            {
+              "material": "Tin Oxide",
+              "percentage": 5.0
+            },
+            {
+              "material": "Copper Carbonate",
+              "percentage": 0.1
+            }
+          ],
+          "expected_color": "pale copper blue"
+        }
+      ]
+    }
+  ]
+}

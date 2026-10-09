@@ -1,6 +1,7 @@
 """FastAPI application for glaze formulation."""
 
 import json
+import logging
 import os
 import uuid
 from datetime import datetime, timezone
@@ -11,13 +12,13 @@ import httpx
 from fastapi import FastAPI, HTTPException, Request, UploadFile, File, Form, Query, Body
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, Response
 from pydantic import BaseModel, Field
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
-from src.models.materials import Material, MaterialType
+from src.models.materials import Material, MaterialType, OxideAnalysis
 from src.models.glaze import (
     GlazeRecipe,
     GlazeIngredient,
@@ -38,9 +39,14 @@ from src.services.analyzer import GlazeAnalyzer
 from src.services.predictor import OutcomePredictor
 from src.services.classifier import GlazeClassifier, StullRegion, GlazeCategory
 from src.services.substitution_service import SubstitutionService, AvailabilityStatus
-from src.integrations.glazy_client import GlazyClient
+from src.integrations.glazy_client import GlazyClient, glazy_recipe_url
 from src.services.glazy_bulk import CommunityRecipeService
 from src.services.recipe_db import RecipeDatabase
+from src.services.clay_body_db import ClayBodyDatabase
+from src.services.recipe_storage import RecipeStorage
+from src.services import surface_model
+from src.services.safety_assessor import SafetyAssessor
+from src.services import exporter
 
 
 limiter = Limiter(key_func=get_remote_address)
@@ -70,11 +76,176 @@ materials_db = MaterialsDatabase(DATA_DIR / "materials")
 substitution_service = SubstitutionService(DATA_DIR / "materials" / "substitutions.json")
 formulator = GlazeFormulator(materials_db, substitution_service=substitution_service)
 analyzer = GlazeAnalyzer()
-predictor = OutcomePredictor()
+predictor = OutcomePredictor(materials_db=materials_db)
 classifier = GlazeClassifier()
 glazy_client = GlazyClient(cache_dir=DATA_DIR / "glazy_cache")
 community_recipes = CommunityRecipeService(DATA_DIR / "glazy_bulk" / "glazy_recipes.json")
 recipe_db = RecipeDatabase(DATA_DIR)
+clay_body_db = ClayBodyDatabase(DATA_DIR / "materials")
+recipe_storage = RecipeStorage(DATA_DIR / "saved_recipes" / "saved_recipes.json")
+safety_assessor = SafetyAssessor(materials_db)
+
+logger = logging.getLogger(__name__)
+
+
+def _index_key(record: dict) -> str:
+    """Stable, unique classifier key for a recipe record.
+
+    Names are not unique across the corpus - 1,007 of the 10,799 Glazy
+    bulk records share a name with another ("floating blue" x22, and 50
+    have no name at all), so keying the index by name made those records
+    invisible to region and category search.
+    """
+    if record.get("id") is not None:
+        return f"glazy:{record['id']}"
+    source, source_id = record.get("source"), record.get("source_id")
+    if source and source_id:
+        return f"{source}:{source_id}"
+    return f"name:{(record.get('name') or 'unnamed').strip().lower()}"
+
+
+# Below this share of the batch resolving, a batch-derived UMF is not
+# merely imprecise but wrong: the formulator normalizes over whatever
+# resolved, so a missing 34% frit reappears as inflated alumina and
+# silica. Plotting that on the Stull chart is worse than plotting nothing.
+_MIN_RESOLVED_PCT = 90.0
+
+
+def _batch_chemistry(record: dict):
+    """UMF from a curated recipe's ingredient list, with provenance.
+
+    Returns (umf, provenance) or (None, provenance) when too little of the
+    batch resolves. `resolved_pct` is by batch WEIGHT, not ingredient
+    count - a recipe missing one ingredient that is 60% of the batch is
+    not 80% resolved.
+    """
+    ingredients = [
+        i for i in (record.get("ingredients") or [])
+        if isinstance(i, dict) and i.get("material") and (i.get("percentage") or 0) > 0
+    ]
+    if not ingredients:
+        return None, None
+
+    total = sum(i["percentage"] for i in ingredients)
+    resolved_weight = 0.0
+    unresolved: list[str] = []
+    for item in ingredients:
+        if materials_db.get(item["material"]):
+            resolved_weight += item["percentage"]
+        elif item["material"] not in unresolved:
+            unresolved.append(item["material"])
+
+    resolved_pct = round(resolved_weight / total * 100, 1) if total else 0.0
+    quality = (
+        "complete" if not unresolved
+        else "partial" if resolved_pct >= _MIN_RESOLVED_PCT
+        else "insufficient"
+    )
+    provenance = {
+        "basis": "batch_derived",
+        "resolved_pct": resolved_pct,
+        "unresolved": unresolved,
+        "quality": quality,
+    }
+    if quality == "insufficient":
+        return None, provenance
+
+    recipe = GlazeRecipe(name=record.get("name") or "Unnamed", ingredients=[
+        GlazeIngredient(material_name=i["material"], percentage=i["percentage"])
+        for i in ingredients
+    ])
+    try:
+        umf = formulator.calculate_umf(recipe)
+    except Exception:
+        return None, provenance
+    return (umf, provenance) if umf.flux_total > 0 else (None, provenance)
+
+
+def _seed_classifier_index() -> None:
+    """Pre-populate the classifier's search index from the recipe corpus.
+
+    classifier._recipe_index only grows when classify() is called, and the
+    only caller was POST /api/classify - so /api/search/by-region,
+    /api/search/by-category, /api/search/similar and the Stull chart's
+    glaze overlay all returned empty on every fresh boot until a client
+    happened to classify something first.
+
+    Three sources of chemistry, in descending order of trust:
+
+      measured      Wood publishes a fired oxide analysis alongside each
+                    of his recipes - an instrument reading, not a
+                    calculation. Keyed under `fired_oxide_analysis`, which
+                    this loop previously did not look for, so all nine
+                    were skipped.
+      published     The Glazy bulk corpus ships a computed analysis.
+      batch_derived Curated book recipes carry only an ingredient list.
+                    None of the 255 had chemistry anywhere in the system,
+                    so every recipe from Britt, Zakin, Wood and Bloomfield
+                    was absent from the chart and from chemistry search.
+
+    Resolving 255 curated recipes emits over a hundred per-ingredient
+    warnings from the formulator, which is noise at boot; they are
+    suppressed here and reported as one aggregate line instead.
+    """
+    counts = {"measured": 0, "published": 0, "batch_derived": 0}
+    quality_counts: dict[str, int] = {}
+    unresolved_names: set[str] = set()
+    skipped = 0
+
+    formulator_logger = logging.getLogger("src.services.formulator")
+    previous_level = formulator_logger.level
+    formulator_logger.setLevel(logging.ERROR)
+    try:
+        for record in recipe_db.get_all():
+            umf, provenance = None, None
+            try:
+                if record.get("fired_oxide_analysis"):
+                    umf = UMF.from_oxide_analysis(
+                        OxideAnalysis.from_dict(record["fired_oxide_analysis"]))
+                    provenance = {"basis": "measured", "resolved_pct": 100.0,
+                                  "unresolved": [], "quality": "complete"}
+                elif record.get("analysis"):
+                    umf = UMF.from_oxide_analysis(OxideAnalysis.from_dict(record["analysis"]))
+                    provenance = {"basis": "published", "resolved_pct": 100.0,
+                                  "unresolved": [], "quality": "complete"}
+                elif record.get("ingredients"):
+                    umf, provenance = _batch_chemistry(record)
+            except Exception:
+                umf, provenance = None, provenance
+
+            if provenance:
+                record["chemistry"] = provenance
+                if provenance["basis"] == "batch_derived":
+                    quality_counts[provenance["quality"]] = (
+                        quality_counts.get(provenance["quality"], 0) + 1)
+                    unresolved_names.update(provenance["unresolved"])
+
+            if umf is None or umf.flux_total <= 0:
+                skipped += 1
+                continue
+
+            name = record.get("name") or record.get("result_id") or "Unnamed"
+            classifier.classify(GlazeRecipe(name=name, umf=umf), index_key=_index_key(record))
+            counts[provenance["basis"]] += 1
+            record["chemistry"]["umf"] = umf.to_dict()
+    finally:
+        formulator_logger.setLevel(previous_level)
+
+    logger.info(
+        "Classifier index seeded: %d indexed (%d published, %d batch-derived, "
+        "%d measured), %d skipped",
+        sum(counts.values()), counts["published"], counts["batch_derived"],
+        counts["measured"], skipped,
+    )
+    if quality_counts:
+        logger.info(
+            "Curated chemistry: %s; %d distinct unresolved materials",
+            ", ".join(f"{v} {k}" for k, v in sorted(quality_counts.items())),
+            len(unresolved_names),
+        )
+
+
+_seed_classifier_index()
 
 # Mount static files for uploaded photos
 app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
@@ -169,6 +340,36 @@ class UMFResponse(BaseModel):
     silica_alumina_ratio: float
     alkali_ratio: float
     stull_prediction: str
+    # Ingredient names that matched no known material. These are excluded from
+    # the oxide totals before normalization, so a non-empty list means the UMF
+    # above is computed from only part of the batch.
+    unresolved_materials: list[str] = Field(default_factory=list)
+    # Fired analysis as weight percent, INCLUDING colorant additions. The
+    # UMF above is molar, normalized to flux unity, and base-only - so a
+    # recipe carrying 1% red iron oxide as an addition shows Fe2O3 0.10
+    # there and 1.16 here. Published composition targets ("Fe2O3 1.0-1.5%",
+    # "TiO2 below 0.2%") are quoted on this basis, not on UMF.
+    fired_weight_percent: dict[str, float] = Field(default_factory=dict)
+
+
+class FoodSafetyFindingResponse(BaseModel):
+    key: str
+    severity: str
+    message: str
+
+
+class FoodSafetyResponse(BaseModel):
+    risk_level: str
+    findings: list[FoodSafetyFindingResponse]
+    testing_recommendation: str
+
+
+class ThermalExpansionResponse(BaseModel):
+    calculated_coe: float
+    clay_body_coe: float
+    crazing_risk: str
+    shivering_risk: str
+    recommendations: list[str]
 
 
 class ChemistryResponse(BaseModel):
@@ -178,6 +379,8 @@ class ChemistryResponse(BaseModel):
     issues: list[str]
     warnings: list[str]
     recommendations: list[str]
+    thermal_expansion: Optional[ThermalExpansionResponse] = None
+    food_safety: Optional[FoodSafetyResponse] = None
 
 
 class DualUMFResponse(BaseModel):
@@ -204,6 +407,18 @@ class PredictionResponse(BaseModel):
     defect_risks: dict[str, float]
     application_recommendations: list[str]
     firing_recommendations: list[str]
+    # Full distribution behind `predicted_surface`. `confidence` is the
+    # probability of the winning class; chemistry alone reaches about 67%
+    # on this task, so the spread matters as much as the argmax.
+    surface_probabilities: dict[str, float] = {}
+    surface_basis: Optional[str] = None
+    surface_caveat: str = ""
+    stability_flags: list[str] = []
+    # Why each risk fired and where the threshold came from. `evidence`
+    # separates a figure quoted from a book ("book_quantified") from one
+    # inherited from the predictor's original guesses
+    # ("uncalibrated_heuristic") - previously indistinguishable.
+    defect_details: list[dict] = []
 
 
 # ============== Materials Endpoints ==============
@@ -232,6 +447,7 @@ async def list_materials(
             "name": m.name,
             "type": m.material_type.value,
             "description": m.description,
+            "discontinued": m.discontinued,
             "glazy_id": m.glazy_id,
         }
         for m in materials
@@ -245,22 +461,16 @@ async def get_material(name: str):
     if not material:
         raise HTTPException(status_code=404, detail="Material not found")
 
-    analysis = material.analysis.oxide_analysis
     return {
         "name": material.name,
         "type": material.material_type.value,
         "description": material.description,
-        "oxide_analysis": {
-            "SiO2": analysis.SiO2,
-            "Al2O3": analysis.Al2O3,
-            "Na2O": analysis.Na2O,
-            "K2O": analysis.K2O,
-            "CaO": analysis.CaO,
-            "MgO": analysis.MgO,
-            "Fe2O3": analysis.Fe2O3,
-            "TiO2": analysis.TiO2,
-            "LOI": analysis.LOI,
-        },
+        # Full oxide set, zeros omitted — a hardcoded subset previously hid
+        # B2O3/Li2O/BaO/SrO/P2O5, blanking out every frit and boron material.
+        "oxide_analysis": material.analysis.oxide_analysis.to_dict(),
+        "source": material.analysis.source,
+        "soluble": material.soluble,
+        "discontinued": material.discontinued,
         "glazy_id": material.glazy_id,
     }
 
@@ -431,6 +641,7 @@ async def calculate_umf(recipe: RecipeInput) -> UMFResponse:
     umf = formulator.calculate_umf(glaze_recipe)
 
     return UMFResponse(
+        unresolved_materials=formulator.unresolved_ingredients(glaze_recipe),
         SiO2=round(umf.SiO2, 4),
         Al2O3=round(umf.Al2O3, 4),
         B2O3=round(umf.B2O3, 4),
@@ -446,6 +657,7 @@ async def calculate_umf(recipe: RecipeInput) -> UMFResponse:
         silica_alumina_ratio=round(umf.silica_alumina_ratio, 2),
         alkali_ratio=round(umf.alkali_ratio, 4),
         stull_prediction=umf.stull_point.surface_prediction,
+        fired_weight_percent=formulator.fired_weight_percent(glaze_recipe),
     )
 
 
@@ -536,16 +748,77 @@ async def calculate_ash_accumulation(
 
 
 @app.post("/api/recipes/analyze")
-async def analyze_recipe(recipe: RecipeInput) -> ChemistryResponse:
-    """Analyze glaze chemistry."""
+async def analyze_recipe(
+    recipe: RecipeInput,
+    clay_body_name: Optional[str] = None,
+    clay_body_type: Optional[str] = None,
+) -> ChemistryResponse:
+    """Analyze glaze chemistry.
+
+    clay_body_name: a specific named body from data/materials/clay_bodies.json
+        (e.g. "Standard Stoneware") - gives an exact COE for the fit check.
+    clay_body_type: a broad ClayBody enum value (e.g. "stoneware") used only
+        if clay_body_name is not given or not found - resolves to the
+        average COE across named bodies of that type.
+    Fit analysis is included whenever either resolves to a real COE;
+    otherwise thermal_expansion is omitted rather than guessed.
+    """
     glaze_recipe = _convert_recipe_input(recipe)
     glaze_recipe.umf = formulator.calculate_umf(glaze_recipe)
 
     analysis = analyzer.analyze_chemistry(glaze_recipe)
     umf = analysis.umf
 
+    clay_coe = None
+    if clay_body_name:
+        body = clay_body_db.get(clay_body_name)
+        clay_coe = body.get("coe") if body else None
+    if clay_coe is None and clay_body_type:
+        clay_coe = clay_body_db.get_default_coe(clay_body_type)
+
+    thermal_expansion = None
+    if clay_coe is not None:
+        fit = analyzer.analyze_thermal_expansion(glaze_recipe, clay_body_coe=clay_coe)
+        thermal_expansion = ThermalExpansionResponse(
+            calculated_coe=fit.calculated_coe,
+            clay_body_coe=fit.clay_body_coe,
+            crazing_risk=fit.crazing_risk,
+            shivering_risk=fit.shivering_risk,
+            recommendations=fit.recommendations,
+        )
+
+    # Reuses analysis.issues (already flags low SiO2/Al2O3) and the crazing
+    # risk from the fit check above, if one was run - both are risk factors
+    # the source article ties directly to leaching, not separate concerns.
+    safety = safety_assessor.assess(
+        glaze_recipe,
+        chemistry_issues=analysis.issues,
+        crazing_risk=thermal_expansion.crazing_risk if thermal_expansion else None,
+    )
+    food_safety = FoodSafetyResponse(
+        risk_level=safety.risk_level,
+        findings=[
+            FoodSafetyFindingResponse(key=f.key, severity=f.severity, message=f.message)
+            for f in safety.findings
+        ],
+        testing_recommendation=safety.testing_recommendation,
+    )
+
+    # Unresolved ingredients are dropped before normalization, so the analysis
+    # below describes only the part of the batch we could identify. Lead with
+    # that rather than reporting it as a clean result.
+    unresolved = formulator.unresolved_ingredients(glaze_recipe)
+    warnings = list(analysis.warnings)
+    if unresolved:
+        warnings.insert(0, (
+            f"Unknown material(s) excluded from this analysis: "
+            f"{', '.join(unresolved)}. The chemistry shown is calculated from "
+            f"the remaining ingredients only."
+        ))
+
     return ChemistryResponse(
         umf=UMFResponse(
+            unresolved_materials=unresolved,
             SiO2=round(umf.SiO2, 4),
             Al2O3=round(umf.Al2O3, 4),
             B2O3=round(umf.B2O3, 4),
@@ -565,8 +838,10 @@ async def analyze_recipe(recipe: RecipeInput) -> ChemistryResponse:
         predicted_surface=analysis.predicted_surface,
         predicted_cone_range=analysis.predicted_cone_range,
         issues=analysis.issues,
-        warnings=analysis.warnings,
+        warnings=warnings,
         recommendations=analysis.recommendations,
+        thermal_expansion=thermal_expansion,
+        food_safety=food_safety,
     )
 
 
@@ -582,16 +857,26 @@ async def predict_outcome(
 
     firing_schedule = FiringSchedule(
         name="Custom",
-        cone=ConeTemperature(firing.cone),
-        atmosphere=AtmosphereType(firing.atmosphere),
-        firing_type=FiringType(firing.firing_type),
+        cone=_enum_from_value(ConeTemperature, firing.cone, "firing.cone"),
+        atmosphere=_enum_from_value(AtmosphereType, firing.atmosphere, "firing.atmosphere"),
+        firing_type=_enum_from_value(FiringType, firing.firing_type, "firing.firing_type"),
         hold_time_minutes=firing.hold_time_minutes,
         cooling_rate=firing.cooling_rate,
     )
 
-    clay = ClayBody(clay_body)
+    clay = _enum_from_value(ClayBody, clay_body, "clay_body")
 
-    prediction = predictor.predict_outcome(glaze_recipe, firing_schedule, clay)
+    # Body chemistry lets defect conditions that depend on it fire -
+    # bloating keys off iron content. This endpoint only receives the
+    # broad ClayBody enum ("stoneware"), not a specific product, so use
+    # the type average; the record is flagged as representative. Passing
+    # None only means those conditions are skipped, never that they
+    # evaluate false.
+    clay_body_record = clay_body_db.get_representative(clay.value) if clay else None
+
+    prediction = predictor.predict_outcome(
+        glaze_recipe, firing_schedule, clay, clay_body_record=clay_body_record
+    )
 
     return PredictionResponse(
         predicted_surface=prediction.predicted_surface.value,
@@ -601,6 +886,13 @@ async def predict_outcome(
         defect_risks={k: round(v, 2) for k, v in prediction.defect_risks.items()},
         application_recommendations=prediction.application_recommendations,
         firing_recommendations=prediction.firing_recommendations,
+        surface_probabilities={
+            k: round(v, 3) for k, v in prediction.surface_probabilities.items()
+        },
+        surface_basis=prediction.surface_basis,
+        surface_caveat=prediction.surface_caveat,
+        stability_flags=prediction.stability_flags,
+        defect_details=[f.to_dict() for f in prediction.defect_findings],
     )
 
 
@@ -618,8 +910,8 @@ async def formulate_glaze(target: FormulationTargetInput):
         colorant_dicts = [c.model_dump() for c in target.colorants]
 
     formulation_target = FormulationTarget(
-        cone=ConeTemperature(target.cone),
-        surface=GlazeSurface(target.surface),
+        cone=_enum_from_value(ConeTemperature, target.cone, "cone"),
+        surface=_enum_from_value(GlazeSurface, target.surface, "surface"),
         atmosphere=target.atmosphere,
         category=target.category,
         colorants=colorant_dicts,
@@ -792,14 +1084,32 @@ async def get_glazy_recipe(request: Request, glazy_id: int):
     recipe = glazy_client.get_recipe(glazy_id)
     if not recipe:
         raise HTTPException(status_code=404, detail="Recipe not found on Glazy")
+    if not recipe.ingredients:
+        # Previously returned 200 with an empty ingredient list, which the
+        # UI treated as a successful import of nothing. Say so instead.
+        raise HTTPException(
+            status_code=422,
+            detail=f"Glazy recipe {glazy_id} came back with no ingredients - "
+                   f"open it on Glazy to check: {glazy_recipe_url(glazy_id)}",
+        )
 
     return {
         "name": recipe.name,
         "glazy_id": recipe.glazy_id,
+        # Link back to the source so the formula can be checked against
+        # what Glazy itself shows.
+        "glazy_url": glazy_recipe_url(recipe.glazy_id or glazy_id),
         "author": recipe.author,
         "ingredients": [
             {"material": i.material_name, "percentage": i.percentage}
             for i in recipe.ingredients
+        ],
+        # Additions on top of the 100% base (Glazy's isAdditional). These
+        # were previously dropped, so an iron-blue chun imported without
+        # its iron.
+        "colorants": [
+            {"material": c.material_name, "percentage": c.percentage}
+            for c in recipe.colorants
         ],
         "cone": recipe.target_cone.value,
         "atmospheres": [a.value for a in recipe.suitable_atmospheres],
@@ -891,6 +1201,53 @@ async def browse_recipes(
     )
 
 
+@app.get("/api/recipes/chemistry-coverage")
+async def recipe_chemistry_coverage():
+    """How much of the curated corpus has usable chemistry, and why not.
+
+    Curated book recipes carry an ingredient list but no oxide analysis,
+    so their chemistry is derived by resolving ingredients against the
+    materials database. Where too little of the batch resolves the recipe
+    is excluded rather than plotted, because the formulator normalizes
+    over whatever it did resolve - the result is wrong, not merely
+    approximate. The unresolved names are returned so the gap is visible
+    and actionable rather than silent.
+    """
+    by_quality: dict[str, int] = {}
+    by_basis: dict[str, int] = {}
+    unresolved: dict[str, int] = {}
+    excluded: list[dict] = []
+
+    for record in recipe_db.get_all():
+        chemistry = record.get("chemistry")
+        if not chemistry:
+            continue
+        by_basis[chemistry["basis"]] = by_basis.get(chemistry["basis"], 0) + 1
+        if chemistry["basis"] != "batch_derived":
+            continue
+        by_quality[chemistry["quality"]] = by_quality.get(chemistry["quality"], 0) + 1
+        for name in chemistry["unresolved"]:
+            unresolved[name] = unresolved.get(name, 0) + 1
+        if chemistry["quality"] == "insufficient":
+            excluded.append({
+                "name": record.get("name"),
+                "source": record.get("source"),
+                "resolved_pct": chemistry["resolved_pct"],
+                "unresolved": chemistry["unresolved"],
+            })
+
+    return {
+        "by_basis": by_basis,
+        "by_quality": by_quality,
+        "min_resolved_pct": _MIN_RESOLVED_PCT,
+        "unresolved_materials": [
+            {"material": k, "recipes_blocked": v}
+            for k, v in sorted(unresolved.items(), key=lambda kv: -kv[1])
+        ],
+        "excluded_recipes": excluded,
+    }
+
+
 @app.get("/api/recipes/statistics")
 async def recipe_statistics():
     """Get recipe database statistics."""
@@ -901,6 +1258,41 @@ async def recipe_statistics():
 async def recipe_sources():
     """Get info about loaded recipe data sources."""
     return recipe_db.get_sources()
+
+
+# ============== Saved Recipes (user's own, not the bulk corpus) ==============
+#
+# Previously localStorage-only in the browser - clearing the browser or
+# switching devices silently lost every saved recipe. No auth on this API
+# (see CLAUDE.md), so "saved recipes" means everything saved through this
+# app instance, same scope localStorage already had.
+
+@app.get("/api/recipes/saved")
+async def list_saved_recipes():
+    """List the user's saved recipes, most recently saved first."""
+    return recipe_storage.get_all()
+
+
+@app.post("/api/recipes/saved")
+async def save_recipe(recipe: dict = Body(...)):
+    """Save or update a recipe.
+
+    An explicit "id" updates that record. Otherwise a "name" match against
+    an existing saved recipe updates it in place - matches the resave
+    behavior the localStorage version already had, so switching to this
+    endpoint doesn't change what "Save" does.
+    """
+    if not recipe.get("name"):
+        raise HTTPException(status_code=422, detail="Recipe must have a name")
+    return recipe_storage.save(recipe)
+
+
+@app.delete("/api/recipes/saved/{recipe_id}")
+async def delete_saved_recipe(recipe_id: str):
+    """Delete a saved recipe by id."""
+    if not recipe_storage.delete(recipe_id):
+        raise HTTPException(status_code=404, detail="Saved recipe not found")
+    return {"deleted": recipe_id}
 
 
 @app.get("/api/reference/umf-limits-all")
@@ -1185,58 +1577,10 @@ async def upload_result_photo(
     }
 
 
-RESULTS_DIR = DATA_DIR / "results"
-RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-
-
-def _save_result_to_disk(result_id: str, result: ResultInput, photo_ids: list[str], fired_at: str):
-    """Persist a firing result to disk as JSON."""
-    record = {
-        "result_id": result_id,
-        "recipe_name": result.recipe_name,
-        "firing_cone": result.firing_cone,
-        "firing_atmosphere": result.firing_atmosphere,
-        "firing_type": result.firing_type,
-        "clay_body": result.clay_body,
-        "surface_quality": result.surface_quality,
-        "color_description": result.color_description,
-        "defects": result.defects,
-        "notes": result.notes,
-        "photo_ids": photo_ids,
-        "fired_at": fired_at,
-    }
-    result_file = RESULTS_DIR / f"{result_id}.json"
-    with open(result_file, "w", encoding="utf-8") as f:
-        json.dump(record, f, indent=2)
-
-
-def _get_cone(r: dict) -> str | None:
-    """Extract cone value from either user-submitted or seed format."""
-    return r.get("firing_cone") or (r.get("firing_schedule", {}) or {}).get("cone")
-
-
-def _load_results_from_disk() -> list[dict]:
-    """Load all firing results from disk. Handles both single-result and array files."""
-    results = []
-    for f in RESULTS_DIR.glob("*.json"):
-        try:
-            with open(f, "r", encoding="utf-8") as fh:
-                data = json.load(fh)
-            if isinstance(data, list):
-                results.extend(d for d in data if isinstance(d, dict))
-            elif isinstance(data, dict):
-                results.append(data)
-        except (json.JSONDecodeError, IOError):
-            continue
-    results.sort(key=lambda r: r.get("fired_at", ""), reverse=True)
-    return results
-
-
 @app.post("/api/results")
 async def submit_result(result: ResultInput = Body(...), photo_ids: list[str] = Query(default=[])):
     """Submit a firing result."""
     result_id = str(uuid.uuid4())
-    fired_at = datetime.now(timezone.utc).isoformat()
 
     # Build photos list
     photos = []
@@ -1258,24 +1602,24 @@ async def submit_result(result: ResultInput = Body(...), photo_ids: list[str] = 
         recipe_name=result.recipe_name,
         firing_schedule=FiringSchedule(
             name="User Firing",
-            cone=ConeTemperature(result.firing_cone),
-            atmosphere=AtmosphereType(result.firing_atmosphere),
-            firing_type=FiringType(result.firing_type),
+            cone=_enum_from_value(ConeTemperature, result.firing_cone, "firing_cone"),
+            atmosphere=_enum_from_value(AtmosphereType, result.firing_atmosphere, "firing_atmosphere"),
+            firing_type=_enum_from_value(FiringType, result.firing_type, "firing_type"),
         ),
-        clay_body=ClayBody(result.clay_body),
-        surface_quality=SurfaceQuality(result.surface_quality),
+        clay_body=_enum_from_value(ClayBody, result.clay_body, "clay_body"),
+        surface_quality=_enum_from_value(SurfaceQuality, result.surface_quality, "surface_quality"),
         color=color,
-        defects=[GlazeDefect(d) for d in result.defects],
+        defects=[_enum_from_value(GlazeDefect, d, "defect") for d in result.defects],
         photos=photos,
         notes=result.notes,
         fired_at=datetime.now(timezone.utc),
     )
 
-    # Add to predictor database
+    # predictor.add_result() is the single write path: it appends to the
+    # in-memory list and persists the whole list atomically. There is no
+    # separate per-result file - that used to exist alongside this and every
+    # submission was silently double-counted when both were read back.
     predictor.add_result(firing_result)
-
-    # Persist to disk
-    _save_result_to_disk(result_id, result, photo_ids, fired_at)
 
     return {
         "result_id": result_id,
@@ -1291,46 +1635,36 @@ async def list_results(
     limit: int = 50,
 ):
     """List submitted firing results."""
-    # Load from disk for persistence across restarts
-    disk_results = _load_results_from_disk()
+    # predictor.results is the single source of truth, loaded once at startup
+    # and kept in sync by add_result() - no disk re-read or format merging.
+    results = predictor.results
 
     if recipe_name:
-        disk_results = [r for r in disk_results if recipe_name.lower() in r.get("recipe_name", "").lower()]
+        needle = recipe_name.lower()
+        results = [r for r in results if needle in (r.recipe_name or "").lower()]
 
     if cone:
-        disk_results = [r for r in disk_results if _get_cone(r) == cone]
+        results = [r for r in results if r.firing_schedule and r.firing_schedule.cone.value == cone]
 
-    results_out = []
-    for r in disk_results[:limit]:
-        # Resolve photo URLs from photo_ids
-        photos = []
-        for pid in r.get("photo_ids", []):
-            for f in UPLOADS_DIR.glob(f"{pid}.*"):
-                photos.append({"url": f"/uploads/{f.name}", "caption": None})
-                break
-        # Also include photos from seed data format
-        for p in r.get("photos", []):
-            if isinstance(p, dict) and p.get("url"):
-                photos.append({"url": p["url"], "caption": p.get("caption")})
+    results = sorted(results, key=lambda r: r.fired_at, reverse=True)
 
-        # Normalize: support both user-submitted format (firing_cone) and seed format (firing_schedule.cone)
-        fs = r.get("firing_schedule", {}) or {}
-        results_out.append({
-            "result_id": r.get("result_id"),
-            "recipe_name": r.get("recipe_name"),
-            "cone": r.get("firing_cone") or fs.get("cone"),
-            "atmosphere": r.get("firing_atmosphere") or fs.get("atmosphere"),
-            "firing_type": r.get("firing_type") or fs.get("firing_type"),
-            "clay_body": r.get("clay_body"),
-            "surface_quality": r.get("surface_quality"),
-            "color": r.get("color_description") or (r.get("color", {}) or {}).get("primary_color") if isinstance(r.get("color"), dict) else r.get("color_description") or r.get("color"),
-            "defects": r.get("defects", []),
-            "notes": r.get("notes"),
-            "photos": photos,
-            "fired_at": r.get("fired_at"),
-        })
-
-    return results_out
+    return [
+        {
+            "result_id": r.result_id,
+            "recipe_name": r.recipe_name,
+            "cone": r.firing_schedule.cone.value if r.firing_schedule else None,
+            "atmosphere": r.firing_schedule.atmosphere.value if r.firing_schedule else None,
+            "firing_type": r.firing_schedule.firing_type.value if r.firing_schedule else None,
+            "clay_body": r.clay_body.value if r.clay_body else None,
+            "surface_quality": r.surface_quality.value if r.surface_quality else None,
+            "color": r.color.primary_color if r.color else None,
+            "defects": [d.value for d in r.defects],
+            "notes": r.notes,
+            "photos": [{"url": p.url, "caption": p.caption} for p in r.photos],
+            "fired_at": r.fired_at.isoformat(),
+        }
+        for r in results[:limit]
+    ]
 
 
 # ============== Reference Data Endpoints ==============
@@ -1352,8 +1686,29 @@ async def list_atmospheres():
 
 @app.get("/api/reference/clay-bodies")
 async def list_clay_bodies():
-    """List clay body types."""
+    """List clay body types (the abstract ClayBody categories, not named bodies)."""
     return [{"value": c.value} for c in ClayBody]
+
+
+@app.get("/api/reference/clay-bodies-detailed")
+async def list_clay_bodies_detailed():
+    """List named clay bodies with real fit-relevant properties.
+
+    Unlike /api/reference/clay-bodies (bare ClayBody enum values with no
+    chemistry), these come from data/materials/clay_bodies.json and carry
+    an actual COE per named body - what the glaze-fit check needs to give a
+    real answer instead of one hardcoded default for every body.
+    """
+    return [
+        {
+            "name": b.get("name"),
+            "type": b.get("type"),
+            "coe": b.get("coe"),
+            "cone_range": b.get("cone_range"),
+            "description": b.get("description"),
+        }
+        for b in clay_body_db.get_all()
+    ]
 
 
 @app.get("/api/reference/umf-ranges/{cone}")
@@ -1556,6 +1911,26 @@ async def get_community_image(request: Request, recipe_id: int):
 
 # ============== Helper Functions ==============
 
+def _enum_from_value(enum_cls, value: str, field_name: str):
+    """Convert a request string to an enum member.
+
+    Bare EnumClass(value) raises a plain ValueError on a bad value, which
+    FastAPI does not catch - it surfaces as an unhandled 500 with a stack
+    trace instead of a normal validation error. Every recipe/result
+    endpoint builds its model this way, so a single typo'd cone or
+    atmosphere currently crashes the request instead of explaining what
+    went wrong.
+    """
+    try:
+        return enum_cls(value)
+    except ValueError:
+        valid = [e.value for e in enum_cls]
+        raise HTTPException(
+            status_code=422,
+            detail=f"Invalid {field_name} {value!r}. Valid values: {valid}",
+        )
+
+
 def _convert_recipe_input(recipe: RecipeInput) -> GlazeRecipe:
     """Convert API input to GlazeRecipe model."""
     ingredients = [
@@ -1576,17 +1951,52 @@ def _convert_recipe_input(recipe: RecipeInput) -> GlazeRecipe:
         for c in recipe.colorants
     ]
 
-    atmospheres = [AtmosphereType(a) for a in recipe.atmospheres]
+    atmospheres = [_enum_from_value(AtmosphereType, a, "atmosphere") for a in recipe.atmospheres]
 
     return GlazeRecipe(
         name=recipe.name,
         ingredients=ingredients,
         colorants=colorants,
-        target_cone=ConeTemperature(recipe.target_cone),
+        target_cone=_enum_from_value(ConeTemperature, recipe.target_cone, "target_cone"),
         suitable_atmospheres=atmospheres,
-        glaze_type=GlazeType(recipe.glaze_type),
-        expected_surface=GlazeSurface(recipe.expected_surface),
+        glaze_type=_enum_from_value(GlazeType, recipe.glaze_type, "glaze_type"),
+        expected_surface=_enum_from_value(GlazeSurface, recipe.expected_surface, "expected_surface"),
         notes=recipe.notes,
+    )
+
+
+# ============== Reference Export Endpoints ==============
+
+@app.get("/api/export/reference.zip")
+async def export_reference_bundle():
+    """Download the whole reference layer as a zip of CSVs."""
+    return Response(
+        content=exporter.export_all_zip(materials_db),
+        media_type="application/zip",
+        headers={"Content-Disposition": 'attachment; filename="glaze-reference.zip"'},
+    )
+
+
+@app.get("/api/export/{dataset}.csv")
+async def export_reference_csv(dataset: str):
+    """Download one reference dataset as CSV.
+
+    Datasets: materials, colorants, umf-limits, substitutions.
+    """
+    try:
+        content = exporter.export_dataset(dataset, materials_db)
+    except ValueError:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Unknown dataset '{dataset}'. Available: {', '.join(exporter.DATASETS)}",
+        )
+
+    return Response(
+        content=content,
+        media_type="text/csv; charset=utf-8",
+        headers={
+            "Content-Disposition": f'attachment; filename="glaze-reference-{dataset}.csv"'
+        },
     )
 
 
@@ -1598,38 +2008,36 @@ async def get_stull_chart_data():
 
     Includes Stull region boundaries and all indexed glazes.
     """
-    # Stull region boundary lines (Al2O3 on x, SiO2 on y)
-    # Regions defined by Si:Al ratio = SiO2 / Al2O3
-    regions = [
-        {
-            "name": "runny",
-            "label": "Runny (Si:Al > 12)",
-            "color": "rgba(239,68,68,0.15)",
-            "si_al_min": 12,
-            "si_al_max": None,
-        },
-        {
-            "name": "glossy",
-            "label": "Glossy (Si:Al 8–12)",
-            "color": "rgba(34,197,94,0.15)",
-            "si_al_min": 8,
-            "si_al_max": 12,
-        },
-        {
-            "name": "satin",
-            "label": "Satin (Si:Al 6–8)",
-            "color": "rgba(234,179,8,0.15)",
-            "si_al_min": 6,
-            "si_al_max": 8,
-        },
-        {
-            "name": "matte",
-            "label": "Matte (Si:Al < 6)",
-            "color": "rgba(168,85,247,0.15)",
-            "si_al_min": None,
-            "si_al_max": 6,
-        },
-    ]
+    # Bands come from the calibrated model rather than the hardcoded
+    # 6/8/12 cuts this endpoint used to carry - a fourth set of Stull
+    # boundaries that disagreed with the three elsewhere. Each band now
+    # states the measured probability and sample size behind it, so the
+    # chart shows "Si:Al 9-11 - 79% glossy (n=1,633)" instead of implying
+    # a hard boundary the data does not support.
+    _BAND_COLORS = {
+        "glossy": "rgba(34,197,94,0.15)",
+        "satin": "rgba(234,179,8,0.15)",
+        "matte": "rgba(168,85,247,0.15)",
+    }
+    regions = []
+    for band in surface_model.region_bands():
+        rng = band["si_al_range"]
+        if rng.startswith("<"):
+            lo, hi = None, float(rng[1:])
+        elif rng.startswith(">="):
+            lo, hi = float(rng[2:]), None
+        else:
+            lo, hi = (float(x) for x in rng.split("-"))
+        regions.append({
+            "name": band["dominant"],
+            "label": f"Si:Al {rng} — {band['probability']:.0%} {band['dominant']} (n={band['n']:,})",
+            "color": _BAND_COLORS.get(band["dominant"], "rgba(148,163,184,0.15)"),
+            "si_al_min": lo,
+            "si_al_max": hi,
+            "probability": band["probability"],
+            "probabilities": band["probabilities"],
+            "n": band["n"],
+        })
 
     # Build glaze points from classifier index
     glazes = []
@@ -1680,11 +2088,14 @@ async def get_stull_chart_data():
             "x": {"label": "Al₂O₃", "min": 0.1, "max": 0.7},
             "y": {"label": "SiO₂", "min": 1.0, "max": 6.0},
         },
+        # Bin edges from the fitted model, not hand-picked boundaries.
+        # These are where the measured probabilities change, and are
+        # labelled as transitions rather than as hard rules.
         "reference_lines": [
-            {"si_al": 6, "label": "Matte boundary"},
-            {"si_al": 8, "label": "Satin boundary"},
-            {"si_al": 12, "label": "Runny boundary"},
+            {"si_al": edge, "label": f"Si:Al {edge:g}"}
+            for edge in surface_model.model_features()["si_al_bins"]
         ],
+        "model_accuracy": surface_model.model_accuracy(),
     }
 
 

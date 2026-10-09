@@ -1,0 +1,1996 @@
+{
+  "_source_note": "60 glaze recipes from Chapter 11 of Richard Zakin's 'Electric Kiln Ceramics: A Guide to Clays and Glazes' (3rd ed, Krause/F+W Media, 2004) - ingredient/percentage data, with surface and colour descriptions written in our own words from the facts Zakin reports. All recipes in this chapter are written for oxidation firing in an electric kiln, which is why the book exists. Generic material terms (boron frit, soda frit, potash feldspar, red clay, stoneware clay) are Zakin's own category names, not specific branded products - most are left unresolved rather than guessed at, except where this database already defaults a generic term to a standard equivalent (Potash Feldspar -> Custer Feldspar, Soda Feldspar -> Minspar 200, Iron/Iron Oxide -> Red Iron Oxide, Zirconium/Zirconium Opacifier -> Zircopax). Two recipes (Dewitt Mills, Franklin R 92) sum to 88% and 80% respectively as printed in the book - confirmed against the source text, not a transcription gap; kept faithful to the original rather than padded to 100. The Estacada recipe (cone 3) uses 'potash' and 'spodium' in the original where every neighboring recipe spells out 'potash feldspar' and 'spodumene' - treated as the book's own abbreviation/typo and resolved accordingly, noted per-recipe. Surface labels were inferred from Zakin's own prose descriptions and carry surface_source='description'; he states the fired surface for most glazes but not as a separate field. Five have no surface claim in the text and are deliberately left unlabelled rather than guessed.",
+  "zakin_electric_kiln_glazes": [
+    {
+      "name": "Opaque 04 k2",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "A basic opaque low-fire glaze base of boron frit, talc, ball clay, and zirconium opacifier.",
+      "cone": "04",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Boron Frit",
+          "percentage": 34.0
+        },
+        {
+          "material": "Talc",
+          "percentage": 40.0
+        },
+        {
+          "material": "Ball Clay",
+          "percentage": 14.0
+        },
+        {
+          "material": "Zirconium Opacifier",
+          "percentage": 12.0
+        }
+      ]
+    },
+    {
+      "name": "04 Clear k2",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "A basic transparent low-fire glaze base of boron frit, talc, and ball clay.",
+      "cone": "04",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Boron Frit",
+          "percentage": 54.0
+        },
+        {
+          "material": "Talc",
+          "percentage": 32.0
+        },
+        {
+          "material": "Ball Clay",
+          "percentage": 12.0
+        },
+        {
+          "material": "Zinc Oxide",
+          "percentage": 2.0
+        }
+      ],
+      "surface": "transparent",
+      "surface_source": "description"
+    },
+    {
+      "name": "Robin's 1b Clear k2",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "A transparent low-fire glaze base built on spodumene and boron frit 3124, with talc and ball clay.",
+      "cone": "04",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Spodumene",
+          "percentage": 18.0
+        },
+        {
+          "material": "Frit 3124",
+          "percentage": 46.0
+        },
+        {
+          "material": "Talc",
+          "percentage": 24.0
+        },
+        {
+          "material": "Ball Clay",
+          "percentage": 10.0
+        },
+        {
+          "material": "Zinc Oxide",
+          "percentage": 2.0
+        }
+      ],
+      "notes": "'boron frit 3124' as printed -> resolved to Frit 3124",
+      "surface": "transparent",
+      "surface_source": "description"
+    },
+    {
+      "name": "Mohawk Green F k2",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Low in silica and high in alumina and flux, fluxed mainly by soda, calcium, boron and lithium. Saturated green with noticeable texture.",
+      "cone": "04",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Soda Feldspar",
+          "percentage": 20.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 12.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 50.0
+        },
+        {
+          "material": "Kaolin",
+          "percentage": 16.0
+        },
+        {
+          "material": "Zinc Oxide",
+          "percentage": 2.0
+        },
+        {
+          "material": "Copper Carbonate",
+          "percentage": 3.0
+        }
+      ]
+    },
+    {
+      "name": "Millbrook Visitor",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Glossy, transparent and hard-wearing.",
+      "cone": "02",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Potash Feldspar",
+          "percentage": 10.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 76.0
+        },
+        {
+          "material": "Stoneware Clay",
+          "percentage": 10.0
+        },
+        {
+          "material": "Zinc Oxide",
+          "percentage": 2.0
+        },
+        {
+          "material": "Titanium",
+          "percentage": 2.0
+        }
+      ],
+      "surface": "shiny",
+      "surface_source": "description"
+    },
+    {
+      "name": "Tottman",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Dry matte. Yellow thick, rust thin, heavily textured; iron from the red clay.",
+      "cone": "02",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Soda Feldspar",
+          "percentage": 12.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 20.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 33.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 16.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 16.0
+        },
+        {
+          "material": "Tin Oxide",
+          "percentage": 3.0
+        }
+      ],
+      "surface": "dry matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Cobblestone Base",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Satin-gloss ivory.",
+      "cone": "02",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Potash Feldspar",
+          "percentage": 25.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 52.0
+        },
+        {
+          "material": "Stoneware Clay",
+          "percentage": 10.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 8.0
+        },
+        {
+          "material": "Titanium",
+          "percentage": 2.0
+        },
+        {
+          "material": "Tin Oxide",
+          "percentage": 3.0
+        }
+      ],
+      "surface": "satin shiny",
+      "surface_source": "description"
+    },
+    {
+      "name": "Lorraine Earth Yellow",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Satin-gloss. Soft yellow thick, tan thin; red-clay iron.",
+      "cone": "02",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Potash Feldspar",
+          "percentage": 25.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 50.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 12.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 10.0
+        },
+        {
+          "material": "Tin Oxide",
+          "percentage": 3.0
+        }
+      ],
+      "surface": "satin shiny",
+      "surface_source": "description"
+    },
+    {
+      "name": "Wardwell Brown",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Satin matte brown leaning persimmon, with fine ochre spotting. Iron from both clays.",
+      "cone": "02",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Spodumene",
+          "percentage": 20.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 36.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 20.0
+        },
+        {
+          "material": "Stoneware Clay",
+          "percentage": 16.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 5.0
+        },
+        {
+          "material": "Tin Oxide",
+          "percentage": 3.0
+        }
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Towle Gulf Yellow",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Matte. Mustard yellow thick, rust-red thin; red-clay iron.",
+      "cone": "02",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Potash Feldspar",
+          "percentage": 15.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 20.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 34.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 16.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 12.0
+        },
+        {
+          "material": "Tin Oxide",
+          "percentage": 3.0
+        }
+      ],
+      "surface": "matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "02 Millennium MetalBlack",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Midnight black, from Barnard clay iron and manganese plus cobalt. Plain on its own, but tends to bring out texture in glazes layered with it.",
+      "cone": "02",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Boron Frit",
+          "percentage": 36.0
+        },
+        {
+          "material": "Barnard clay",
+          "percentage": 64.0
+        },
+        {
+          "material": "Cobalt Oxide",
+          "percentage": 1.0
+        }
+      ]
+    },
+    {
+      "name": "02 Orange Chartreuse",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Matte. Chartreuse thick, rust thin; colour from the red clay.",
+      "cone": "02",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Potash Feldspar",
+          "percentage": 10.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 20.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 35.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 18.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 14.0
+        },
+        {
+          "material": "Tin Oxide",
+          "percentage": 3.0
+        }
+      ],
+      "surface": "matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "02 Dark Matte",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Satin matte. Dark mustard thick, red-brown thin; red-clay iron.",
+      "cone": "02",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Boron Frit",
+          "percentage": 36.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 52.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 12.0
+        },
+        {
+          "material": "Cobalt",
+          "percentage": 1.5
+        }
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Tremaines Persimmon",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Glossy and fluid - pulls back from edges. Cream thick, brown thin; iron from both clays.",
+      "cone": "02",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Spodumene",
+          "percentage": 18.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 51.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 18.0
+        },
+        {
+          "material": "Stoneware Clay",
+          "percentage": 10.0
+        },
+        {
+          "material": "Tin Oxide",
+          "percentage": 3.0
+        }
+      ],
+      "surface": "shiny",
+      "surface_source": "description"
+    },
+    {
+      "name": "Millbrook Opaque 2",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Smooth, glossy opaque white.",
+      "cone": "02",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Potash Feldspar",
+          "percentage": 10.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 75.0
+        },
+        {
+          "material": "Stoneware Clay",
+          "percentage": 10.0
+        },
+        {
+          "material": "Zinc Oxide",
+          "percentage": 1.0
+        },
+        {
+          "material": "Titanium",
+          "percentage": 1.0
+        },
+        {
+          "material": "Tin Oxide",
+          "percentage": 3.0
+        }
+      ],
+      "surface": "shiny",
+      "surface_source": "description"
+    },
+    {
+      "name": "Millbrook Opaque 3",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Glossy opaque white.",
+      "cone": "02",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Potash Feldspar",
+          "percentage": 10.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 71.0
+        },
+        {
+          "material": "Stoneware Clay",
+          "percentage": 10.0
+        },
+        {
+          "material": "Titanium",
+          "percentage": 6.0
+        },
+        {
+          "material": "Tin Oxide",
+          "percentage": 3.0
+        }
+      ],
+      "surface": "shiny",
+      "surface_source": "description"
+    },
+    {
+      "name": "Cadwells Base",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Dry matte, opaque, muted blue-green.",
+      "cone": "3",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Soda Feldspar",
+          "percentage": 40.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 20.0
+        },
+        {
+          "material": "Stoneware Clay",
+          "percentage": 8.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 8.0
+        },
+        {
+          "material": "Strontium",
+          "percentage": 10.0
+        },
+        {
+          "material": "Titanium",
+          "percentage": 2.0
+        },
+        {
+          "material": "Zirconium Opacifier",
+          "percentage": 12.0
+        }
+      ],
+      "variations": [
+        {
+          "name": "Cadwells Base",
+          "colorants": [
+            {
+              "material": "Copper",
+              "percentage": 2.0
+            }
+          ]
+        }
+      ],
+      "surface": "dry matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Dewitt Mills",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Opaque satin matte, cream to tan - cream when applied thick. Pleasant to handle and strongly textured.",
+      "cone": "3",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Soda Feldspar",
+          "percentage": 10.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 24.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 20.0
+        },
+        {
+          "material": "Stoneware Clay",
+          "percentage": 8.0
+        },
+        {
+          "material": "Barnard clay",
+          "percentage": 8.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 16.0
+        },
+        {
+          "material": "Titanium",
+          "percentage": 2.0
+        }
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Dewitt White 1",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Soft opaque satin matte in a slightly greyed ivory; the grey comes from the stoneware clay.",
+      "cone": "3",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Soda Feldspar",
+          "percentage": 10.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 20.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 24.0
+        },
+        {
+          "material": "Stoneware Clay",
+          "percentage": 16.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 16.0
+        },
+        {
+          "material": "Tin",
+          "percentage": 2.0
+        },
+        {
+          "material": "Zirconium Opacifier",
+          "percentage": 12.0
+        }
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Fulton 4a Deep Blue",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Opaque waxy matte. Grey thin, deep slate blue thick. Heavy in strontium, so watch for settling in the bucket.",
+      "cone": "3",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Boron Frit",
+          "percentage": 28.0
+        },
+        {
+          "material": "Soda Feldspar",
+          "percentage": 26.0
+        },
+        {
+          "material": "Stoneware Clay",
+          "percentage": 12.0
+        },
+        {
+          "material": "Strontium",
+          "percentage": 22.0
+        },
+        {
+          "material": "Titanium",
+          "percentage": 2.0
+        },
+        {
+          "material": "Zirconium Opacifier",
+          "percentage": 10.0
+        }
+      ],
+      "variations": [
+        {
+          "name": "Fulton 4a Deep Blue",
+          "colorants": [
+            {
+              "material": "Cobalt Oxide",
+              "percentage": 2.0
+            },
+            {
+              "material": "Iron Oxide",
+              "percentage": 6.0
+            }
+          ]
+        }
+      ],
+      "surface": "waxy matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Oz Strontium IV",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Opaque velvety matte, strong green. Strontium gives a barium-like matte without barium's toxicity, though it can settle.",
+      "cone": "3",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Boron Frit",
+          "percentage": 26.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 22.0
+        },
+        {
+          "material": "Stoneware Clay",
+          "percentage": 8.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 10.0
+        },
+        {
+          "material": "Strontium",
+          "percentage": 32.0
+        },
+        {
+          "material": "Titanium",
+          "percentage": 2.0
+        }
+      ],
+      "variations": [
+        {
+          "name": "Oz Strontium IV",
+          "colorants": [
+            {
+              "material": "Copper Carbonate",
+              "percentage": 3.0
+            }
+          ]
+        }
+      ],
+      "surface": "velvety matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Richmond Mills",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Opaque satin matte, cream thick, pale amber thin. Durable - a good liner candidate.",
+      "cone": "3",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Soda Feldspar",
+          "percentage": 30.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 30.0
+        },
+        {
+          "material": "Talc",
+          "percentage": 11.0
+        },
+        {
+          "material": "Stoneware Clay",
+          "percentage": 20.0
+        },
+        {
+          "material": "Iron",
+          "percentage": 1.0
+        },
+        {
+          "material": "Zirconium Opacifier",
+          "percentage": 8.0
+        }
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Snyders 2",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Opaque satin-gloss, silver-grey to ochre with visible texture. Iron from the oxide and the stoneware clay. Hard-wearing.",
+      "cone": "3",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Boron Frit",
+          "percentage": 50.0
+        },
+        {
+          "material": "Soda Feldspar",
+          "percentage": 20.0
+        },
+        {
+          "material": "Stoneware Clay",
+          "percentage": 20.0
+        },
+        {
+          "material": "Iron",
+          "percentage": 2.0
+        },
+        {
+          "material": "Zirconium Opacifier",
+          "percentage": 8.0
+        }
+      ],
+      "surface": "satin shiny",
+      "surface_source": "description"
+    },
+    {
+      "name": "Sodus Point 2",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Opaque matte, yellow-ochre to brown, coloured by the Barnard and stoneware clays.",
+      "cone": "3",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Boron Frit",
+          "percentage": 24.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 24.0
+        },
+        {
+          "material": "Barnard clay",
+          "percentage": 8.0
+        },
+        {
+          "material": "Stoneware Clay",
+          "percentage": 8.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 26.0
+        },
+        {
+          "material": "Zirconium Opacifier",
+          "percentage": 10.0
+        }
+      ],
+      "surface": "matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Orwell Amber",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Satin. Butterscotch thick, amber-brown thin; iron from both clays, plus titania from the stoneware.",
+      "cone": "3",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Boron Frit",
+          "percentage": 42.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 30.0
+        },
+        {
+          "material": "Stoneware Clay",
+          "percentage": 14.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 10.0
+        },
+        {
+          "material": "Tin Oxide",
+          "percentage": 4.0
+        }
+      ],
+      "surface": "satin",
+      "surface_source": "description"
+    },
+    {
+      "name": "Wardwell Persimmon",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Stony satin matte in a soft persimmon-brown, mostly from stoneware and red-clay iron.",
+      "cone": "3",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Potash Feldspar",
+          "percentage": 12.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 20.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 11.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 20.0
+        },
+        {
+          "material": "Stoneware Clay",
+          "percentage": 20.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 14.0
+        },
+        {
+          "material": "Tin Oxide",
+          "percentage": 3.0
+        }
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Dutcherville Barn Red",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Satin-gloss, bright iron red from the red clay.",
+      "cone": "3",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Boron Frit",
+          "percentage": 38.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 36.0
+        },
+        {
+          "material": "Stoneware Clay",
+          "percentage": 12.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 10.0
+        },
+        {
+          "material": "Tin Oxide",
+          "percentage": 4.0
+        }
+      ],
+      "surface": "satin shiny",
+      "surface_source": "description"
+    },
+    {
+      "name": "Minoa Amber",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Satin-gloss. Tan thick, red-amber thin; iron from both clays. Tin noticeably improves both colour and surface.",
+      "cone": "3",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Boron Frit",
+          "percentage": 26.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 36.0
+        },
+        {
+          "material": "Stoneware Clay",
+          "percentage": 16.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 18.0
+        },
+        {
+          "material": "Tin Oxide",
+          "percentage": 4.0
+        }
+      ],
+      "surface": "satin shiny",
+      "surface_source": "description"
+    },
+    {
+      "name": "Fairdale Bridge",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Satin matte, very pale yellow. The rutile works as flux and colourant at once.",
+      "cone": "3",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Potash Feldspar",
+          "percentage": 28.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 22.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 20.0
+        },
+        {
+          "material": "Ball Clay",
+          "percentage": 12.0
+        },
+        {
+          "material": "Rutile",
+          "percentage": 4.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 10.0
+        },
+        {
+          "material": "Tin Oxide",
+          "percentage": 4.0
+        }
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Dewitt Dark Tan 3",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Satin matte in a mottled range of browns, coloured by Barnard clay iron and manganese.",
+      "cone": "3",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Spodumene",
+          "percentage": 20.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 38.0
+        },
+        {
+          "material": "Ball Clay",
+          "percentage": 8.0
+        },
+        {
+          "material": "Barnard clay",
+          "percentage": 8.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 16.0
+        },
+        {
+          "material": "Titanium",
+          "percentage": 2.0
+        },
+        {
+          "material": "Zirconium Opacifier",
+          "percentage": 8.0
+        }
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Stone Hill",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Satin, creamy tan, with texture following application thickness. Red-clay iron.",
+      "cone": "3",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Potash Feldspar",
+          "percentage": 42.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 30.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 12.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 10.0
+        },
+        {
+          "material": "Titanium",
+          "percentage": 2.0
+        },
+        {
+          "material": "Tin Oxide",
+          "percentage": 4.0
+        }
+      ],
+      "surface": "satin",
+      "surface_source": "description"
+    },
+    {
+      "name": "Checkered House Ocher",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Matte, soft earth yellow. Iron from the rutile and the stoneware clay.",
+      "cone": "3",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Potash Feldspar",
+          "percentage": 27.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 20.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 16.0
+        },
+        {
+          "material": "Stoneware Clay",
+          "percentage": 18.0
+        },
+        {
+          "material": "Rutile",
+          "percentage": 4.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 12.0
+        },
+        {
+          "material": "Tin Oxide",
+          "percentage": 3.0
+        }
+      ],
+      "surface": "matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Howardville",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Satin matte. Earth yellow thick, amber thin, texture shifting strongly with thickness. Iron from both clays.",
+      "cone": "3",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Boron Frit",
+          "percentage": 20.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 36.0
+        },
+        {
+          "material": "Stoneware Clay",
+          "percentage": 16.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 18.0
+        },
+        {
+          "material": "Zirconium Opacifier",
+          "percentage": 10.0
+        }
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Bethel Gray",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Hard-wearing satin matte. Grey-mustard thick, orange-brown thin, sometimes flecked dark brown. Iron and titania from both clays.",
+      "cone": "3",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Boron Frit",
+          "percentage": 24.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 30.0
+        },
+        {
+          "material": "Stoneware Clay",
+          "percentage": 24.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 14.0
+        },
+        {
+          "material": "Zirconium Opacifier",
+          "percentage": 8.0
+        }
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Canton Brown",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Satin matte, ochre to brown. Red-clay iron plus the cobalt addition.",
+      "cone": "3",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Boron Frit",
+          "percentage": 12.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 60.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 18.0
+        },
+        {
+          "material": "Zirconium Opacifier",
+          "percentage": 10.0
+        }
+      ],
+      "variations": [
+        {
+          "name": "Canton Brown",
+          "colorants": [
+            {
+              "material": "Cobalt Carbonate",
+              "percentage": 1.5
+            },
+            {
+              "material": "Cobalt",
+              "percentage": 2.5
+            }
+          ]
+        }
+      ],
+      "notes": "1.5% cobalt carbonate - ocher and brown; 2.5% cobalt - rich matte black",
+      "surface": "satin matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Estacada",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Matte. Warm yellow thick, orange-tan thin, lightly speckled and earthy. Iron from both clays.",
+      "cone": "3",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Potash Feldspar",
+          "percentage": 27.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 20.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 16.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 18.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 16.0
+        },
+        {
+          "material": "Stoneware Clay",
+          "percentage": 3.0
+        }
+      ],
+      "notes": "'potash' as printed -> resolved to Potash Feldspar; 'spodium' as printed -> resolved to Spodumene",
+      "surface": "matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "C/3 Millennium MetalBlack",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Grainy, high-shine metallic ebony black from Barnard clay iron and manganese; 1% cobalt deepens it to midnight black. Little texture alone, but brings it out in layered glazes.",
+      "cone": "3",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Barnard clay",
+          "percentage": 70.0
+        },
+        {
+          "material": "Frit 3124",
+          "percentage": 30.0
+        }
+      ],
+      "notes": "'boron frit (3124)' as printed -> resolved to Frit 3124",
+      "surface": "metallic",
+      "surface_source": "description"
+    },
+    {
+      "name": "Denton",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Opaque satin-gloss, cool green.",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Soda Feldspar",
+          "percentage": 30.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 12.0
+        },
+        {
+          "material": "Wollastonite",
+          "percentage": 30.0
+        },
+        {
+          "material": "Kaolin",
+          "percentage": 10.0
+        },
+        {
+          "material": "Zirconium Opacifier",
+          "percentage": 18.0
+        },
+        {
+          "material": "Copper Carbonate",
+          "percentage": 2.5
+        }
+      ],
+      "surface": "satin shiny",
+      "surface_source": "description"
+    },
+    {
+      "name": "Soft Tan Base",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Opaque matte, warm ivory.",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Soda Feldspar",
+          "percentage": 40.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 14.0
+        },
+        {
+          "material": "Ball Clay",
+          "percentage": 10.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 14.0
+        },
+        {
+          "material": "Zirconium Opacifier",
+          "percentage": 22.0
+        }
+      ],
+      "surface": "matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Satin White",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Opaque satin matte, silvery white.",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Soda Feldspar",
+          "percentage": 18.0
+        },
+        {
+          "material": "Soda Frit",
+          "percentage": 20.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 14.0
+        },
+        {
+          "material": "Kaolin",
+          "percentage": 10.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 14.0
+        },
+        {
+          "material": "Zirconium Opacifier",
+          "percentage": 24.0
+        }
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Transparent Matte Glaze",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Satin matte yet translucent - an unusual pairing, and a style common in American work from the 1900s to the 1930s.",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Boron Frit",
+          "percentage": 30.0
+        },
+        {
+          "material": "Wollastonite",
+          "percentage": 25.0
+        },
+        {
+          "material": "Ball Clay",
+          "percentage": 40.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 5.0
+        }
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "MetalBlack",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Satin matte metallic black, from a heavy Barnard clay load plus copper.",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Barnard clay",
+          "percentage": 90.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 10.0
+        },
+        {
+          "material": "Copper Carbonate",
+          "percentage": 6.0
+        }
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Corinth Corners",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Glossy opaque, deep grey-mustard with rust showing at thin edges. A very heavy red-clay load supplies the iron.",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Boron Frit",
+          "percentage": 12.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 60.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 16.0
+        },
+        {
+          "material": "Zirconium Opacifier",
+          "percentage": 10.0
+        }
+      ],
+      "notes": "melting power: moderate",
+      "surface": "shiny",
+      "surface_source": "description"
+    },
+    {
+      "name": "Estacada 18",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Satin matte. Amber-brown thick, bleached mustard thin; red-clay iron.",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Nepheline Syenite",
+          "percentage": 39.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 20.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 18.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 20.0
+        },
+        {
+          "material": "Tin Oxide",
+          "percentage": 3.0
+        }
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Estacada Gray-Ocher",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Glossy. Soft cream thick, light burnt orange thin; red-clay iron.",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Potash Feldspar",
+          "percentage": 29.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 20.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 10.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 18.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 20.0
+        },
+        {
+          "material": "Tin Oxide",
+          "percentage": 3.0
+        }
+      ],
+      "surface": "shiny",
+      "surface_source": "description"
+    },
+    {
+      "name": "Estacada Orange-Ocher",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Glossy. Soft cream thick, burnt orange thin, with texture tracking thickness. Red-clay iron.",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Potash Feldspar",
+          "percentage": 38.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 20.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 5.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 18.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 16.0
+        },
+        {
+          "material": "Tin Oxide",
+          "percentage": 3.0
+        }
+      ],
+      "surface": "shiny",
+      "surface_source": "description"
+    },
+    {
+      "name": "Barnard Estacada",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Glossy deep red umber; can pull away from thin edges. Colour from Barnard clay iron and manganese.",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Potash Feldspar",
+          "percentage": 31.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 22.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 10.0
+        },
+        {
+          "material": "Barnard clay",
+          "percentage": 18.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 16.0
+        },
+        {
+          "material": "Tin Oxide",
+          "percentage": 3.0
+        }
+      ],
+      "surface": "shiny",
+      "surface_source": "description"
+    },
+    {
+      "name": "Maple View Cream-Orange",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Satin matte. Orange thick, pale cream-orange thin, texture tracking thickness. Red-clay iron.",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Potash Feldspar",
+          "percentage": 40.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 20.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 18.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 19.0
+        },
+        {
+          "material": "Tin Oxide",
+          "percentage": 3.0
+        }
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Sayles Corners",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Satin matte. Light mustard thick, light orange thin; red-clay iron.",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Boron Frit",
+          "percentage": 10.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 40.0
+        },
+        {
+          "material": "Stoneware Clay",
+          "percentage": 20.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 20.0
+        },
+        {
+          "material": "Zirconium Opacifier",
+          "percentage": 10.0
+        }
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Crawling Vitgobe",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Vitreous engobe that bubbles and wrinkles into a complex surface, cream-tan; colour and texture both come from its heavy stoneware clay content.",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Soda Feldspar",
+          "percentage": 36.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 10.0
+        },
+        {
+          "material": "Stoneware Clay",
+          "percentage": 50.0
+        },
+        {
+          "material": "Zinc Oxide",
+          "percentage": 2.0
+        },
+        {
+          "material": "Titanium",
+          "percentage": 2.0
+        }
+      ]
+    },
+    {
+      "name": "Mullen Hill Base",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Smooth eggshell matte, oyster white. With 2% copper carbonate it moves through amber and brown to green.",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Soda Feldspar",
+          "percentage": 60.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 10.0
+        },
+        {
+          "material": "Kaolin",
+          "percentage": 10.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 16.0
+        },
+        {
+          "material": "Zinc Oxide",
+          "percentage": 2.0
+        },
+        {
+          "material": "Titanium",
+          "percentage": 2.0
+        }
+      ],
+      "surface": "eggshell matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Vans White",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Satin-gloss white.",
+      "cone": "6",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Potash Feldspar",
+          "percentage": 38.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 10.0
+        },
+        {
+          "material": "Boron Frit",
+          "percentage": 16.0
+        },
+        {
+          "material": "Stoneware Clay",
+          "percentage": 10.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 16.0
+        },
+        {
+          "material": "Zirconium Opacifier",
+          "percentage": 10.0
+        }
+      ],
+      "surface": "satin shiny",
+      "surface_source": "description"
+    },
+    {
+      "name": "Ridgebury",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Satin-gloss, transparent, iron green to orange.",
+      "cone": "9",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Silica",
+          "percentage": 10.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 12.0
+        },
+        {
+          "material": "Wollastonite",
+          "percentage": 30.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 18.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 30.0
+        }
+      ],
+      "surface": "satin shiny",
+      "surface_source": "description"
+    },
+    {
+      "name": "Franklin R 92",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Satin, red-brown to burnt umber, strongly textured by its calcium and magnesium.",
+      "cone": "9",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Silica",
+          "percentage": 8.0
+        },
+        {
+          "material": "Potash Feldspar",
+          "percentage": 30.0
+        },
+        {
+          "material": "Ball Clay",
+          "percentage": 8.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 26.0
+        },
+        {
+          "material": "Iron",
+          "percentage": 8.0
+        }
+      ],
+      "surface": "satin",
+      "surface_source": "description"
+    },
+    {
+      "name": "Gateville R 92",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Translucent satin, ochre through amber to dark brown, strongly textured by lithium, calcium/magnesium and titania.",
+      "cone": "9",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Dolomite",
+          "percentage": 30.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 40.0
+        },
+        {
+          "material": "Potash Feldspar",
+          "percentage": 20.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 10.0
+        }
+      ],
+      "surface": "satin",
+      "surface_source": "description"
+    },
+    {
+      "name": "H GK 92",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Opaque bone white; the surface runs from stony and dry to pitted.",
+      "cone": "9",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Soda Feldspar",
+          "percentage": 44.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 16.0
+        },
+        {
+          "material": "Kaolin",
+          "percentage": 8.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 18.0
+        },
+        {
+          "material": "Zirconium Opacifier",
+          "percentage": 14.0
+        }
+      ],
+      "notes": "'zirconium' as printed -> resolved to Zirconium Opacifier",
+      "surface": "stony matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Harpersfield R 92",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Opaque satin red-brown. Unstable, and bubbles when applied thick.",
+      "cone": "9",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Spodumene",
+          "percentage": 8.0
+        },
+        {
+          "material": "Ball Clay",
+          "percentage": 16.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 40.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 28.0
+        },
+        {
+          "material": "Iron",
+          "percentage": 8.0
+        }
+      ],
+      "surface": "satin",
+      "surface_source": "description"
+    },
+    {
+      "name": "Deerpark Base",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Satin matte, amber-cream to amber, strongly textured by its iron and calcium/magnesium.",
+      "cone": "9",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Silica",
+          "percentage": 10.0
+        },
+        {
+          "material": "Spodumene",
+          "percentage": 8.0
+        },
+        {
+          "material": "Ball Clay",
+          "percentage": 30.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 18.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 34.0
+        }
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
+    },
+    {
+      "name": "Pilgrim Vitreous Engobe 92",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Opaque semi-vitreous white with a faint sheen.",
+      "cone": "9",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Potash Feldspar",
+          "percentage": 12.0
+        },
+        {
+          "material": "Talc",
+          "percentage": 20.0
+        },
+        {
+          "material": "Ball Clay",
+          "percentage": 52.0
+        },
+        {
+          "material": "Titanium",
+          "percentage": 2.0
+        },
+        {
+          "material": "Tin",
+          "percentage": 2.0
+        },
+        {
+          "material": "Zirconium Opacifier",
+          "percentage": 12.0
+        }
+      ],
+      "notes": "'zirconium' as printed -> resolved to Zirconium Opacifier",
+      "surface": "semi-vitreous",
+      "surface_source": "description"
+    },
+    {
+      "name": "Woodbourne Base 92",
+      "source": "zakin-electric-kiln-ceramics-2004",
+      "description": "Opaque satin matte, amber-yellow.",
+      "cone": "9",
+      "atmosphere": "oxidation",
+      "ingredients": [
+        {
+          "material": "Soda Feldspar",
+          "percentage": 44.0
+        },
+        {
+          "material": "Red Clay",
+          "percentage": 20.0
+        },
+        {
+          "material": "Ball Clay",
+          "percentage": 8.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 28.0
+        }
+      ],
+      "surface": "satin matte",
+      "surface_source": "description"
+    }
+  ]
+}

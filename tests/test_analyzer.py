@@ -126,6 +126,69 @@ class TestThermalExpansion:
         # High alkali should indicate crazing risk
         assert analysis.crazing_risk in ["medium", "high"]
 
+    def test_clay_body_coe_echoed_on_result(self, analyzer, test_recipe):
+        """The body COE actually used must be visible on the result, not
+        just implied by the risk verdict."""
+        analysis = analyzer.analyze_thermal_expansion(test_recipe, clay_body_coe=5.5)
+        assert analysis.clay_body_coe == 5.5
+
+    def test_defaults_clay_body_coe_when_not_supplied(self, analyzer, test_recipe):
+        analysis = analyzer.analyze_thermal_expansion(test_recipe)
+        assert analysis.clay_body_coe == 6.0
+
+    def test_crazing_recommendations_come_from_defect_guide(self, analyzer):
+        """Recommendations for a high-crazing-risk glaze should be the
+        archived Digitalfire remedies, not the old two-line placeholder."""
+        recipe = GlazeRecipe(
+            name="High Alkali", ingredients=[], target_cone=ConeTemperature.CONE_6,
+            umf=UMF(SiO2=3.5, Al2O3=0.4, Na2O=0.6, K2O=0.2, CaO=0.2),
+        )
+        analysis = analyzer.analyze_thermal_expansion(recipe, clay_body_coe=6.0)
+        joined = " ".join(analysis.recommendations)
+        assert "MgO" in joined or "B2O3" in joined
+
+    def test_shivering_recommendations_come_from_defect_guide(self, analyzer):
+        """A glaze with much lower expansion than a high-COE body should
+        surface shivering remedies (raise Na2O)."""
+        recipe = GlazeRecipe(
+            name="Low Expansion", ingredients=[], target_cone=ConeTemperature.CONE_6,
+            umf=UMF(SiO2=3.0, Al2O3=0.4, B2O3=0.5, CaO=0.6, MgO=0.3),
+        )
+        analysis = analyzer.analyze_thermal_expansion(recipe, clay_body_coe=8.0)
+        assert analysis.shivering_risk in ["medium", "high"]
+        joined = " ".join(analysis.recommendations)
+        assert "Na2O" in joined
+
+
+class TestRealCoeFormula:
+    """The formula this replaces (invented 'simplified Appen factors' with
+    an unexplained x10 scale-up) is gone; these pin the real one against
+    hand-calculated values and known ceramic-chemistry direction."""
+
+    def test_matches_hand_calculation(self, analyzer):
+        # SiO2=3.5, Al2O3=0.35, B2O3=0.15, Na2O=0.15, K2O=0.15, CaO=0.5,
+        # MgO=0.1, ZnO=0.1 molar -> converted to wt% and summed against
+        # Digitalfire's factors by hand: ~7.26.
+        umf = UMF(
+            SiO2=3.5, Al2O3=0.35, B2O3=0.15,
+            Na2O=0.15, K2O=0.15, CaO=0.5, MgO=0.1, ZnO=0.1,
+        )
+        assert analyzer._calculate_coe(umf) == pytest.approx(7.26, abs=0.02)
+
+    def test_alkali_raises_expansion_more_than_boron(self, analyzer):
+        high_alkali = UMF(Na2O=0.5, K2O=0.1, CaO=0.3, Al2O3=0.3, SiO2=3.0)
+        high_boron = UMF(Na2O=0.1, K2O=0.05, CaO=0.3, B2O3=0.4, Al2O3=0.3, SiO2=3.0)
+        assert analyzer._calculate_coe(high_alkali) > analyzer._calculate_coe(high_boron)
+
+    def test_output_scale_matches_clay_body_coe_range(self, analyzer, test_recipe):
+        """A typical UMF should land near the 5-8 range used throughout
+        data/materials/clay_bodies.json, not an arbitrary scale."""
+        coe = analyzer._calculate_coe(test_recipe.umf)
+        assert 3.0 < coe < 12.0
+
+    def test_empty_umf_does_not_crash(self, analyzer):
+        assert analyzer._calculate_coe(UMF()) == 6.0
+
 
 class TestRecipeComparison:
     """Tests for recipe comparison."""

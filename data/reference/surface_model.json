@@ -1,0 +1,195 @@
+{
+  "description": "Empirical surface-probability model fitted to Glazy community recipes carrying both an oxide analysis and a human surface label. Replaces four disagreeing hardcoded threshold sets. Predicts a DISTRIBUTION, not a label - chemistry alone tops out near 67% on this task.",
+  "generated_by": "scripts/calibrate_surface_model.py",
+  "training_data": {
+    "path": "data/glazy_bulk/glazy_recipes.json",
+    "n_labeled": 7575,
+    "label_map": {
+      "glossy": [
+        "Glossy",
+        "Semi-glossy"
+      ],
+      "satin": [
+        "Satin",
+        "Satin-matte",
+        "Semi-matte"
+      ],
+      "matte": [
+        "Matte",
+        "Smooth Matte",
+        "Stony Matte",
+        "Dry Matte"
+      ]
+    }
+  },
+  "accuracy": {
+    "holdout_split": 0.25,
+    "seed": 0,
+    "n_test": 1894,
+    "majority_baseline": 0.6278,
+    "full_model": 0.6642,
+    "ratio_only_model": 0.6526,
+    "mean_prob_of_true_class": 0.5424,
+    "ceiling_note": "A 14-feature decision tree over the same data reaches ~0.674 on this split. Chemistry alone does not determine surface - firing schedule, application thickness and clay body are not in this dataset. Treat the distribution, not the argmax, as the output."
+  },
+  "features": {
+    "si_al_bins": [
+      5.0,
+      7.0,
+      9.0,
+      11.0
+    ],
+    "mgo_threshold": 0.31,
+    "cao_threshold": 0.22,
+    "threshold_provenance": "MgO 0.31 and CaO 0.22 were selected independently by a depth-3 decision tree over this data; they correspond to the classic magnesia and calcia mattes. On aggregate they add only ~1 point over the ratio alone because those cells are rare - they matter for per-glaze calibration, not for the headline number."
+  },
+  "min_cell_n": 40,
+  "stability_flags": {
+    "al2o3_underfired_max": 0.15,
+    "al2o3_stiff_min": 0.65,
+    "si_al_runny_min": 12.0,
+    "note": "Melt stability is a separate axis from gloss. The legacy labels 'underfired_runny', 'glossy_runny' and 'matte_dry' conflated the two. Inherited from the legacy thresholds, not fitted."
+  },
+  "prior": {
+    "n": 7575,
+    "glossy": 0.6048,
+    "satin": 0.2173,
+    "matte": 0.178
+  },
+  "ratio_only": {
+    "5-7": {
+      "n": 1765,
+      "glossy": 0.4351,
+      "satin": 0.2844,
+      "matte": 0.2805
+    },
+    "7-9": {
+      "n": 2027,
+      "glossy": 0.7573,
+      "satin": 0.1579,
+      "matte": 0.0849
+    },
+    "9-11": {
+      "n": 1633,
+      "glossy": 0.7912,
+      "satin": 0.1592,
+      "matte": 0.0496
+    },
+    "<5": {
+      "n": 1040,
+      "glossy": 0.2202,
+      "satin": 0.301,
+      "matte": 0.4788
+    },
+    ">=11": {
+      "n": 1110,
+      "glossy": 0.682,
+      "satin": 0.2261,
+      "matte": 0.0919
+    }
+  },
+  "cells": {
+    "5-7|mgo_hi|cao_hi": {
+      "n": 205,
+      "glossy": 0.278,
+      "satin": 0.4098,
+      "matte": 0.3122
+    },
+    "5-7|mgo_hi|cao_lo": {
+      "n": 61,
+      "glossy": 0.1311,
+      "satin": 0.6557,
+      "matte": 0.2131
+    },
+    "5-7|mgo_lo|cao_hi": {
+      "n": 1256,
+      "glossy": 0.5191,
+      "satin": 0.2627,
+      "matte": 0.2182
+    },
+    "5-7|mgo_lo|cao_lo": {
+      "n": 243,
+      "glossy": 0.2099,
+      "satin": 0.1975,
+      "matte": 0.5926
+    },
+    "7-9|mgo_hi|cao_hi": {
+      "n": 191,
+      "glossy": 0.5707,
+      "satin": 0.2932,
+      "matte": 0.1361
+    },
+    "7-9|mgo_hi|cao_lo": {
+      "n": 49,
+      "glossy": 0.2245,
+      "satin": 0.2653,
+      "matte": 0.5102
+    },
+    "7-9|mgo_lo|cao_hi": {
+      "n": 1704,
+      "glossy": 0.8075,
+      "satin": 0.1338,
+      "matte": 0.0587
+    },
+    "7-9|mgo_lo|cao_lo": {
+      "n": 83,
+      "glossy": 0.4699,
+      "satin": 0.2771,
+      "matte": 0.253
+    },
+    "9-11|mgo_hi|cao_hi": {
+      "n": 146,
+      "glossy": 0.3973,
+      "satin": 0.4726,
+      "matte": 0.1301
+    },
+    "9-11|mgo_lo|cao_hi": {
+      "n": 1401,
+      "glossy": 0.8394,
+      "satin": 0.1263,
+      "matte": 0.0343
+    },
+    "9-11|mgo_lo|cao_lo": {
+      "n": 80,
+      "glossy": 0.725,
+      "satin": 0.15,
+      "matte": 0.125
+    },
+    "<5|mgo_hi|cao_hi": {
+      "n": 134,
+      "glossy": 0.0896,
+      "satin": 0.2761,
+      "matte": 0.6343
+    },
+    "<5|mgo_lo|cao_hi": {
+      "n": 561,
+      "glossy": 0.1426,
+      "satin": 0.3565,
+      "matte": 0.5009
+    },
+    "<5|mgo_lo|cao_lo": {
+      "n": 312,
+      "glossy": 0.3974,
+      "satin": 0.2276,
+      "matte": 0.375
+    },
+    ">=11|mgo_hi|cao_hi": {
+      "n": 135,
+      "glossy": 0.3333,
+      "satin": 0.4815,
+      "matte": 0.1852
+    },
+    ">=11|mgo_lo|cao_hi": {
+      "n": 822,
+      "glossy": 0.7384,
+      "satin": 0.1922,
+      "matte": 0.0693
+    },
+    ">=11|mgo_lo|cao_lo": {
+      "n": 138,
+      "glossy": 0.7246,
+      "satin": 0.1739,
+      "matte": 0.1014
+    }
+  }
+}

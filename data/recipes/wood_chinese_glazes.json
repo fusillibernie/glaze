@@ -1,0 +1,456 @@
+{
+  "_source_note": "Nine numbered recipes from Chapter 14 ('Glaze Recipes') of Nigel Wood's 'Chinese Glazes: Their Origins, Chemistry and Re-creation' (A & C Black, 1999, reprinted 2007) - ingredient/percentage data and firing notes only, descriptions written independently. These are Wood's own calculated reconstructions of historical Chinese glaze chemistry (derived from published oxide analyses of genuine wares), not the original historical batch recipes, which are lost. UK material terms are mapped to US equivalents already used elsewhere in this database: 'Potash Feldspar' to Custer Feldspar, 'Cornish Stone' to Cornwall Stone, 'China Clay' to EPK Kaolin, 'Flint'/'Quartz' to Silica (Flint). Specific UK ball-clay brands (Hyplas 71, Hymod SMD, BBV) and Molochite (a branded calcined china clay) have no equivalent in this database and are left as unresolved rather than approximated - their oxide analyses are given in the book (roughly: Hyplas 71 is a high-silica ball clay, SMD and BBV are ordinary aluminous ball clays, Molochite is ~54% SiO2/42% Al2O3 calcined china clay). Each recipe also carries the book's fired oxide-percentage analysis (fired_oxide_analysis) as published, alongside the batch recipe - useful as an independent chemistry cross-check, not something this app's UMF calculator currently consumes directly. Where Wood prints a single combined alkali column, it is stored under the literal key 'K2O+Na2O' (glazes 3, 6 and 7) rather than being split - the book does not say how it divides.",
+  "wood_chinese_glazes": [
+    {
+      "name": "Porcelain Glaze (Wood, Glaze 1)",
+      "source": "wood-chinese-glazes-1999",
+      "source_id": "glaze-1",
+      "description": "A calculated reconstruction of traditional Chinese porcelain glaze chemistry, ranging from opaque white at 1230C to a glossy faintly-bluish transparent at cone-10-equivalent. Wollastonite (rather than whiting) and a high-silica ball clay give the fired character.",
+      "cone": "7-9",
+      "atmosphere": "oxidation or reduction",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Potash Feldspar",
+          "percentage": 25
+        },
+        {
+          "material": "Wollastonite",
+          "percentage": 27
+        },
+        {
+          "material": "China Clay",
+          "percentage": 12.5
+        },
+        {
+          "material": "Hyplas 71 Ball Clay",
+          "percentage": 12.5
+        },
+        {
+          "material": "Flint",
+          "percentage": 20
+        },
+        {
+          "material": "Talc",
+          "percentage": 3
+        }
+      ],
+      "fired_oxide_analysis": {
+        "SiO2": 68.7,
+        "Al2O3": 12.2,
+        "TiO2": 0.2,
+        "Fe2O3": 0.3,
+        "CaO": 13.7,
+        "MgO": 1.1,
+        "K2O": 3.0,
+        "Na2O": 0.7
+      },
+      "notes": "1240-1290C. Best applied thickly and fired in reduction to about 1250C. Suitable for raw-glazing dry or biscuit ware. If an ordinary aluminous ball clay is substituted for the high-silica Hyplas 71, use ~7% clay and 5% quartz/flint instead."
+    },
+    {
+      "name": "Pale-Green Celadon (Wood, Glaze 2)",
+      "source": "wood-chinese-glazes-1999",
+      "source_id": "glaze-2",
+      "description": "A calculated celadon with a lime percentage slightly above typical, giving a fine surface quality and fresh colour. Designed for raw or biscuit ware.",
+      "cone": "7-9",
+      "atmosphere": "reduction",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Potash Feldspar",
+          "percentage": 30.5
+        },
+        {
+          "material": "Wollastonite",
+          "percentage": 22.5
+        },
+        {
+          "material": "Flint",
+          "percentage": 16.0
+        },
+        {
+          "material": "Talc",
+          "percentage": 3
+        },
+        {
+          "material": "China Clay",
+          "percentage": 12.5
+        },
+        {
+          "material": "Hyplas 71 Ball Clay",
+          "percentage": 15.5
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 0.5
+        }
+      ],
+      "fired_oxide_analysis": {
+        "SiO2": 67.5,
+        "Al2O3": 14.4,
+        "TiO2": 0.2,
+        "Fe2O3": 0.8,
+        "CaO": 11.5,
+        "MgO": 1.1,
+        "K2O": 3.6,
+        "Na2O": 0.9
+      },
+      "notes": "1240-1280C in good reduction. Above ~12% CaO, slight dulling is prevented by cooling fairly quickly from peak to about 1000C, then allowing the clammed-up kiln to cool at its own speed. Cooled fast to 1000C, tends toward a 'fat'/waxy surface instead."
+    },
+    {
+      "name": "'Northern' Celadon (Wood, Glaze 3)",
+      "source": "wood-chinese-glazes-1999",
+      "source_id": "glaze-3",
+      "description": "A fine glossy olive-green celadon reconstructed to reveal carving, engraving and combing with the clarity typical of genuine Chinese northern celadons.",
+      "cone": "6-8",
+      "atmosphere": "reduction",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Cornish Stone",
+          "percentage": 56
+        },
+        {
+          "material": "Wollastonite",
+          "percentage": 20
+        },
+        {
+          "material": "SMD Ball Clay",
+          "percentage": 20
+        },
+        {
+          "material": "Talc",
+          "percentage": 3.5
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 1.5
+        }
+      ],
+      "fired_oxide_analysis": {
+        "SiO2": 67.1,
+        "Al2O3": 13.2,
+        "TiO2": 0.3,
+        "Fe2O3": 1.9,
+        "CaO": 11.2,
+        "MgO": 1.3,
+        "K2O+Na2O": 5.0
+      },
+      "notes": "1230-1260C in good reduction; best character between 1230-1250C. Higher-iron versions show attractive straw-yellow/amber in oxidation. Suitable for dry or biscuited clay."
+    },
+    {
+      "name": "Temmoku - 'Hare's Fur' (Wood, Glaze 4)",
+      "source": "wood-chinese-glazes-1999",
+      "source_id": "glaze-4",
+      "description": "Fires 'Northern' brown temmoku in oxidation or a Jian-type 'hare's fur' temmoku in reduction, giving a fine smooth glossy dark-bronze glaze. Molochite (calcined china clay) supplies most of the clay content to keep shrinkage low.",
+      "cone": "8-10",
+      "atmosphere": "oxidation (Northern temmoku) or reduction (hare's fur)",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Cornish Stone",
+          "percentage": 42.5
+        },
+        {
+          "material": "BBV Ball Clay",
+          "percentage": 15.0
+        },
+        {
+          "material": "Molochite (Calcined China Clay)",
+          "percentage": 13.0
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 15.5
+        },
+        {
+          "material": "Flint",
+          "percentage": 17.0
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 4.5
+        },
+        {
+          "material": "Rutile",
+          "percentage": 0.5
+        }
+      ],
+      "fired_oxide_analysis": {
+        "SiO2": 62.5,
+        "Al2O3": 16.55,
+        "TiO2": 0.8,
+        "Fe2O3": 5.5,
+        "CaO": 6.45,
+        "MgO": 3.52,
+        "K2O": 2.6,
+        "Na2O": 1.96
+      },
+      "notes": "1260-1300C. If underfired (below ~1260C) or the magnesia from dolomite hasn't come into full reaction, results in a dull matte brown rather than glossy black/hare's-fur - the transition happens abruptly at temperature. Thin application on light bodies fires yellowish-brown to almost white at edges despite being black when thick, attributed to a three-layer glaze microstructure (lime-feldspar crystals, then iron crystals, then clear glass). Should not be applied too near the foot - tends to run when fired fully. Molochite may be substituted with 15% raw china clay if unavailable."
+    },
+    {
+      "name": "Raw 'Albany Slip' (Wood, Glaze 5)",
+      "source": "wood-chinese-glazes-1999",
+      "source_id": "glaze-5",
+      "description": "A slip glaze designed to be applied directly to leatherhard, dry, or (thinly) biscuited pots. Gives remarkable covering power as a thin coat on fine clay bodies.",
+      "cone": "8-10",
+      "atmosphere": "oxidation or reduction",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Hyplas 71 Ball Clay",
+          "percentage": 61.5
+        },
+        {
+          "material": "Potash Feldspar",
+          "percentage": 17.5
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 15
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 4.5
+        },
+        {
+          "material": "Wollastonite",
+          "percentage": 2
+        }
+      ],
+      "fired_oxide_analysis": {
+        "SiO2": 62.0,
+        "Al2O3": 17.2,
+        "TiO2": 1.2,
+        "Fe2O3": 5.5,
+        "CaO": 6.4,
+        "MgO": 3.6,
+        "K2O": 3.8,
+        "Na2O": 0.7
+      },
+      "notes": "Book gives firing range as '1360-1300C' (sic, likely a printing error for 1260-1300C given the neighboring recipes' ranges - preserved as printed). Stronger reduction gives more opacity/lustre/richness of tone; applied thinly in oxidation it turns a translucent brown, much like Glaze 4."
+    },
+    {
+      "name": "Mirror-Black Glaze (Wood, Glaze 6)",
+      "source": "wood-chinese-glazes-1999",
+      "source_id": "glaze-6",
+      "description": "Reconstructed from the analysis of a late-Qing Jingdezhen mirror-black glaze. Historically, 18th-19th century mirror-blacks relied on low-grade cobalt ore - mostly manganese, with cobalt present only as an impurity, hence the large manganese dioxide content here.",
+      "cone": "6-7",
+      "atmosphere": "oxidation or reduction",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Flint",
+          "percentage": 20.5
+        },
+        {
+          "material": "Wollastonite",
+          "percentage": 18.5
+        },
+        {
+          "material": "Potash Feldspar",
+          "percentage": 19.0
+        },
+        {
+          "material": "China Clay",
+          "percentage": 14.7
+        },
+        {
+          "material": "Hyplas 71 Ball Clay",
+          "percentage": 14.7
+        },
+        {
+          "material": "Iron Oxide",
+          "percentage": 9.0
+        },
+        {
+          "material": "Manganese Dioxide",
+          "percentage": 3.2
+        },
+        {
+          "material": "Cobalt Carbonate",
+          "percentage": 0.5
+        }
+      ],
+      "fired_oxide_analysis": {
+        "SiO2": 62.1,
+        "Al2O3": 12.4,
+        "TiO2": 0.3,
+        "Fe2O3": 9.5,
+        "CaO": 9.1,
+        "MgO": 0.1,
+        "MnO": 2.7,
+        "CoO": 0.3,
+        "K2O+Na2O": 3.0
+      },
+      "notes": "1220-1250C; tends to run above ~1250C. Best at medium thickness - too thin looks golden-brown/tortoiseshell rather than black, too thick becomes dull and crystalline."
+    },
+    {
+      "name": "Chinese Blue Stoneware Glaze (Wood, Glaze 7)",
+      "source": "wood-chinese-glazes-1999",
+      "source_id": "glaze-7",
+      "description": "Reproduces the effect of impure Chinese cobalt ore (cobalt naturally contaminated with iron and manganese) via a deliberate cobalt oxide + manganese dioxide + iron oxide blend, giving a good medium-blue that avoids the garishness of pure cobalt colouring.",
+      "cone": "7-10",
+      "atmosphere": "reduction (preferred), oxidation, or as an overglaze",
+      "surface": "glossy",
+      "ingredients": [
+        {
+          "material": "Potash Feldspar",
+          "percentage": 30.5
+        },
+        {
+          "material": "Wollastonite",
+          "percentage": 15.0
+        },
+        {
+          "material": "Flint",
+          "percentage": 20.0
+        },
+        {
+          "material": "China Clay",
+          "percentage": 15.5
+        },
+        {
+          "material": "Hyplas 71 Ball Clay",
+          "percentage": 12.5
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 0.5
+        },
+        {
+          "material": "Cobalt Oxide",
+          "percentage": 0.4
+        },
+        {
+          "material": "Manganese Dioxide",
+          "percentage": 1.5
+        }
+      ],
+      "fired_oxide_analysis": {
+        "SiO2": 69.07,
+        "Al2O3": 14.2,
+        "TiO2": 0.24,
+        "Fe2O3": 0.73,
+        "CaO": 7.6,
+        "MgO": 1.6,
+        "MnO": 1.6,
+        "CoO": 0.3,
+        "K2O+Na2O": 5.52
+      },
+      "notes": "1250-1310C. Increasing iron oxide to 1.0% darkens/enriches the blue. Needs thorough ball-milling to disperse the cobalt evenly (otherwise fires with visible flecks) - if no ball mill, substitute cobalt carbonate and manganese carbonate for the oxides since they disperse more easily. Green tone from reduced iron is an important part of the colour, so good reduction gives the best results."
+    },
+    {
+      "name": "Mashiko Kaki (Wood, Glaze 8)",
+      "source": "wood-chinese-glazes-1999",
+      "source_id": "glaze-8",
+      "description": "A traditional Japanese (not Chinese) rusty-brown glaze included for its versatility as an overglaze and temmoku base, used to great effect historically by Bernard Leach and Shoji Hamada. Molochite supplies most of the clay content since the original is prepared from crushed rock.",
+      "cone": "7-10",
+      "atmosphere": "oxidation or reduction",
+      "surface": "glossy, semi-matte when thin",
+      "ingredients": [
+        {
+          "material": "Cornish Stone",
+          "percentage": 54.5
+        },
+        {
+          "material": "Hyplas 71 Ball Clay",
+          "percentage": 10
+        },
+        {
+          "material": "Molochite (Calcined China Clay)",
+          "percentage": 12.5
+        },
+        {
+          "material": "Flint",
+          "percentage": 9
+        },
+        {
+          "material": "Wollastonite",
+          "percentage": 5.5
+        },
+        {
+          "material": "Talc",
+          "percentage": 6
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 6
+        }
+      ],
+      "fired_oxide_analysis": {
+        "SiO2": 68.4,
+        "Al2O3": 14.3,
+        "TiO2": 0.36,
+        "Fe2O3": 6.54,
+        "CaO": 3.7,
+        "MgO": 2.0,
+        "K2O": 2.3,
+        "Na2O": 2.25
+      },
+      "notes": "1240-1310C. Alone, a smooth rusty-brown with slight gloss; over more fluid glazes (celadons, temmokus, porcelain glazes) becomes a rich foxy-red where thick, brown-black dusted with rust where thin. Used as a temmoku base, additions of 1-15% wood ash progress from glossy-black temmoku toward clear glassy amber/green as ash increases."
+    },
+    {
+      "name": "Jun Glaze (Wood, Glaze 9)",
+      "source": "wood-chinese-glazes-1999",
+      "source_id": "glaze-9",
+      "description": "A calculated Jun-type glaze applied thick for the characteristic optical-blue opalescent colour, with a low clay content that aids application. Brushwork with dilute copper carbonate before firing produces the diffused copper-red effects seen in Song/Jin/Yuan originals.",
+      "cone": "9-10",
+      "atmosphere": "reduction",
+      "surface": "glossy, opalescent",
+      "ingredients": [
+        {
+          "material": "Potash Feldspar",
+          "percentage": 45
+        },
+        {
+          "material": "Quartz",
+          "percentage": 29
+        },
+        {
+          "material": "Whiting",
+          "percentage": 11
+        },
+        {
+          "material": "China Clay",
+          "percentage": 5
+        },
+        {
+          "material": "Dolomite",
+          "percentage": 6.5
+        },
+        {
+          "material": "Red Iron Oxide",
+          "percentage": 1.5
+        },
+        {
+          "material": "Bone Ash",
+          "percentage": 2.0
+        }
+      ],
+      "fired_oxide_analysis": {
+        "SiO2": 68.2,
+        "Al2O3": 10.8,
+        "Fe2O3": 1.8,
+        "CaO": 10.3,
+        "MgO": 1.6,
+        "K2O": 5.1,
+        "Na2O": 1.3,
+        "P2O5": 0.9
+      },
+      "notes": "1280-1300C. Cool slowly, or the surface turns overly glassy. Optional: brushwork with dilute copper-carbonate pigment on the dry glaze surface before firing, for diffused copper-red effects.",
+      "variations": [
+        {
+          "name": "Jun Glaze, copper-red brushwork",
+          "colorants": [
+            {
+              "material": "Copper Carbonate",
+              "percentage": 0.5
+            }
+          ],
+          "expected_color": "diffused copper-red over opalescent blue"
+        }
+      ]
+    }
+  ]
+}

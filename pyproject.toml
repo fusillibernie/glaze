@@ -27,9 +27,17 @@ dev = [
     "pytest-cov>=4.1.0",
     "hypothesis>=6.100.0",
     "httpx>=0.26.0",
+    # HTTP mocking for the Glazy client tests. Was installed locally but
+    # never declared, so CI could not collect those test modules.
+    "respx>=0.20.0",
 ]
 ml = [
     "scikit-learn>=1.3.0",
+]
+# Only needed to regenerate the reference PDF via scripts/build_reference_pdf.py.
+# The app itself does not import reportlab.
+docs = [
+    "reportlab>=4.0.0",
 ]
 
 [build-system]
